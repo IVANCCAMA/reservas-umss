@@ -23,8 +23,8 @@ function App() {
         </button>
         <br />
         <div className="elemento">
-          Ejemplo uso de Sass
-          <div className="sub-elemento">Nesting</div>
+          Ejemplo uso de Sass elemento
+          <div className="sub-elemento">sub elemento</div>
         </div>
 
         <div className="ejemplo-sass-global">Ejemplo Sass Global</div>
