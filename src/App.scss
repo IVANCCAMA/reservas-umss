@@ -40,3 +40,14 @@
 .read-the-docs {
   color: #888;
 }
+
+// Ejemplo uso de Sass
+.elemento {
+  font-size: 45px;
+  background-color: rgb(137, 14, 14);
+  .sub-elemento {
+    font-size: 25px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    background-color: blue;
+  }
+}
