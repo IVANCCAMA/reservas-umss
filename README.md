@@ -1,7 +1,6 @@
 # React + Vite
-
 Estamos usando Vite + React para este proyecto
-El proyecto tiene Booststrap 5.3.2 instalado.
+El proyecto tiene Booststrap 5.3.3 instalado.
 
 ## Instalar
 Para instalar los paquetes de dependencia debemos correr:
