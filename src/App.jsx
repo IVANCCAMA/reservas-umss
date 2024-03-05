@@ -25,6 +25,10 @@ function App() {
         <div className="elemento">Ejemplo uso de Sass
           <div className="sub-elemento">Nesting</div>
         </div>
+
+        <div className="ejemplo-sass-global">
+          Ejemplo Sass Global 
+        </div>
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
