@@ -37,15 +37,11 @@
   padding: 2em;
 }
 
-.read-the-docs {
-  color: #888;
-}
-
 // Ejemplo uso de Sass
 .elemento {
   font-size: 35px;
   .sub-elemento {
     font-size: 25px;
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-family: Georgia, "Times New Roman", Times, serif;
   }
 }
