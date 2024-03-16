@@ -32,9 +32,9 @@ export default function ExamplePage() {
           Button Bootstrap
         </button>
 
-        <h3 className='mt-3'>Component React</h3>
+        <h3 className="mt-3">Component React</h3>
         <CardComponent></CardComponent>
-
+        <CardComponent></CardComponent>
       </div>
     </div>
   );
