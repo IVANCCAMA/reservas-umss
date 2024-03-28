@@ -9,13 +9,21 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <Routes>
-          <Route index element={<ExamplePage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/ambientes/lista" element={<ListadoAmbientesPage />} />
-          <Route path="/materias/lista" element={<ListadoMateriasPage />} />
-          <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
-        </Routes>
+        <div className="row">
+          {/* Menu */}
+          <div className="col-3 border border-1 border-black">
+            Menu aqui
+          </div>
+          <div className="col-9">
+            <Routes>
+              <Route index element={<ExamplePage />} />
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/ambientes" element={<ListadoAmbientesPage />} />
+              <Route path="/materias" element={<ListadoMateriasPage />} />
+              <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
+            </Routes>
+          </div>
+        </div>
       </div>
     </BrowserRouter>
   );
