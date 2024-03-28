@@ -1,10 +1,13 @@
+import { useEffect, useState } from 'react';
 import './ListadoMateriasPage.scss';
+import axios from 'axios';
 
 const ListadoMateriasPage = () => {
   // estados
+  const [materias, setMaterias] = useState([]);
 
   // variables
-  const materias = [
+  /*   const materias = [
     {
       id: 1,
       Materia: 'Matemáticas',
@@ -37,10 +40,26 @@ const ListadoMateriasPage = () => {
       Inscritos: 28,
       Docentes: ['Luis Hernández', 'Sofía Ramírez'],
     },
-  ];
+  ]; */
 
-  // logica | api
-  
+  // logic
+  const loadMaterias = () => {
+    // Realizar la solicitud a la API
+    axios
+      .get('https://api-url.com/materias')
+      .then((response) => {
+        // Establecer los datos en el estado
+        setMaterias(response.data);
+      })
+      .catch((error) => {
+        console.error('Error al obtener las materias:', error);
+      });
+    //api
+  };
+
+  useEffect(() => {
+    loadMaterias();
+  }, []);
 
   return (
     <div className="container listado-materias p-5">
