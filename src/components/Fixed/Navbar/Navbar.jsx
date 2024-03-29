@@ -10,6 +10,7 @@ const Navbar = () => {
         height: '55px',
         backgroundColor: '#ffffff',
         border: '0.5px solid rgba(140, 134, 134, 0.6)',
+        zIndex: 1
       }}
     >
       {/* <div
