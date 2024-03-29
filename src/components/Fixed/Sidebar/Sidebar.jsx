@@ -35,7 +35,7 @@ const Sidebar = () => {
   return (
     <div className="sidebar-container h-100">
       <div className="flex-shrink-0 sidebar-menu h-100">
-        <ul className="nav nav-pills mt-md-4">
+        <ul className="nav nav-pills nav-sticky mt-md-4">
           {btns.map((btn, index) => (
             <li key={`nav-item-${index}`} className="nav-item w-100">
               <button
