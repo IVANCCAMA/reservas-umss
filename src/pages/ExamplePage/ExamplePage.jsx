@@ -34,7 +34,6 @@ export default function ExamplePage() {
 
         <h3 className='mt-3'>Component React</h3>
         <CardComponent></CardComponent>
-
       </div>
     </div>
   );
