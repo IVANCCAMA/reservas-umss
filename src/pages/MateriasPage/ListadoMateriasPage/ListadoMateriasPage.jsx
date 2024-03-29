@@ -7,7 +7,7 @@ const ListadoMateriasPage = () => {
   const [materias, setMaterias] = useState([]);
 
   // variables
-  /*   const materias = [
+    /* const materias = [
     {
       id: 1,
       Materia: 'Matemáticas',
