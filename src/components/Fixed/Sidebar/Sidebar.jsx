@@ -10,32 +10,32 @@ const Sidebar = () => {
       name: 'Ambientes',
       icon: 'mdi:google-classroom',
       subs: [
-        { to: '/registrarAmbiente', name: 'Registrar ambiente' },
-        { to: '/listaAbientes', name: 'Lista de ambientes' },
+        { to: 'ambientes/registrarAmbiente', name: 'Registrar ambiente' },
+        { to: 'ambientes/listaAbientes', name: 'Lista de ambientes' },
       ],
     },
     {
       name: 'Materias',
       icon: 'ph:book',
       subs: [
-        { to: '/subirMaterias', name: 'Subir materias' },
-        { to: '/listaMaterias', name: 'Lista de materias' },
+        { to: '/materias/subirMaterias', name: 'Subir materias' },
+        { to: '/materias/listaMaterias', name: 'Lista de materias' },
       ],
     },
     {
       name: 'Reservas',
       icon: 'ep:calendar',
       subs: [
-        { to: '/reservarAmbiente', name: 'Reservar ambiente' },
-        { to: '/listaReservas', name: 'Lista de reservas' },
+        { to: '/reservas/reservarAmbiente', name: 'Reservar ambiente' },
+        { to: '/reservas/listaReservas', name: 'Lista de reservas' },
       ],
     },
   ];
 
   return (
-    <div className="sidebar-container h-100">
-      <div className="flex-shrink-0 sidebar-menu h-100">
-        <ul className="nav nav-pills nav-sticky mt-md-4">
+    <div className="sidebar-container">
+      <div className="flex-shrink-0 sidebar-menu">
+        <ul className="nav nav-pills mt-md-4">
           {btns.map((btn, index) => (
             <li key={`nav-item-${index}`} className="nav-item w-100">
               <button
@@ -64,7 +64,7 @@ const Sidebar = () => {
                   {btn.subs.map((sub, subIndex) => (
                     <li key={`nav-item-${index}-${subIndex}`}>
                       <Link
-                        to={sub.url}
+                        to={sub.to}
                         className="nav-link link-body-emphasis d-inline-flex text-decoration-none rounded"
                       >
                         {sub.name}
@@ -76,65 +76,6 @@ const Sidebar = () => {
             </li>
           ))}
         </ul>
-
-        {/* <li className="sidenav-item">
-          <Link
-            className="sidenav-link ripple-surface-primary collapsed"
-            to="#sidenav-collapse-2-0-0"
-            role="button"
-            data-mdb-ripple-initialized="true"
-            aria-expanded="false"
-          >
-            <span>Category 1</span>
-            <Icon
-              className="fas fa-angle-down rotate-icon"
-              icon="iconamoon:arrow-down-2"
-              width="48"
-              height="48"
-              style={{ transform: 'rotate(0deg)' }}
-            />
-          </Link>
-          <ul className="sidenav-collapse collapse" itemID="sidenav-collapse-2-0-0">
-            <li className="sidenav-item">
-              <Link className="sidenav-link ripple-surface" data-mdb-ripple-initialized="true">
-                Link 2
-              </Link>
-            </li>
-            <li className="sidenav-item">
-              <Link className="sidenav-link ripple-surface" data-mdb-ripple-initialized="true">
-                Link 3
-              </Link>
-            </li>
-          </ul>
-        </li>
-        <li className="sidenav-item">
-          <button
-            className="sidenav-link ripple-surface"
-            to="#sidenav-collapse-2-0-1"
-            type="button"
-            data-mdb-ripple-initialized="true"
-          >
-            <span>Category 2</span>
-            <Icon
-              className="fas fa-angle-down rotate-icon"
-              icon="iconamoon:arrow-down-2"
-              width="48"
-              height="48"
-            />
-          </button>
-          <ul className="sidenav-collapse collapse" itemID="sidenav-collapse-2-0-1">
-            <li className="sidenav-item">
-              <Link className="sidenav-link ripple-surface" data-mdb-ripple-initialized="true">
-                Link 4
-              </Link>
-            </li>
-            <li className="sidenav-item">
-              <Link className="sidenav-link ripple-surface" data-mdb-ripple-initialized="true">
-                Link 5
-              </Link>
-            </li>
-          </ul>
-        </li> */}
       </div>
     </div>
   );
