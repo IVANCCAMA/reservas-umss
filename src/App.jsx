@@ -11,7 +11,7 @@ function App() {
     <BrowserRouter>
       <div className="App container-fluid p-0">
         {/* header */}
-        <div className="row m-0">
+        <div className="row m-0 justify-content-center">
           <Navbar />
           <div className="col-md-2 p-0 pt-5">
             <Sidebar />

@@ -7,7 +7,7 @@ export default function ExamplePage() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="container text-center">
+    <div className="container-md text-center">
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" width={'100px'} />
