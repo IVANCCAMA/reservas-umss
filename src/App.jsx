@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import ExamplePage from './pages/ExamplePage/ExamplePage';
 import HomePage from './pages/HomePage/HomePage';
 import Sidebar from './components/Fixed/Sidebar/Sidebar';
 import Navbar from './components/Fixed/Navbar/Navbar';
@@ -19,9 +18,7 @@ function App() {
           </div>
           <div className="col-md-10 pt-md-5 p-0 main-content">
             <Routes>
-              <Route index element={<ExamplePage />} />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/home" element={<ListadoMateriasPage />} />
+              <Route path="/" index element={<HomePage />} />
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
               <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
               <Route path="/ambientes/listaAbientes" element={<ListadoAmbientesPage />} />
