@@ -19,6 +19,10 @@ h1 {
   height: calc(100vh - 3rem);
   background-color: rgba(222, 242, 255, 0.66);
   border: 0.5px solid rgba(140, 134, 134, 0.6);
+
+  button {
+    border: 0;
+  }
 }
 
 .nav-link {
@@ -32,4 +36,10 @@ h1 {
 .nav-sticky {
   position: sticky;
   top: 4.6rem;
+}
+
+@include media-breakpoint-down(md) {
+  .sidebar-container {
+    height: auto;
+  }
 }
