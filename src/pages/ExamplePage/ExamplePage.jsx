@@ -1,7 +1,6 @@
 import reactLogo from '../../assets/react.svg';
 import viteLogo from '../../assets/vite.svg';
 import { useState } from 'react';
-import '../../App.scss';
 import CardComponent from '../../components/Examples/CardComponent/CarComponent';
 
 export default function ExamplePage() {
