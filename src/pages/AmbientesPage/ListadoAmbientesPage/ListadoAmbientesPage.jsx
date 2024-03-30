@@ -4,12 +4,12 @@ import axios from 'axios';
 
 const ListadoAmbientesPage = () => {
   // estados
-  const [ambientes, setAmbientes] = useState([]);
+  //const [ambientes, setAmbientes] = useState([]);
 
   // variables
-        /* const ambientes = [
+        const ambientes = [
     {
-      id: 001,
+      id: 1,
       Aula: 'Laboratorio 1',
       Capacidad: 120,
       Estado: 'Deshabilitado',
@@ -17,7 +17,7 @@ const ListadoAmbientesPage = () => {
       Proyector: Sí,
     },
     {
-      id: 002,
+      id: 2,
       Aula: '690 B',
       Capacidad: 140,
       Estado: 'Habilitado',
@@ -25,7 +25,7 @@ const ListadoAmbientesPage = () => {
       Proyector: Sí,
     },
     {
-      id: 003,
+      id: 3,
       Aula: '690 C',
       Capacidad: 110,
       Estado: 'Habilitado',
@@ -33,22 +33,23 @@ const ListadoAmbientesPage = () => {
       Proyector: Sí,
     },
     {
-      id: 001,
+      id: 4,
       Aula: '690 A',
       Capacidad: 120,
       Estado: 'Deshabilitado',
       Tipo: Laboratorio,
       Proyector: Sí,
     },
-  ]; */
+  ]; 
 
   // logica | api
   const loadAmbientes = () => {
     // Realizar la solicitud a la API
     axios
-      .get('https://api-url.com/materias') //////////////cambiar
+      .get('http://localhost:4000/api/ambientes') 
       .then((response) => {
         // Establecer los datos en el estado
+        console.log(response.data);
         setAmbientes(response.data);
       })
       .catch((error) => {

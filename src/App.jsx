@@ -3,6 +3,7 @@ import ExamplePage from './pages/ExamplePage/ExamplePage';
 import HomePage from './pages/HomePage/HomePage';
 import ListadoMateriasPage from './pages/MateriasPage/ListadoMateriasPage/ListadoMateriasPage';
 import SubirMatariasPage from './pages/MateriasPage/SubirMatariasPage/SubirMatariasPage';
+import ListadoAmbientesPage from './pages/AmbientesPage/ListadoAmbientesPage/ListadoAmbientesPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
               <Route path="/home" element={<ListadoMateriasPage />} />
               <Route path="/materias" element={<ListadoMateriasPage />} />
               <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
+              <Route path="/ambientes/lista" element={<ListadoAmbientesPage />} />
             </Routes>
           </div>
         </div>

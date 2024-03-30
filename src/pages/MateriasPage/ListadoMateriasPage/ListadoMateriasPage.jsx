@@ -7,7 +7,7 @@ const ListadoMateriasPage = () => {
   const [materias, setMaterias] = useState([]);
 
   // variables
-    /* const materias = [
+    /*const materias = [
     {
       id: 1,
       Materia: 'Matemáticas',
@@ -46,9 +46,10 @@ const ListadoMateriasPage = () => {
   const loadMaterias = () => {
     // Realizar la solicitud a la API
     axios
-      .get('https://api-url.com/materias')
+      .get('http://localhost:4000/api/grupos/tablamaterias')
       .then((response) => {
         // Establecer los datos en el estado
+        console.log(response.data);
         setMaterias(response.data);
       })
       .catch((error) => {
@@ -76,20 +77,15 @@ const ListadoMateriasPage = () => {
           </tr>
         </thead>
         <tbody>
-          {console.log(materias)}
           {materias.map((materia, index) => {
             return (
               <tr key={index}>
-                <th scope="row">{materia.id}</th>
-                <td>{materia.Materia}</td>
-                <td>{materia.Nivel}</td>
-                <td>{materia.Grupo}</td>
-                <td>{materia.Inscritos}</td>
-                <td>
-                  {materia.Docentes.map((Docente) => (
-                    <div key={Docente}>{Docente}</div>
-                  ))}
-                </td>
+                <th scope="row">{materia.numero}</th>
+                <td>{materia.nombre_materia}</td>
+                <td>{materia.nivel_materia}</td>
+                <td>{materia.nombre_grupo}</td>
+                <td>{materia.cantidad_est}</td>
+                <td>{materia.docente}</td>
               </tr>
             );
           })}
