@@ -26,7 +26,7 @@ const ListadoAmbientesPage = () => {
   }, []);
 
   return (
-    <div className="container-md listado-ambientes p-md-5">
+    <div className="container-fluid listado-ambientes p-md-5">
       <h2 className="text-start">Lista de ambientes</h2>
       <div className="table-responsive">
         <table className="table table-striped border border-1">

@@ -38,7 +38,9 @@ h1 {
   top: 4.6rem;
 }
 
+// abajo de 768 px
 @include media-breakpoint-down(md) {
+  /*   max-width: 1920px; */
   .sidebar-container {
     height: auto;
   }
@@ -47,3 +49,8 @@ h1 {
     margin-top: 15px;
   }
 }
+
+/* .container-md {
+  max-width: 1920px;
+}
+ */

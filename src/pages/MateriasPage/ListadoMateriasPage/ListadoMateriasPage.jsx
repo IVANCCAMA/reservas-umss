@@ -26,7 +26,7 @@ const ListadoMateriasPage = () => {
   }, []);
 
   return (
-    <div className="container-md listado-materias p-md-5">
+    <div className="container-fluid listado-materias p-md-5">
       <h2 className="text-start">Materias registradas</h2>
       <div className="table-responsive-md">
         <table className="table table-striped border border-1">
@@ -48,7 +48,7 @@ const ListadoMateriasPage = () => {
                   <td>{materia.nombre_materia}</td>
                   <td>{materia.nivel_materia}</td>
                   <td>{materia.nombre_grupo}</td>
-                  <td>{materia.cantidad_est}</td>
+                  <td>{materia.cantidad_est ? materia.cantidad_est : 0}</td>
                   <td>{materia.docente}</td>
                 </tr>
               );
