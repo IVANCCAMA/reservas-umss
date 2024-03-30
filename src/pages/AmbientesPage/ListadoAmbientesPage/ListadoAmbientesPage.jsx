@@ -4,49 +4,34 @@ import axios from 'axios';
 
 const ListadoAmbientesPage = () => {
   // estados
-  //const [ambientes, setAmbientes] = useState([]);
+  const [ambientes, setAmbientes] = useState([]);
 
   // variables
-        const ambientes = [
-    {
-      id: 1,
-      Aula: 'Laboratorio 1',
-      Capacidad: 120,
-      Estado: 'Deshabilitado',
-      Tipo: Laboratorio,
-      Proyector: Sí,
-    },
-    {
-      id: 2,
-      Aula: '690 B',
-      Capacidad: 140,
-      Estado: 'Habilitado',
-      Tipo: Aula,
-      Proyector: Sí,
-    },
-    {
-      id: 3,
-      Aula: '690 C',
-      Capacidad: 110,
-      Estado: 'Habilitado',
-      Tipo: Aula,
-      Proyector: Sí,
-    },
-    {
-      id: 4,
-      Aula: '690 A',
-      Capacidad: 120,
-      Estado: 'Deshabilitado',
-      Tipo: Laboratorio,
-      Proyector: Sí,
-    },
-  ]; 
+  /*const ambientes = [
+{
+id: 1,
+Aula: 'Laboratorio 1',
+Capacidad: 120,
+Estado: 'Deshabilitado',
+Tipo: 'Laboratorio',
+Proyector: 'Sí',
+},
+{
+id: 2,
+Aula: '690 B',
+Capacidad: 140,
+Estado: 'Habilitado',
+Tipo: 'Aula',
+Proyector: 'Sí',
+},
+ 
+]; */
 
   // logica | api
   const loadAmbientes = () => {
     // Realizar la solicitud a la API
     axios
-      .get('http://localhost:4000/api/ambientes') 
+      .get('http://localhost:4000/api/ambientes')
       .then((response) => {
         // Establecer los datos en el estado
         console.log(response.data);
@@ -61,7 +46,7 @@ const ListadoAmbientesPage = () => {
   useEffect(() => {
     loadAmbientes();
   }, []);
-  
+
 
 
   return (
@@ -82,16 +67,16 @@ const ListadoAmbientesPage = () => {
         </thead>
         <tbody>
           {console.log(ambientes)}
-          {materias.map((ambiente, index) => {
+          {ambientes.map((ambiente, index) => {
             return (
               <tr key={index}>
-                <th scope="row">{ambiente.id}</th>
-                <td>{ambiente.ID}</td>
-                <td>{ambiente.Aula}</td>
-                <td>{ambiente.Capacidad}</td>
-                <td>{ambiente.Estado}</td>
-                <td>{ambiente.Tipo}</td>
-                <td>{ambiente.Proyector}</td>
+                <th scope="row">{index+1}</th>
+                <td>{ambiente.id_ambiente}</td>
+                <td>{ambiente.nombre_ambiente}</td>
+                <td>{ambiente.capacidad}</td>
+                <td>{ambiente.disponible?'Si':'No'}</td>
+                <td>{ambiente.tipo}</td>
+                <td>{ambiente.proyector?'Si':'No'}</td>
               </tr>
             );
           })}
