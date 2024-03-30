@@ -10,24 +10,24 @@ const Sidebar = () => {
       name: 'Ambientes',
       icon: 'mdi:google-classroom',
       subs: [
-        { to: '/registrarAmbiente', name: 'Registrar ambiente' },
-        { to: '/listaAbientes', name: 'Lista de ambientes' },
+        { to: 'ambientes/registrarAmbiente', name: 'Registrar ambiente' },
+        { to: 'ambientes/listaAbientes', name: 'Lista de ambientes' },
       ],
     },
     {
       name: 'Materias',
       icon: 'ph:book',
       subs: [
-        { to: '/subirMaterias', name: 'Subir materias' },
-        { to: '/listaMaterias', name: 'Lista de materias' },
+        { to: '/materias/subirMaterias', name: 'Subir materias' },
+        { to: '/materias/listaMaterias', name: 'Lista de materias' },
       ],
     },
     {
       name: 'Reservas',
       icon: 'ep:calendar',
       subs: [
-        { to: '/reservarAmbiente', name: 'Reservar ambiente' },
-        { to: '/listaReservas', name: 'Lista de reservas' },
+        { to: '/reservas/reservarAmbiente', name: 'Reservar ambiente' },
+        { to: '/reservas/listaReservas', name: 'Lista de reservas' },
       ],
     },
   ];
@@ -64,7 +64,7 @@ const Sidebar = () => {
                   {btn.subs.map((sub, subIndex) => (
                     <li key={`nav-item-${index}-${subIndex}`}>
                       <Link
-                        to={sub.url}
+                        to={sub.to}
                         className="nav-link link-body-emphasis d-inline-flex text-decoration-none rounded"
                       >
                         {sub.name}
