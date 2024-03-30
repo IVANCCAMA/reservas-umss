@@ -26,38 +26,39 @@ const ListadoAmbientesPage = () => {
   }, []);
 
   return (
-    <div className="container listado-ambientes p-5">
+    <div className="container-md listado-ambientes p-md-5">
       <h2 className="text-start">Lista de ambientes</h2>
-
-      <table className="table table-striped border border-1">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">ID</th>
-            <th scope="col">Aula</th>
-            <th scope="col">Capacidad</th>
-            <th scope="col">Estado</th>
-            <th scope="col">Tipo</th>
-            <th scope="col">Proyector</th>
-          </tr>
-        </thead>
-        <tbody>
-          {console.log(ambientes)}
-          {ambientes.map((ambiente, index) => {
-            return (
-              <tr key={index}>
-                <th scope="row">{index + 1}</th>
-                <td>{ambiente.id_ambiente}</td>
-                <td>{ambiente.nombre_ambiente}</td>
-                <td>{ambiente.capacidad}</td>
-                <td>{ambiente.disponible ? 'Si' : 'No'}</td>
-                <td>{ambiente.tipo}</td>
-                <td>{ambiente.proyector ? 'Si' : 'No'}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="table-responsive">
+        <table className="table table-striped border border-1">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">ID</th>
+              <th scope="col">Aula</th>
+              <th scope="col">Capacidad</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Proyector</th>
+            </tr>
+          </thead>
+          <tbody>
+            {console.log(ambientes)}
+            {ambientes.map((ambiente, index) => {
+              return (
+                <tr key={index}>
+                  <th scope="row">{index + 1}</th>
+                  <td>{ambiente.id_ambiente}</td>
+                  <td>{ambiente.nombre_ambiente}</td>
+                  <td>{ambiente.capacidad}</td>
+                  <td>{ambiente.disponible ? 'Si' : 'No'}</td>
+                  <td>{ambiente.tipo}</td>
+                  <td>{ambiente.proyector ? 'Si' : 'No'}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       {/* Botones de paginación */}
       <nav aria-label="Page navigation example">
         <ul className="pagination justify-content-end">

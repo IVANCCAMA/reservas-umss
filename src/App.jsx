@@ -17,7 +17,7 @@ function App() {
           <div className="col-md-2 p-0 pt-5">
             <Sidebar />
           </div>
-          <div className="col-md-10 pt-5 p-0 main-content">
+          <div className="col-md-10 pt-md-5 p-0 main-content">
             <Routes>
               <Route index element={<ExamplePage />} />
               <Route path="/home" element={<HomePage />} />
