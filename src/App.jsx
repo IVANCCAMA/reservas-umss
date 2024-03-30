@@ -17,14 +17,14 @@ function App() {
           <div className="col-md-2 p-0 pt-5">
             <Sidebar />
           </div>
-          <div className="col-md-10 pt-5">
+          <div className="col-md-10 pt-5 p-0 main-content">
             <Routes>
               <Route index element={<ExamplePage />} />
               <Route path="/home" element={<HomePage />} />
               <Route path="/home" element={<ListadoMateriasPage />} />
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
               <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
-              <Route path="/ambientes" element={<ListadoAmbientesPage />} />
+              <Route path="/ambientes/listaAbientes" element={<ListadoAmbientesPage />} />
             </Routes>
           </div>
         </div>

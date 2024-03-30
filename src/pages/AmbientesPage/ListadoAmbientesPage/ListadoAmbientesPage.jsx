@@ -6,27 +6,6 @@ const ListadoAmbientesPage = () => {
   // estados
   const [ambientes, setAmbientes] = useState([]);
 
-  // variables
-  /*const ambientes = [
-{
-id: 1,
-Aula: 'Laboratorio 1',
-Capacidad: 120,
-Estado: 'Deshabilitado',
-Tipo: 'Laboratorio',
-Proyector: 'Sí',
-},
-{
-id: 2,
-Aula: '690 B',
-Capacidad: 140,
-Estado: 'Habilitado',
-Tipo: 'Aula',
-Proyector: 'Sí',
-},
- 
-]; */
-
   // logica | api
   const loadAmbientes = () => {
     // Realizar la solicitud a la API
@@ -34,24 +13,21 @@ Proyector: 'Sí',
       .get('http://localhost:4000/api/ambientes')
       .then((response) => {
         // Establecer los datos en el estado
-        console.log(response.data);
         setAmbientes(response.data);
       })
       .catch((error) => {
         console.error('Error al obtener los ambientes:', error);
       });
-    //api
   };
 
+  // rederización inicial
   useEffect(() => {
     loadAmbientes();
   }, []);
 
-
-
   return (
     <div className="container listado-ambientes p-5">
-      <h2 className='text-start'>Lista de ambientes</h2>
+      <h2 className="text-start">Lista de ambientes</h2>
 
       <table className="table table-striped border border-1">
         <thead>
@@ -70,13 +46,13 @@ Proyector: 'Sí',
           {ambientes.map((ambiente, index) => {
             return (
               <tr key={index}>
-                <th scope="row">{index+1}</th>
+                <th scope="row">{index + 1}</th>
                 <td>{ambiente.id_ambiente}</td>
                 <td>{ambiente.nombre_ambiente}</td>
                 <td>{ambiente.capacidad}</td>
-                <td>{ambiente.disponible?'Si':'No'}</td>
+                <td>{ambiente.disponible ? 'Si' : 'No'}</td>
                 <td>{ambiente.tipo}</td>
-                <td>{ambiente.proyector?'Si':'No'}</td>
+                <td>{ambiente.proyector ? 'Si' : 'No'}</td>
               </tr>
             );
           })}
