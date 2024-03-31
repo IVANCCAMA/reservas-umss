@@ -53,7 +53,7 @@ Proyector: 'Sí',
     <div className="container listado-ambientes p-5">
       <h2 className='text-start'>Lista de ambientes</h2>
 
-      <table className="table table-striped border border-1">
+      <table className="table table-striped table-hover border border-1">
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -74,7 +74,7 @@ Proyector: 'Sí',
                 <td>{ambiente.id_ambiente}</td>
                 <td>{ambiente.nombre_ambiente}</td>
                 <td>{ambiente.capacidad}</td>
-                <td>{ambiente.disponible?'Si':'No'}</td>
+                <td>{ambiente.disponible?'Habilitado':'Deshabilitado'}</td>
                 <td>{ambiente.tipo}</td>
                 <td>{ambiente.proyector?'Si':'No'}</td>
               </tr>
