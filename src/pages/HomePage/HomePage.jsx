@@ -1,40 +1,33 @@
+import { Link } from 'react-router-dom';
 import patito from '../../assets/Images/patito.png';
 
 export default function HomePage() {
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col">
-          <h1>
-            Home Page <i className="bi bi-car-front-fill"></i>
-          </h1>
-          <img src={patito} alt="patito" width={'400px'} />
-          <div className="dropdown my-3">
-            <button
-              className="btn btn-primary dropdown-toggle"
-              type="button"
-              id="dropdownMenuButton1"
-              data-bs-toggle="dropdown"
-            >
-              Botón desplegable
-            </button>
-            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li>
-                <a className="dropdown-item" href="#">
-                  Action
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item" href="#">
-                  Another action
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item" href="#">
-                  Something else here
-                </a>
-              </li>
-            </ul>
+    <div className="container-md">
+      <div className="row justify-content-center">
+        <h1 className="text-center p-md-3 fs-1" style={{ color: '#215f88' }}>
+          ¡Bienvenido a Reserbit, nuestra plataforma de reserva de ambientes universitarios!
+          <i className="bi bi-check-all"></i>
+        </h1>
+        <div className="col-md-5">
+          <div className="text-center">
+            <img className="img-fluid object-fit-cover" src={patito} alt="patito" width={'400px'} />
+          </div>
+        </div>
+        <div className="col-md-7">
+          <p>
+            Simplificamos el proceso de reserva de espacios en tu campus para eventos, reuniones y
+            actividades académicas. Con nuestra interfaz intuitiva, puedes encontrar y reservar
+            fácilmente aulas, auditorios y laboratorios, ¡todo en un solo lugar!
+          </p>
+          <p>
+            Encuentra y reserva salas de clases, auditorios y más en tu campus en segundos. ¡Haz que
+            la gestión de espacios sea más simple que nunca!
+          </p>
+          <div className="text-center">
+            <Link to={'/reservas/reservarAmbiente'} className="btn btn-info">
+              Reservar ahora
+            </Link>
           </div>
         </div>
       </div>

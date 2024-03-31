@@ -1,20 +1,19 @@
 import reactLogo from '../../assets/react.svg';
 import viteLogo from '../../assets/vite.svg';
 import { useState } from 'react';
-import '../../App.scss';
 import CardComponent from '../../components/Examples/CardComponent/CarComponent';
 
 export default function ExamplePage() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="container">
+    <div className="container-md text-center">
       <div>
         <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
+          <img src={viteLogo} className="logo" alt="Vite logo" width={'100px'} />
         </a>
         <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
+          <img src={reactLogo} className="logo react" alt="React logo" width={'100px'} />
         </a>
       </div>
       <h1>Vite + React</h1>
@@ -33,8 +32,10 @@ export default function ExamplePage() {
         </button>
 
         <h3 className="mt-3">Component React</h3>
-        <CardComponent></CardComponent>
-        <CardComponent></CardComponent>
+        <CardComponent />
+        <CardComponent />
+        <CardComponent />
+        <CardComponent />
       </div>
     </div>
   );
