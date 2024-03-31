@@ -21,7 +21,7 @@ function App() {
               <Route path="/" index element={<HomePage />} />
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
               <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
-              <Route path="/ambientes/listaAbientes" element={<ListadoAmbientesPage />} />
+              <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
             </Routes>
           </div>
         </div>
