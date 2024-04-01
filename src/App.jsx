@@ -6,6 +6,7 @@ import ListadoMateriasPage from './pages/MateriasPage/ListadoMateriasPage/Listad
 import SubirMatariasPage from './pages/MateriasPage/SubirMatariasPage/SubirMatariasPage';
 import ListadoAmbientesPage from './pages/AmbientesPage/ListadoAmbientesPage/ListadoAmbientesPage';
 import FichaInformacionAmbiente from './pages/AmbientesPage/FichaInformacionAmbiente/FichaInformacionAmbiente';
+import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/RegistroAmbientePage';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
               <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
               <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
               <Route path="/ambientes/listaAmbientes/fichaAmbiente" element={<FichaInformacionAmbiente />} />
+              <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
             </Routes>
           </div>
         </div>
