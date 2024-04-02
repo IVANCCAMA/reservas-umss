@@ -5,7 +5,7 @@ import Navbar from './components/Fixed/Navbar/Navbar';
 import ListadoMateriasPage from './pages/MateriasPage/ListadoMateriasPage/ListadoMateriasPage';
 import SubirMatariasPage from './pages/MateriasPage/SubirMatariasPage/SubirMatariasPage';
 import ListadoAmbientesPage from './pages/AmbientesPage/ListadoAmbientesPage/ListadoAmbientesPage';
-import FichaInformacionAmbiente from './pages/AmbientesPage/FichaInformacionAmbiente/FichaInformacionAmbiente';
+import FichaInformacionAmbientePage from './pages/AmbientesPage/FichaInformacionAmbientePage/FichaInformacionAmbientePage';
 import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/RegistroAmbientePage';
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
               <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
               <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
-              <Route path="/ambientes/listaAmbientes/fichaAmbiente" element={<FichaInformacionAmbiente />} />
+              <Route path="/ambientes/listaAmbientes/fichaAmbiente" element={<FichaInformacionAmbientePage />} />
               <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
             </Routes>
           </div>

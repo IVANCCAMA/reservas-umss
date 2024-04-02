@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-//import 'FichaInformacionAmbiente.scss';
+//import 'FichaInformacionAmbientePage.scss';
 import axios from "axios";
 
 const FichaInformacionAmbiente = () => {
@@ -24,6 +24,7 @@ const FichaInformacionAmbiente = () => {
       useEffect(() => {
         loadAmbientes();
       }, []);
+
       return (
         <div className="container-fluid listado-ambientes p-md-5">
           <h2 className="text-start">Lista de ambientes</h2>
@@ -58,36 +59,7 @@ const FichaInformacionAmbiente = () => {
               </tbody>
             </table>
           </div>
-          {/* Botones de paginación */}
-          <nav aria-label="Page navigation example">
-            <ul className="pagination justify-content-end">
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  Anterior
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link active" href="#">
-                  1
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  2
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  3
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  Siguiente
-                </a>
-              </li>
-            </ul>
-          </nav>
+          
         </div>
       );
 
