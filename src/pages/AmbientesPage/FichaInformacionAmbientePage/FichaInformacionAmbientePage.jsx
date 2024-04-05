@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'; //obtiene el parametro de la url
 import './FichaInformacionAmbientePage.scss';
 import axios from 'axios';
 
+// Cambiar EnvironmentInfo por FichaInformacionAmbientePage
 const EnvironmentInfo = () => {
   const ambienteInitialState = {
     nombre_ambiente: '',
@@ -17,6 +18,62 @@ const EnvironmentInfo = () => {
     diponibilidadPorDia: [],
   };
 
+  // Ejemplo de JSON que se recupera de la api, trabajar sobre esto por el momento
+  const diasDisponibles = {
+    id_ambiente: 7,
+    nombre_ambiente: '777',
+    tipo: 'aula comun',
+    capacidad: 130,
+    disponible: true,
+    computadora: 0,
+    proyector: false,
+    ubicacion: 'x-y-z',
+    porcentaje_min: 85,
+    porcentaje_max: 115,
+    disponibilidadPorDia: [
+      {
+        dia: 'lunes',
+        periodos: [
+          {
+            periodo: 'periodo 1',
+            hora_inicio: '06:45:00',
+            hora_fin: '08:15:00',
+          },
+          {
+            periodo: 'periodo 2',
+            hora_inicio: '06:45:00',
+            hora_fin: '08:15:00',
+          },
+          {
+            periodo: 'periodo 3',
+            hora_inicio: '06:45:00',
+            hora_fin: '08:15:00',
+          },
+        ],
+      },
+      {
+        dia: 'martes',
+        periodos: [
+          {
+            periodo: 'periodo 1',
+            hora_inicio: '06:45:00',
+            hora_fin: '08:15:00',
+          },
+          {
+            periodo: 'periodo 2',
+            hora_inicio: '06:45:00',
+            hora_fin: '08:15:00',
+          },
+          {
+            periodo: 'periodo 3',
+            hora_inicio: '06:45:00',
+            hora_fin: '08:15:00',
+          },
+        ],
+      },
+    ],
+  };
+
   let { id_ambiente } = useParams();
   const [ambiente, setAmbiente] = useState(ambienteInitialState);
   const [disponibilidadPorDia, setDisponibilidadPorDia] = useState([]);
@@ -27,7 +84,8 @@ const EnvironmentInfo = () => {
       .then((response) => {
         console.log('id_ambiente', id);
         setAmbiente(response.data.ambiente);
-        setDisponibilidadPorDia(response.data.disponibilidadPorDia);
+        /* setDisponibilidadPorDia(response.data.disponibilidadPorDia); */
+        setDisponibilidadPorDia(diasDisponibles.disponibilidadPorDia); // ejemplo
       })
       .catch((error) => {
         console.error('Error al obtener los datos del ambiente:', error);
@@ -97,42 +155,43 @@ const EnvironmentInfo = () => {
       </div>
 
       <h4 className="py-3">Días y horarios disponibles</h4>
-      {/* /const dias = [`Lunes`, `Martes`, `Miércoles`, `Jueves`, `Viernes`, `Sábado`]; */}
 
-      {/* {disponibilidadPorDia && disponibilidadPorDia.map((dia, index) => {
-        return (
-          <div className="accordion" key={index}>
-            <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseTwo"
-                  aria-expanded="false"
-                  aria-controls="collapseTwo"
+      {disponibilidadPorDia &&
+        diasDisponibles.disponibilidadPorDia.map((diaDisponible, index) => {
+          return (
+            <div className="accordion" key={index}>
+              <div className="accordion-item">
+                <h2 className="accordion-header">
+                  <button
+                    className="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target={`#collapseTwo${index}`}
+                    aria-expanded="false"
+                    aria-controls={`collapseTwo${index}`}
+                  >
+                    {diaDisponible.dia}
+                  </button>
+                </h2>
+                <div
+                  id={`collapseTwo${index}`}
+                  className="accordion-collapse collapse"
+                  aria-labelledby={`headingTwo${index}`}
+                  data-bs-parent="#accordionExample"
                 >
-                  {dia.lunes}
-                </button>
-              </h2>
-              <div
-                id="collapseTwo"
-                className="accordion-collapse collapse"
-                aria-labelledby="headingTwo"
-                data-bs-parent="#accordionExample"
-              >
-                <div className="accordion-body">
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis delectus sunt
-                    saepe itaque expedita, libero at inventore voluptate totam, modi, facilis autem
-                    reiciendis officia quae nam odit dolor quas tenetur?
-                  </p>
+                  <div className="accordion-body">
+                    {/* Mapear horarios accediendo a la propiedad  diaDisponible.periodos*/}
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis delectus sunt
+                      saepe itaque expedita, libero at inventore voluptate totam, modi, facilis
+                      autem reiciendis officia quae nam odit dolor quas tenetur?
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })} */}
+          );
+        })}
     </div>
   );
 };
