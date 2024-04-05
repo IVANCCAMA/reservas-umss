@@ -1,4 +1,10 @@
+import axios from 'axios';
+import { useEffect } from 'react';
+
 const RegistroAmbientePage = () => {
+  // states
+
+  // json horarios
   const horarios = [
     {
       nombre: 'Lunes',
@@ -272,6 +278,24 @@ const RegistroAmbientePage = () => {
     },
   ];
 
+  // logic
+  const loadMaterias = () => {
+    // Realizar la solicitud a la API
+    axios
+      .get('http://localhost:4000/api/ambientes/completo')
+      .then((response) => {
+        // Establecer los datos en el estado
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error('Error al obtener las materias:', error);
+      });
+  };
+
+  // rederización inicial
+  useEffect(() => {
+    loadMaterias();
+  }, []);
   return (
     <div className="container">
       <div className="row py-md-3 justify-content-center">
