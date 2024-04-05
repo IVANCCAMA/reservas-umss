@@ -20,9 +20,8 @@ function App() {
             <Routes>
               <Route index element={<ExamplePage />} />
               <Route path="/home" element={<HomePage />} />
-              <Route path="/home" element={<ListadoMateriasPage />} />
-              <Route path="/materias" element={<ListadoMateriasPage />} />
-              <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
+              <Route path="/subirMaterias" element={<SubirMatariasPage />} />
+              <Route path="/listaMaterias" element={<ListadoMateriasPage />} />
             </Routes>
           </div>
         </div>
