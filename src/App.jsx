@@ -24,7 +24,7 @@ function App() {
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
               <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
               <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
-              <Route path="/ambientes/listaAmbientes/fichaAmbiente" element={<FichaInformacionAmbientePage />} />
+              <Route path="/ambientes/listaAmbientes/fichaAmbiente/:id_ambiente" element={<FichaInformacionAmbientePage />} />
               <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
             </Routes>
           </div>

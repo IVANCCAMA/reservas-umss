@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState} from 'react';
+//import { useHistory } from 'react-router-dom'; //maneja la redireccion
 import './ListadoAmbientesPage.scss';
 import axios from 'axios';
+import { Icon } from '@iconify/react';
+import { Link } from 'react-router-dom';
 
 const ListadoAmbientesPage = () => {
   // estados
   const [ambientes, setAmbientes] = useState([]);
+  //const history = useHistory(); //obtiene el historial para la redireccion
 
   // logica | api
   const loadAmbientes = () => {
@@ -25,6 +29,10 @@ const ListadoAmbientesPage = () => {
     loadAmbientes();
   }, []);
 
+  const handleClick = (id) => {
+    history.push(`/ambiente/${id}`); //redirige a la pagina de la ficha con el id correspondiente
+  }
+
   return (
     <div className="container-fluid listado-ambientes p-md-5">
       <h2 className="text-start">Lista de ambientes</h2>
@@ -39,13 +47,14 @@ const ListadoAmbientesPage = () => {
               <th scope="col">Estado</th>
               <th scope="col">Tipo</th>
               <th scope="col">Proyector</th>
+              <th scope="col">Ver más</th>
             </tr>
           </thead>
           <tbody>
             {console.log(ambientes)}
             {ambientes.map((ambiente, index) => {
               return (
-                <tr key={index}>
+                <tr key={index} onClick={() => handleClick(ambiente.id_ambiente)}>
                   <th scope="row">{index + 1}</th>
                   <td>{ambiente.id_ambiente}</td>
                   <td>{ambiente.nombre_ambiente}</td>
@@ -53,6 +62,12 @@ const ListadoAmbientesPage = () => {
                   <td>{ambiente.disponible ? 'Habilitado' : 'Deshabilitado'}</td>
                   <td>{ambiente.tipo}</td>
                   <td>{ambiente.proyector ? 'Si' : 'No'}</td>
+                  <td>
+                    <Link className='btn btn-primary' to={"/ambientes/listaAmbientes/fichaAmbiente/"+ambiente.id_ambiente} >
+                      <Icon icon='arrow-right-circle' width="50" height="50" style={{color: '#215f88'}}/>
+                      Ver
+                    </Link>
+                  </td>
                 </tr>
               );
             })}
