@@ -1,8 +1,36 @@
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 
 const RegistroAmbientePage = () => {
   // states
+  //const [horarios, setHorarios] = useState([]);
+  const [selectedHorarios, setSelectedHorarios] = useState([]);
+
+  // yup validación, atributos de formulario
+  const schema = yup.object({
+    nombre_ambiente: yup.string().required(),
+    tipo: yup.string().required(),
+    capacidad: yup.number().required(),
+    disponible: yup.boolean().required(),
+    computadora: yup.number().required(),
+    proyector: yup.boolean().required(),
+    ubicacion: yup.string(),
+    porcentaje_min: yup.number().required(),
+    porcentaje_max: yup.number().required(),
+    dia: yup.object().required(),
+  });
+  // react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    clearErrors,
+  } = useForm({ resolver: yupResolver(schema) });
 
   // json horarios
   const horarios = [
@@ -279,40 +307,56 @@ const RegistroAmbientePage = () => {
   ];
 
   // logic
-  const loadMaterias = () => {
-    // Realizar la solicitud a la API
-    axios
-      .get('http://localhost:4000/api/ambientes/completo')
+  const onSubmit = (data) => {
+    // Envio de data con post
+    console.log(data);
+    /* axios
+      .post('http://localhost:4000/api/ambientes/completo', data)
       .then((response) => {
         // Establecer los datos en el estado
         console.log(response);
+        reset({
+          nombre_ambiente: '',
+          tipo: '',
+          capacidad: '',
+          disponible: '',
+          computadora: '',
+          proyector: '',
+          ubicacion: '',
+          porcentaje_min: '',
+          porcentaje_max: '',
+          dia: '',
+        });
+        setSelectedHorarios([]);
+        clearErrors();
       })
       .catch((error) => {
         console.error('Error al obtener las materias:', error);
-      });
+      }); */
   };
 
   // rederización inicial
-  useEffect(() => {
+  /*  useEffect(() => {
     loadMaterias();
-  }, []);
+  }, []); */
+
   return (
     <div className="container">
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-6">
           <h2 className="text-md-center">Registrar ambientes</h2>
-          <form>
+          <form className="forms" onSubmit={handleSubmit(onSubmit)}>
             <div className="my-3">
               <label className="form-label">Nombre de ambiente *</label>
               <input
                 type="text"
                 className="form-control"
                 placeholder="Escriba el nombre del ambiente"
-                /* {...register('propiedad_')} */
+                {...register('nombre_ambiente')}
               />
-              {/* {errors.propiedad_ && (
+              {errors.nombre_ambiente && (
                 <span className="badge text-bg-danger">El campo es obligatorio</span>
-              )} */}
+              )}
             </div>
             <div className="my-3">
               <label className="form-label">Tipo de ambiente *</label>
@@ -327,58 +371,61 @@ const RegistroAmbientePage = () => {
                 <option>Auditorio</option>
                 <option>Laboratorio</option>
               </select>
-              {/* {errors.propiedad_ && (
-                <span className="badge text-bg-danger">El campo es obligatorio</span>
-              )} */}
+              {errors.tipo && (
+                <span className="badge text-bg-danger">Seleccione una categoria</span>
+              )}
             </div>
             <div className="my-3">
               <label className="form-label">Ubicación</label>
               <textarea
+                rows={2}
                 type="text"
                 className="form-control"
                 placeholder="Escriba la ubicación del ambiente"
-                /* {...register('propiedad_')} */
+                {...register('ubicacion')}
               />
-              {/* {errors.propiedad_ && (
+              {errors.ubicacion && (
                 <span className="badge text-bg-danger">El campo es obligatorio</span>
-              )} */}
+              )}
             </div>
             <div className="row">
               <div className="my-3 col-md-6">
                 <label className="form-label">Capacidad de estudiantes</label>
                 <input
-                  type="text"
+                  type="number"
                   className="form-control"
                   placeholder="Escriba la capacidad de estudiantes"
-                  /* {...register('propiedad_')} */
+                  {...register('capacidad')}
                 />
-                {/* {errors.propiedad_ && (
-                <span className="badge text-bg-danger">El campo es obligatorio</span>
-              )} */}
+                {errors.capacidad && (
+                  <span className="badge text-bg-danger">El campo es obligatorio</span>
+                )}
               </div>
               <div className="my-3 col-md-3">
-                <label className="form-label">Max *</label>
+                <label className="form-label">Max (%)*</label>
                 <input
-                  type="text"
+                  defaultValue={85}
+                  type="number"
                   className="form-control"
                   placeholder="Cap. maxima"
-                  /* {...register('propiedad_')} */
+                  {...register('porcentaje_max')}
                 />
-                {/* {errors.propiedad_ && (
-                <span className="badge text-bg-danger">El campo es obligatorio</span>
-              )} */}
+                {errors.porcentaje_max && (
+                  <span className="badge text-bg-danger">El campo es obligatorio</span>
+                )}
               </div>
               <div className="my-3 col-md-3">
-                <label className="form-label">Min *</label>
+                <label className="form-label">Min (%)*</label>
                 <input
-                  type="text"
+                  defaultValue={115}
+                  type="number"
                   className="form-control"
                   placeholder="Cap. de minima"
-                  /* {...register('propiedad_')} */
+                  {...register('porcentaje_min')}
                 />
-                {/* {errors.propiedad_ && (
-                <span className="badge text-bg-danger">El campo es obligatorio</span>
-              )} */}
+                {errors.porcentaje_min && (
+                  <span className="badge text-bg-danger">El campo es obligatorio</span>
+                )}
               </div>
             </div>
 
@@ -386,19 +433,18 @@ const RegistroAmbientePage = () => {
               <p className="fs-4">Equipamiento de ambiente</p>
               <label className="form-label">N Computadoras</label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
                 placeholder="Escriba el número de computadoras"
-                /* {...register('propiedad_')} */
+                {...register('computadora')}
               />
-              {/* {errors.propiedad_ && (
+              {errors.computadora && (
                 <span className="badge text-bg-danger">El campo es obligatorio</span>
-              )} */}
+              )}
             </div>
 
             {/* Horarios */}
             <div className="my-3">
-              {console.log(horarios)}
               <label className="form-label fs-4">Días y horarios disponibles</label>
               {horarios.map((horario, index) => {
                 return (
@@ -685,12 +731,10 @@ const RegistroAmbientePage = () => {
               </label>
             </div> */}
             <div className="d-flex justify-content-center">
-              <button type="submit" className="btn btn-primary me-md-5">
-                Registrar
-              </button>
-              <button type="submit" className="btn btn-primary">
+              <button className="btn btn-primary me-md-5">Registrar</button>
+              <Link to={'/home'} className="btn btn-primary">
                 Cancelar
-              </button>
+              </Link>
             </div>
           </form>
         </div>
