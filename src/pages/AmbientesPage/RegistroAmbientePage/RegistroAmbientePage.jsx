@@ -21,7 +21,71 @@ const RegistroAmbientePage = () => {
     ubicacion: yup.string(),
     porcentaje_min: yup.number().required(),
     porcentaje_max: yup.number().required(),
-    dia: yup.object().required(),
+    dia: yup
+      .object()
+      .shape({
+        lunes: yup.object().shape({
+          periodos: yup
+            .array()
+            .of(
+              yup.object().shape({
+                id_periodo: yup.number().required(),
+              }),
+            )
+            .required(),
+        }),
+        martes: yup.object().shape({
+          periodos: yup
+            .array()
+            .of(
+              yup.object().shape({
+                id_periodo: yup.number().required(),
+              }),
+            )
+            .required(),
+        }),
+        miercoles: yup.object().shape({
+          periodos: yup
+            .array()
+            .of(
+              yup.object().shape({
+                id_periodo: yup.number().required(),
+              }),
+            )
+            .required(),
+        }),
+        jueves: yup.object().shape({
+          periodos: yup
+            .array()
+            .of(
+              yup.object().shape({
+                id_periodo: yup.number().required(),
+              }),
+            )
+            .required(),
+        }),
+        viernes: yup.object().shape({
+          periodos: yup
+            .array()
+            .of(
+              yup.object().shape({
+                id_periodo: yup.number().required(),
+              }),
+            )
+            .required(),
+        }),
+        sabado: yup.object().shape({
+          periodos: yup
+            .array()
+            .of(
+              yup.object().shape({
+                id_periodo: yup.number().required(),
+              }),
+            )
+            .required(),
+        }),
+      })
+      .required(),
   });
   // react-hook-form
   const {
@@ -30,7 +94,9 @@ const RegistroAmbientePage = () => {
     formState: { errors },
     reset,
     clearErrors,
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm({
+    /* resolver: yupResolver(schema) */
+  });
 
   // json horarios
   const horarios = [
@@ -362,9 +428,8 @@ const RegistroAmbientePage = () => {
               <label className="form-label">Tipo de ambiente *</label>
               <select
                 className="form-select"
-                id="country"
-                required=""
                 placeholder="Seleccione el tipo de ambiente"
+                {...register('tipo', { required: 'Seleccione una categoria' })}
               >
                 <option value="">Seleccione el tipo de ambiente</option>
                 <option>Aula común</option>
@@ -459,269 +524,49 @@ const RegistroAmbientePage = () => {
                             <input
                               className="form-check-input"
                               type="checkbox"
-                              value=""
-                              id="flexCheckDefault"
+                              id={`selectAll_${index}`}
+                              {...register(`dia.${horario.nombre}.selectAll`)}
                             />
-                            <label className="form-check-label me-md-2" htmlFor="flexCheckDefault">
+                            <label
+                              className="form-check-label me-md-2"
+                              htmlFor={`selectAll_${index}`}
+                            >
                               Seleccionar todo
                             </label>
                           </div>
                         </div>
                         <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
-                          {horario.periodos.map((periodo, index) => {
+                          {horario.periodos.map((periodo, subIndex) => {
                             return (
-                              <div className="col" key={index}>
+                              <div className="col" key={subIndex}>
                                 <div className="form-check">
-                                  <label className="form-check-label" htmlFor="flexCheckDefault">
-                                    {periodo.horario}
-                                  </label>
                                   <input
                                     className="form-check-input"
                                     type="checkbox"
-                                    value=""
-                                    id="flexCheckDefault"
+                                    id={`periodo_${index}_${subIndex}`}
+                                    value={periodo.id}
+                                    {...register(
+                                      `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`,
+                                    )}
                                   />
+                                  <label
+                                    className="form-check-label"
+                                    htmlFor={`periodo_${index}_${subIndex}`}
+                                  >
+                                    {periodo.horario}
+                                  </label>
                                 </div>
                               </div>
                             );
                           })}
                         </div>
-
-                        {/* <div className="d-flex flex-md-row-reverse justify-content-between">
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id="flexCheckDefault"
-                            />
-                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                              20:15 - 21:45
-                            </label>
-                          </div>
-                        </div> */}
                       </div>
                     </div>
                   </div>
                 );
               })}
-
-              <button
-                className="form-select text-start rounded-0"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseSabado"
-                aria-expanded="false"
-                aria-controls="collapseSabado"
-              >
-                Sábado
-              </button>
-              <div className="collapse" id="collapseSabado">
-                <div className="card card-body">
-                  <div className="d-flex flex-md-row justify-content-between">
-                    <p>Periodos</p>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        Todo
-                      </label>
-                    </div>
-                  </div>
-                  <div className="d-flex flex-md-row justify-content-between">
-                    <div className="form-check">
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        06:45 - 08:15
-                      </label>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        08:15 - 09:45
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        09:45 - 11:15
-                      </label>
-                    </div>
-                  </div>
-                  <div className="d-flex flex-md-row justify-content-between">
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        11:15 - 12:45
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        12:45 - 14:15
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        14:45 - 15:15
-                      </label>
-                    </div>
-                  </div>
-                  <div className="d-flex flex-md-row justify-content-between">
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        15:45 - 17:15
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        17:15 - 18:45
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        18:45 - 20:15
-                      </label>
-                    </div>
-                  </div>
-                  <div className="d-flex flex-md-row-reverse justify-content-between">
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        20:15 - 21:45
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* <p className="d-flex flex-column">
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseExample"
-                  aria-expanded="false"
-                  aria-controls="collapseExample"
-                >
-                  Lunes
-                </button>
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseExample"
-                  aria-expanded="false"
-                  aria-controls="collapseExample"
-                >
-                  Martes
-                </button>
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseExample"
-                  aria-expanded="false"
-                  aria-controls="collapseExample"
-                >
-                  Miercoles
-                </button>
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseExample"
-                  aria-expanded="false"
-                  aria-controls="collapseExample"
-                >
-                  Juevez
-                </button>
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseExample"
-                  aria-expanded="false"
-                  aria-controls="collapseExample"
-                >
-                  Viernes
-                </button>
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseExample2"
-                  aria-expanded="false"
-                  aria-controls="collapseExample2"
-                >
-                  Sábado
-                </button>
-              </p> */}
             </div>
-            {/* <div className="mb-3 form-check">
-              <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-              <label className="form-check-label" htmlFor="exampleCheck1">
-                Check me out
-              </label>
-            </div> */}
+
             <div className="d-flex justify-content-center">
               <button className="btn btn-primary me-md-5">Registrar</button>
               <Link to={'/'} className="btn btn-primary">
