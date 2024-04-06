@@ -355,7 +355,7 @@ const RegistroAmbientePage = () => {
                 {...register('nombre_ambiente')}
               />
               {errors.nombre_ambiente && (
-                <span className="badge text-bg-danger">El campo es obligatorio</span>
+                <span className="text-danger">El campo es obligatorio</span>
               )}
             </div>
             <div className="my-3">
@@ -371,9 +371,7 @@ const RegistroAmbientePage = () => {
                 <option>Auditorio</option>
                 <option>Laboratorio</option>
               </select>
-              {errors.tipo && (
-                <span className="badge text-bg-danger">Seleccione una categoria</span>
-              )}
+              {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
             <div className="my-3">
               <label className="form-label">Ubicación</label>
@@ -384,9 +382,7 @@ const RegistroAmbientePage = () => {
                 placeholder="Escriba la ubicación del ambiente"
                 {...register('ubicacion')}
               />
-              {errors.ubicacion && (
-                <span className="badge text-bg-danger">El campo es obligatorio</span>
-              )}
+              {errors.ubicacion && <span className="text-danger">El campo es obligatorio</span>}
             </div>
             <div className="row">
               <div className="my-3 col-md-6">
@@ -397,9 +393,7 @@ const RegistroAmbientePage = () => {
                   placeholder="Escriba la capacidad de estudiantes"
                   {...register('capacidad')}
                 />
-                {errors.capacidad && (
-                  <span className="badge text-bg-danger">El campo es obligatorio</span>
-                )}
+                {errors.capacidad && <span className="text-danger">El campo es obligatorio</span>}
               </div>
               <div className="my-3 col-md-3">
                 <label className="form-label">Max (%)*</label>
@@ -411,7 +405,7 @@ const RegistroAmbientePage = () => {
                   {...register('porcentaje_max')}
                 />
                 {errors.porcentaje_max && (
-                  <span className="badge text-bg-danger">El campo es obligatorio</span>
+                  <span className="text-danger">El campo es obligatorio</span>
                 )}
               </div>
               <div className="my-3 col-md-3">
@@ -424,23 +418,21 @@ const RegistroAmbientePage = () => {
                   {...register('porcentaje_min')}
                 />
                 {errors.porcentaje_min && (
-                  <span className="badge text-bg-danger">El campo es obligatorio</span>
+                  <span className="text-danger">El campo es obligatorio</span>
                 )}
               </div>
             </div>
 
             <div className="my-3">
               <p className="fs-4">Equipamiento de ambiente</p>
-              <label className="form-label">N Computadoras</label>
+              <label className="form-label">Nº Computadoras *</label>
               <input
                 type="number"
                 className="form-control"
                 placeholder="Escriba el número de computadoras"
                 {...register('computadora')}
               />
-              {errors.computadora && (
-                <span className="badge text-bg-danger">El campo es obligatorio</span>
-              )}
+              {errors.computadora && <span className="text-danger">El campo es obligatorio</span>}
             </div>
 
             {/* Horarios */}
@@ -732,7 +724,7 @@ const RegistroAmbientePage = () => {
             </div> */}
             <div className="d-flex justify-content-center">
               <button className="btn btn-primary me-md-5">Registrar</button>
-              <Link to={'/home'} className="btn btn-primary">
+              <Link to={'/'} className="btn btn-primary">
                 Cancelar
               </Link>
             </div>
