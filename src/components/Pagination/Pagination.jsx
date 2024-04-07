@@ -12,7 +12,7 @@ export default function Pagination({ pageNumber, setPageNumber, lastPage }) {
 
   return (
     <nav aria-label="Page navigation example">
-      <ul className="pagination justify-content-end p-0">
+      <ul className="pagination justify-content-md-end p-md-0 flex-wrap">
         {pageNumber == 1 ? null : (
           <li className="page-item">
             <Link
