@@ -6,6 +6,7 @@ import ListadoMateriasPage from './pages/MateriasPage/ListadoMateriasPage/Listad
 import SubirMatariasPage from './pages/MateriasPage/SubirMatariasPage/SubirMatariasPage';
 import ListadoAmbientesPage from './pages/AmbientesPage/ListadoAmbientesPage/ListadoAmbientesPage';
 import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/RegistroAmbientePage';
+import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/RegistroReservaPage';
 
 function App() {
   return (
@@ -20,10 +21,14 @@ function App() {
           <div className="col-md-10 pt-md-5 p-0 main-content">
             <Routes>
               <Route path="/" index element={<HomePage />} />
-              <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
-              <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
-              <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
               <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
+              <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
+
+              <Route path="/materias/subirMaterias" element={<SubirMatariasPage />} />
+              <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
+
+              <Route path="/reservas/reservarAmbiente" element={<RegistroReservaPage />} />
+              <Route path="/reservas/listaReservas" element={<ListadoMateriasPage />} />
             </Routes>
           </div>
         </div>
