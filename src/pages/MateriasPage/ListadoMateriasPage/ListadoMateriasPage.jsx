@@ -40,8 +40,8 @@ const ListadoMateriasPage = () => {
   }, []);
 
   return (
-    <div className="container listado-materias p-5">
-      <h2 className="text-start pb-4">Materias registradas</h2>
+    <div className="container-fluid listado-ambientes p-md-5">
+      <h2 className="text-start">Materias registradas</h2>
 
       {/* Se puede parametrizar la cantidad de filas mostradas por hojas */}
       <Table rows={materias} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
