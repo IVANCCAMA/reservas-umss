@@ -236,7 +236,7 @@ const RegistroAmbientePage = () => {
       ],
     },
     {
-      nombre: 'Juevez',
+      nombre: 'Jueves',
       periodos: [
         {
           id: 1,
