@@ -1,92 +1,50 @@
 import { useEffect, useState } from 'react';
 import './ListadoMateriasPage.scss';
 import axios from 'axios';
+import Table from '../../../components/Table/Table';
+import Pagination from '../../../components/Pagination/Pagination';
 
 const ListadoMateriasPage = () => {
-  // estados
-  const [materias, setMaterias] = useState([]);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [materias, setMaterias] = useState([{}]);
 
-  // logic
+  // >>> FUTURO : FILTROS <<<  
+  // obtener valores de un key
+  // const materiasKey = materias.map(mat => mat.Nivel);
+  // filtro para obtener solo los valores únicos 
+  // const keyUnicos = [...new Set(materiasKey)];
+
   const loadMaterias = () => {
-    // Realizar la solicitud a la API
     axios
       .get('http://localhost:4000/api/grupos/tablamaterias')
       .then((response) => {
-        // Establecer los datos en el estado
-        setMaterias(response.data);
+        setMaterias(response.data.map(mat => {
+          return {
+            Materia: mat.nombre_materia,
+            Nivel: mat.nivel_materia,
+            Grupo: mat.nombre_grupo,
+            Inscritos: mat.cantidad_est,
+            Docentes: mat.docente
+          };
+        }));
       })
       .catch((error) => {
         console.error('Error al obtener las materias:', error);
       });
   };
 
-  // rederización inicial
-  useEffect(() => {
-    loadMaterias();
-  }, []);
+  useEffect(() => { loadMaterias();}, []);
 
   return (
-    <div className="container-fluid listado-materias p-md-5">
-      <h2 className="text-start">Materias registradas</h2>
-      <div className="table-responsive-md">
-        <table className="table table-striped border border-1">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Materia</th>
-              <th scope="col">Nivel</th>
-              <th scope="col">Grupo</th>
-              <th scope="col">Inscritos</th>
-              <th scope="col">Docente</th>
-            </tr>
-          </thead>
-          <tbody>
-            {materias.map((materia, index) => {
-              return (
-                <tr key={index}>
-                  <th scope="row">{materia.numero}</th>
-                  <td>{materia.nombre_materia}</td>
-                  <td>{materia.nivel_materia}</td>
-                  <td>{materia.nombre_grupo}</td>
-                  <td>{materia.cantidad_est ? materia.cantidad_est : 0}</td>
-                  <td>{materia.docente}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      {/* Botones de paginación */}
-      <nav aria-label="Page navigation example">
-        <ul className="pagination justify-content-end">
-          <li className="page-item">
-            <a className="page-link" href="#">
-              Anterior
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link active" href="#">
-              1
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">
-              2
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">
-              3
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">
-              Siguiente
-            </a>
-          </li>
-        </ul>
-      </nav>
+    <div className="container listado-materias p-5">
+      <h2 className="text-start pb-4">Materias registradas</h2>
+
+      {/* Se puede parametrizar la cantidad de filas mostradas por hojas */}
+      <Table rows={materias} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
+
+      <Pagination pageNumber={pageNumber} setPageNumber={setPageNumber} lastPage={Math.floor(materias.length / 10) + 1} />
     </div>
   );
 };
+
 export default ListadoMateriasPage;
