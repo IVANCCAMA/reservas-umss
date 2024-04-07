@@ -1,5 +1,6 @@
 /* import { Link } from "react-router-dom";
  */
+import { Link } from 'react-router-dom';
 import logo from '../../../assets/Images/logoReserBit.png';
 
 const Navbar = () => {
@@ -15,12 +16,14 @@ const Navbar = () => {
         zIndex: 1,
       }}
     >
-      <img
-        className="img-fluid object-fit-cover"
-        src={logo}
-        alt="logo de aplicación"
-        style={{ width: '100px' }}
-      />
+      <Link to={'/'}>
+        <img
+          className="img-fluid object-fit-cover"
+          src={logo}
+          alt="logo de aplicación"
+          style={{ width: '100px' }}
+        />
+      </Link>
     </div>
   );
 };

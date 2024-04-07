@@ -6,7 +6,6 @@ import Pagination from '../../../components/Pagination/Pagination';
 
 const ListadoMateriasPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
-  // estados
   const [materias, setMaterias] = useState([{}]);
 
   // >>> FUTURO : FILTROS <<<  

@@ -10,32 +10,32 @@ const Sidebar = () => {
       name: 'Ambientes',
       icon: 'mdi:google-classroom',
       subs: [
-        { to: '/registrarAmbiente', name: 'Registrar ambiente' },
-        { to: '/listaAbientes', name: 'Lista de ambientes' },
+        { to: 'ambientes/registrarAmbiente', name: 'Registrar ambiente' },
+        { to: 'ambientes/listaAmbientes', name: 'Lista de ambientes' },
       ],
     },
     {
       name: 'Materias',
       icon: 'ph:book',
       subs: [
-        { to: '/subirMaterias', name: 'Subir materias' },
-        { to: '/listaMaterias', name: 'Lista de materias' },
+        { to: '/materias/subirMaterias', name: 'Subir materias' },
+        { to: '/materias/listaMaterias', name: 'Lista de materias' },
       ],
     },
     {
       name: 'Reservas',
       icon: 'ep:calendar',
       subs: [
-        { to: '/reservarAmbiente', name: 'Reservar ambiente' },
-        { to: '/listaReservas', name: 'Lista de reservas' },
+        { to: '/reservas/reservarAmbiente', name: 'Reservar ambiente' },
+        { to: '/reservas/listaReservas', name: 'Lista de reservas' },
       ],
     },
   ];
 
   return (
-    <div className="sidebar-container h-100">
-      <div className="flex-shrink-0 sidebar-menu h-100">
-        <ul className="nav nav-pills nav-sticky mt-md-4">
+    <div className="sidebar-container">
+      <div className="flex-shrink-0 sidebar-menu">
+        <ul className="nav nav-pills mt-md-4">
           {btns.map((btn, index) => (
             <li key={`nav-item-${index}`} className="nav-item w-100">
               <button
