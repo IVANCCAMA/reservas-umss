@@ -21,7 +21,7 @@ const RegistroAmbientePage = () => {
     ubicacion: yup.string(),
     porcentaje_min: yup.number().required(),
     porcentaje_max: yup.number().required(),
-    dia: yup
+    /* dia: yup
       .object()
       .shape({
         lunes: yup.object().shape({
@@ -85,8 +85,9 @@ const RegistroAmbientePage = () => {
             .required(),
         }),
       })
-      .required(),
+      .required(), */
   });
+
   // react-hook-form
   const {
     register,
@@ -95,7 +96,8 @@ const RegistroAmbientePage = () => {
     reset,
     clearErrors,
   } = useForm({
-    /* resolver: yupResolver(schema) */
+    /* Para activar el validador yup */
+    resolver: yupResolver(schema),
   });
 
   // json horarios
@@ -372,7 +374,7 @@ const RegistroAmbientePage = () => {
     },
   ];
 
-  // logic
+  // logic api
   const onSubmit = (data) => {
     // Envio de data con post
     console.log(data);
