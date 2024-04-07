@@ -23,7 +23,7 @@ const Tabla = ({ rows, firstRow = 1, lastRow = rows?.length, enumeration = true 
               {enumeration && <th scope="row">{index + 1}</th>}
 
               {Object.keys(rows[0]).map((col, subIndex) => (
-                <td key={`row-${index}-${col}`}>{row[col]}</td>
+                <td key={`row-${index}-${col}`}>{row[col] || '-' }</td>
               ))}
             </tr> :
             // cuando la tabla está vacia
