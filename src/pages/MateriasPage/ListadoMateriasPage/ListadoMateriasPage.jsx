@@ -8,32 +8,36 @@ const ListadoMateriasPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [materias, setMaterias] = useState([{}]);
 
-  // >>> FUTURO : FILTROS <<<  
+  // >>> FUTURO : FILTROS <<<
   // obtener valores de un key
   // const materiasKey = materias.map(mat => mat.Nivel);
-  // filtro para obtener solo los valores únicos 
+  // filtro para obtener solo los valores únicos
   // const keyUnicos = [...new Set(materiasKey)];
 
   const loadMaterias = () => {
     axios
       .get('http://localhost:4000/api/grupos/tablamaterias')
       .then((response) => {
-        setMaterias(response.data.map(mat => {
-          return {
-            Materia: mat.nombre_materia,
-            Nivel: mat.nivel_materia,
-            Grupo: mat.nombre_grupo,
-            Inscritos: mat.cantidad_est,
-            Docentes: mat.docente
-          };
-        }));
+        setMaterias(
+          response.data.map((mat) => {
+            return {
+              Materia: mat.nombre_materia,
+              Nivel: mat.nivel_materia,
+              Grupo: mat.nombre_grupo,
+              Inscritos: mat.cantidad_est,
+              Docentes: mat.docente,
+            };
+          }),
+        );
       })
       .catch((error) => {
         console.error('Error al obtener las materias:', error);
       });
   };
 
-  useEffect(() => { loadMaterias();}, []);
+  useEffect(() => {
+    loadMaterias();
+  }, []);
 
   return (
     <div className="container listado-materias p-5">
@@ -42,7 +46,11 @@ const ListadoMateriasPage = () => {
       {/* Se puede parametrizar la cantidad de filas mostradas por hojas */}
       <Table rows={materias} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
 
-      <Pagination pageNumber={pageNumber} setPageNumber={setPageNumber} lastPage={Math.floor(materias.length / 10) + 1} />
+      <Pagination
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+        lastPage={Math.floor(materias.length / 10) + 1}
+      />
     </div>
   );
 };
