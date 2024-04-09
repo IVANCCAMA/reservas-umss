@@ -1,23 +1,47 @@
-import { useEffect, useState} from 'react';
-//import { useHistory } from 'react-router-dom'; //maneja la redireccion
+import { useEffect, useState } from 'react';
 import './ListadoAmbientesPage.scss';
 import axios from 'axios';
-import { Icon } from '@iconify/react';
 import { Link } from 'react-router-dom';
+import Table from '../../../components/Table/Table';
+import Pagination from '../../../components/Pagination/Pagination';
+import { Icon } from '@iconify/react/dist/iconify.js';
 
 const ListadoAmbientesPage = () => {
   // estados
-  const [ambientes, setAmbientes] = useState([]);
-  //const history = useHistory(); //obtiene el historial para la redireccion
+  const [pageNumber, setPageNumber] = useState(1);
+  const [ambientes, setAmbientes] = useState([{}]);
 
   // logica | api
   const loadAmbientes = () => {
-    // Realizar la solicitud a la API
     axios
       .get('http://localhost:4000/api/ambientes')
       .then((response) => {
-        // Establecer los datos en el estado
-        setAmbientes(response.data);
+        setAmbientes(
+          response.data.map((amb) => {
+            return {
+              Id: amb.id_ambiente,
+              Aula: amb.nombre_ambiente,
+              Capacidad: amb.capacidad,
+              Estado: amb.disponible ? 'Habilitado' : 'Deshabilitado',
+              Tipo: amb.tipo,
+              Proyector: amb.proyector ? 'Si' : 'No',
+              'Ver más': (
+                <Link
+                  to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
+                  className="btn btn-primary"
+                >
+                  <Icon
+                    icon="arrow-right-circle"
+                    width="50"
+                    height="50"
+                    style={{ color: '#215f88' }}
+                  />
+                  Ver
+                </Link>
+              ),
+            };
+          }),
+        );
       })
       .catch((error) => {
         console.error('Error al obtener los ambientes:', error);
@@ -101,7 +125,19 @@ const ListadoAmbientesPage = () => {
           </li>
         </ul>
       </nav>
+      return (
+        <div className="container-fluid listado-ambientes p-md-5">
+          <h2 className="text-start">Lista de ambientes</h2>
+          <Table rows={ambientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
+
+          <Pagination
+            pageNumber={pageNumber}
+            setPageNumber={setPageNumber}
+            lastPage={Math.floor(ambientes.length / 10) + 1}
+          />
+        </div>
+      );
     </div>
-  );
+  )
 };
 export default ListadoAmbientesPage;
