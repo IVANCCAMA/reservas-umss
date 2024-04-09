@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; //obtiene el parametro de la url
+import { useParams } from 'react-router-dom';
 import './FichaInformacionAmbientePage.scss';
 import axios from 'axios';
 
-// Cambiar EnvironmentInfo por FichaInformacionAmbientePage
 const FichaInformacionAmbientePage = () => {
   const ambienteInitialState = {
     nombre_ambiente: '',
@@ -45,42 +44,42 @@ const FichaInformacionAmbientePage = () => {
     <div className="ficha-ambientes">
       {console.log('ambiente', ambiente)}
       {console.log('dias', disponibilidadPorDia)}
-      <h2 className="text-center pb-3">{ambiente.nombre_ambiente}</h2>
+      <h2 className="text-center pb-3">Ambiente {ambiente.nombre_ambiente}</h2>
       <div className="row">
         <p className="fw-bold col">Tipo de ambiente</p>
-        <p className="col-7 text-secondary">{ambiente.tipo}</p>
+        <p className="col-6 text-secondary">{ambiente.tipo}</p>
       </div>
       <div className="row">
         <p className="fw-bold col">Capacidad de Estudiantes</p>
-        <p className="col-7 text-secondary">{ambiente.capacidad}</p>
+        <p className="col-6 text-secondary">{ambiente.capacidad}</p>
       </div>
       <div className="row">
         <p className="fw-bold col">Ubicación</p>
-        <p className="col-7 text-secondary">{ambiente.ubicacion}</p>
+        <p className="col-6 text-secondary">{ambiente.ubicacion}</p>
       </div>
 
       <div className="border-top border-bottom">
         <h4 className="py-3">Equipamiento de Ambiente</h4>
         <div className="row">
           <p className="fw-bold col">N° Computadoras</p>
-          <p className="col-7 text-secondary">{ambiente.computadora}</p>
+          <p className="col-6 text-secondary">{ambiente.computadora}</p>
         </div>
 
         <div className="row">
           <p className="fw-bold col">Proyector de video</p>
-          <p className="col-7 text-secondary">{ambiente.proyector ? 'Sí' : 'No'}</p>
+          <p className="col-6 text-secondary">{ambiente.proyector ? 'Sí' : 'No'}</p>
         </div>
         <div className="row">
           <p className="fw-bold col">Disponibilidad de ambiente</p>
-          <p className="col-7 text-secondary">{ambiente.disponible ? 'Sí' : 'No'}</p>
+          <p className="col-6 text-secondary">{ambiente.disponible ? 'Sí' : 'No'}</p>
         </div>
         <div className="row">
           <p className="fw-bold col">Porcentaje mínimo</p>
-          <p className="col-7 text-secondary">{ambiente.porcentaje_min}</p>
+          <p className="col-6 text-secondary">{ambiente.porcentaje_min}</p>
         </div>
         <div className="row">
           <p className="fw-bold col">Porcentaje máximo</p>
-          <p className="col-7 text-secondary">{ambiente.porcentaje_max}</p>
+          <p className="col-6 text-secondary">{ambiente.porcentaje_max}</p>
         </div>
       </div>
 
@@ -109,14 +108,13 @@ const FichaInformacionAmbientePage = () => {
                   data-bs-parent="#accordionExample"
                 >
                   <div className="accordion-body">
-                    {/* Mapear horarios accediendo a la propiedad  diaDisponible.periodos*/}
                     { diaDisponible.periodos.map((periodoDia, index) => {
                       return(
-                        <div key={index} className='d-inline col-3 ' >
-                          <div  className='d-inline col-3 px-4'>
+                        <div key={index} className='row d-inline-flex px-xxl-4 px-sm-2' >
+                          <p className='col ms-xxl-3 ms-sm-2'>
                             {periodoDia.hora_inicio} - {periodoDia.hora_fin}
-                            {/*No se tiene horarios disponibkes o no existen */}
-                          </div>
+                          </p>
+                            {/*No se tiene horarios disponibles o no existen*/ } 
                         </div>
                       )
                         
@@ -128,8 +126,8 @@ const FichaInformacionAmbientePage = () => {
             </div>
           );
         })}
-        <div className='py-4 align-items-end'>
-          <a href="/ambientes/listaAmbientes" className="btn btn-primary active fw-bold px-4">Aceptar</a>
+        <div className='py-4 d-flex flex-row-reverse'>
+          <a href="/ambientes/listaAmbientes" className="btn active px-4" id='boton-style'>Aceptar</a>
         </div>
     </div>
   );

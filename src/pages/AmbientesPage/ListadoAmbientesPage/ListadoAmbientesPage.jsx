@@ -19,7 +19,7 @@ const ListadoAmbientesPage = () => {
         setAmbientes(
           response.data.map((amb) => {
             return {
-              Id: amb.id_ambiente,
+              ID: amb.id_ambiente,
               Aula: amb.nombre_ambiente,
               Capacidad: amb.capacidad,
               Estado: amb.disponible ? 'Habilitado' : 'Deshabilitado',
@@ -29,7 +29,7 @@ const ListadoAmbientesPage = () => {
               <div className='boton-style w-75 '>
                 <Link
                   to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
-                  className="btn"
+                  className="btn border border-0"
                 >
                   <div className=''>
                   <Icon 
