@@ -23,11 +23,11 @@ function App() {
             <Routes>
               <Route path="/" index element={<HomePage />} />
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
-              <Route path="/materias/subir-materia" element={<SubirMatariasPage />} />
+              <Route path="/materias/subirMaterias" element={<SubirMatariasPage />} />
               <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
               <Route path="/ambientes/listaAmbientes/fichaAmbiente/:id_ambiente" element={<FichaInformacionAmbientePage />} />
               <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
-              <Route path='/materias/subir-materia/infoFormato' element={<InformacionFormatoModal/>} />
+              <Route path='/materias/subirMaterias/infoFormato' element={<InformacionFormatoModal/>} />
             </Routes>
           </div>
         </div>
