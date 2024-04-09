@@ -29,9 +29,6 @@ const ListadoAmbientesPage = () => {
     loadAmbientes();
   }, []);
 
-  const handleClick = (id) => {
-    history.push(`/ambiente/${id}`); //redirige a la pagina de la ficha con el id correspondiente
-  }
 
   return (
     <div className="container-fluid listado-ambientes p-md-5">
@@ -54,7 +51,7 @@ const ListadoAmbientesPage = () => {
             {console.log(ambientes)}
             {ambientes.map((ambiente, index) => {
               return (
-                <tr key={index} onClick={() => handleClick(ambiente.id_ambiente)}>
+                <tr key={index} >
                   <th scope="row">{index + 1}</th>
                   <td>{ambiente.id_ambiente}</td>
                   <td>{ambiente.nombre_ambiente}</td>
