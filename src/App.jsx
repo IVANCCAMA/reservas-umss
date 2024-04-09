@@ -7,6 +7,7 @@ import SubirMatariasPage from './pages/MateriasPage/SubirMatariasPage/SubirMatar
 import ListadoAmbientesPage from './pages/AmbientesPage/ListadoAmbientesPage/ListadoAmbientesPage';
 import FichaInformacionAmbientePage from './pages/AmbientesPage/FichaInformacionAmbientePage/FichaInformacionAmbientePage';
 import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/RegistroAmbientePage';
+import InformacionFormatoModal from './pages/MateriasPage/SubirMatariasPage/InformacionFormatoModal/InformacionFormatoModal';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
               <Route path="/ambientes/listaAmbientes/fichaAmbiente/:id_ambiente" element={<FichaInformacionAmbientePage />} />
               <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
+              <Route path='/materias/subir-materia/infoFormato' element={<InformacionFormatoModal/>} />
             </Routes>
           </div>
         </div>
