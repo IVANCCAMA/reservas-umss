@@ -17,3 +17,20 @@
     }
   }
   
+  .boton-style {
+    align-items: center;
+    //width: 70%;
+    margin-left: 5%;
+    background-color: #0FA958;
+    border-radius: 12%;
+
+    .boton-icon{
+
+      align-items: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      color: white;
+    }
+  }
+
+
