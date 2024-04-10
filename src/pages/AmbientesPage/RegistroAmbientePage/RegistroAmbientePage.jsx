@@ -9,6 +9,7 @@ const RegistroAmbientePage = () => {
   // states
   //const [horarios, setHorarios] = useState([]);
   const [selectedHorarios, setSelectedHorarios] = useState([]);
+  const [periodos, setPeriodos] = useState([]);
 
   // yup validación, atributos de formulario
   const schema = yup.object({
@@ -21,71 +22,6 @@ const RegistroAmbientePage = () => {
     ubicacion: yup.string(),
     porcentaje_min: yup.number().required(),
     porcentaje_max: yup.number().required(),
-    /* dia: yup
-      .object()
-      .shape({
-        lunes: yup.object().shape({
-          periodos: yup
-            .array()
-            .of(
-              yup.object().shape({
-                id_periodo: yup.number().required(),
-              }),
-            )
-            .required(),
-        }),
-        martes: yup.object().shape({
-          periodos: yup
-            .array()
-            .of(
-              yup.object().shape({
-                id_periodo: yup.number().required(),
-              }),
-            )
-            .required(),
-        }),
-        miercoles: yup.object().shape({
-          periodos: yup
-            .array()
-            .of(
-              yup.object().shape({
-                id_periodo: yup.number().required(),
-              }),
-            )
-            .required(),
-        }),
-        jueves: yup.object().shape({
-          periodos: yup
-            .array()
-            .of(
-              yup.object().shape({
-                id_periodo: yup.number().required(),
-              }),
-            )
-            .required(),
-        }),
-        viernes: yup.object().shape({
-          periodos: yup
-            .array()
-            .of(
-              yup.object().shape({
-                id_periodo: yup.number().required(),
-              }),
-            )
-            .required(),
-        }),
-        sabado: yup.object().shape({
-          periodos: yup
-            .array()
-            .of(
-              yup.object().shape({
-                id_periodo: yup.number().required(),
-              }),
-            )
-            .required(),
-        }),
-      })
-      .required(), */
   });
 
   // react-hook-form
@@ -96,8 +32,7 @@ const RegistroAmbientePage = () => {
     reset,
     clearErrors,
   } = useForm({
-    /* Para activar el validador yup */
-    /*  resolver: yupResolver(schema), */
+    /* resolver: yupResolver(schema), */
   });
 
   // json horarios
@@ -424,10 +359,24 @@ const RegistroAmbientePage = () => {
       });
   };
 
-  // rederización inicial
-  /*  useEffect(() => {
-    loadMaterias();
-  }, []); */
+  const loadPeriodos = () => {
+    axios
+      .get('http://localhost:4000/api/periodos')
+      .then((response) => {
+        const firstTenPeriodos = response.data.slice(0, 10);
+        console.log('periodos>>>', firstTenPeriodos);
+
+        setPeriodos(firstTenPeriodos);
+      })
+      .catch((error) => {
+        console.error('Error al obtener periodos:', error);
+      });
+  };
+
+  // load periodos
+  useEffect(() => {
+    loadPeriodos();
+  }, []);
 
   return (
     <div className="container">
@@ -452,7 +401,7 @@ const RegistroAmbientePage = () => {
               <select
                 className="form-select"
                 placeholder="Seleccione el tipo de ambiente"
-                {...register('tipo', { required: 'Seleccione una categoria' })}
+                {...register('tipo')}
               >
                 <option value="">Seleccione el tipo de ambiente</option>
                 <option>Aula común</option>
@@ -470,11 +419,10 @@ const RegistroAmbientePage = () => {
                 placeholder="Escriba la ubicación del ambiente"
                 {...register('ubicacion')}
               />
-              {errors.ubicacion && <span className="text-danger">El campo es obligatorio</span>}
             </div>
             <div className="row">
               <div className="my-3 col-md-6">
-                <label className="form-label">Capacidad de estudiantes</label>
+                <label className="form-label">Capacidad de estudiantes *</label>
                 <input
                   type="number"
                   className="form-control"
@@ -590,7 +538,9 @@ const RegistroAmbientePage = () => {
             </div>
 
             <div className="d-flex justify-content-center">
-              <button className="btn btn-primary me-md-5">Registrar</button>
+              <button type="submit" className="btn btn-primary me-md-5">
+                Registrar
+              </button>
               <Link to={'/'} className="btn btn-primary">
                 Cancelar
               </Link>
