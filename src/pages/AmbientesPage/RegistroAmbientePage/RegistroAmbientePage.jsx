@@ -16,9 +16,7 @@ const RegistroAmbientePage = () => {
     nombre_ambiente: yup.string().required(),
     tipo: yup.string().required(),
     capacidad: yup.number().required(),
-    disponible: yup.boolean().required(),
     computadora: yup.number().required(),
-    proyector: yup.boolean().required(),
     ubicacion: yup.string(),
     porcentaje_min: yup.number().required(),
     porcentaje_max: yup.number().required(),
@@ -32,7 +30,7 @@ const RegistroAmbientePage = () => {
     reset,
     clearErrors,
   } = useForm({
-    /* resolver: yupResolver(schema), */
+    resolver: yupResolver(schema),
   });
 
   // json horarios
@@ -364,7 +362,7 @@ const RegistroAmbientePage = () => {
       .get('http://localhost:4000/api/periodos')
       .then((response) => {
         const firstTenPeriodos = response.data.slice(0, 10);
-        console.log('periodos>>>', firstTenPeriodos);
+        /*  console.log('periodos>>>', firstTenPeriodos); */
 
         setPeriodos(firstTenPeriodos);
       })
