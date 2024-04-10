@@ -97,7 +97,7 @@ const RegistroAmbientePage = () => {
     clearErrors,
   } = useForm({
     /* Para activar el validador yup */
-    resolver: yupResolver(schema),
+    /*  resolver: yupResolver(schema), */
   });
 
   // json horarios
@@ -374,12 +374,33 @@ const RegistroAmbientePage = () => {
     },
   ];
 
+  const removeAccents = (str) => {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  };
+
   // logic api
   const onSubmit = (data) => {
+    const filteredDia = Object.fromEntries(
+      Object.entries(data.dia).filter(([key, value]) =>
+        value.periodos.some((periodo) => periodo.id_periodo !== false),
+      ),
+    );
+
+    const filteredData = {
+      ...data,
+      tipo: removeAccents(data.tipo.toLowerCase()),
+      dia: Object.fromEntries(
+        Object.entries(filteredDia).map(([key, value]) => [
+          removeAccents(key.toLowerCase()),
+          { periodos: value.periodos.filter((periodo) => periodo.id_periodo !== false) },
+        ]),
+      ),
+    };
+
     // Envio de data con post
-    console.log(data);
-    /* axios
-      .post('http://localhost:4000/api/ambientes/completo', data)
+    console.log(filteredData);
+    axios
+      .post('http://localhost:4000/api/ambientes/completo', filteredData)
       .then((response) => {
         // Establecer los datos en el estado
         console.log(response);
@@ -399,8 +420,8 @@ const RegistroAmbientePage = () => {
         clearErrors();
       })
       .catch((error) => {
-        console.error('Error al obtener las materias:', error);
-      }); */
+        console.error('Error al crear ambiente:', error);
+      });
   };
 
   // rederización inicial
@@ -463,7 +484,7 @@ const RegistroAmbientePage = () => {
                 {errors.capacidad && <span className="text-danger">El campo es obligatorio</span>}
               </div>
               <div className="my-3 col-md-3">
-                <label className="form-label">Max (%)*</label>
+                <label className="form-label">Min (%)*</label>
                 <input
                   defaultValue={85}
                   type="number"
@@ -476,7 +497,7 @@ const RegistroAmbientePage = () => {
                 )}
               </div>
               <div className="my-3 col-md-3">
-                <label className="form-label">Min (%)*</label>
+                <label className="form-label">Max (%)*</label>
                 <input
                   defaultValue={115}
                   type="number"
@@ -527,7 +548,6 @@ const RegistroAmbientePage = () => {
                               className="form-check-input"
                               type="checkbox"
                               id={`selectAll_${index}`}
-                              {...register(`dia.${horario.nombre}.selectAll`)}
                             />
                             <label
                               className="form-check-label me-md-2"
