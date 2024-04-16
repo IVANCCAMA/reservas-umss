@@ -318,7 +318,7 @@ const RegistroAmbientePage = () => {
             </div>
 
             <div className="d-flex justify-content-center">
-              <button type="submit" className="btn btn-success me-md-5">
+              <button type="submit" className="btn btn-success me-5">
                 Registrar
               </button>
               <Link to={'/'} className="btn btn-danger">
