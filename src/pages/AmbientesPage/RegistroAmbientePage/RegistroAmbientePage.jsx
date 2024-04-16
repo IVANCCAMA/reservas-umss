@@ -15,6 +15,17 @@ const RegistroAmbientePage = () => {
     ubicacion: yup.string(),
     porcentaje_min: yup.number().required(),
     porcentaje_max: yup.number().required(),
+    dia: yup
+      .object()
+      .test(
+        'at-least-one-period-selected',
+        'Seleccione al menos un periodo para un día',
+        (value) => {
+          return Object.values(value).some((day) =>
+            day.periodos.some((periodo) => periodo.id_periodo !== false),
+          );
+        },
+      ),
   });
 
   // react-hook-form
@@ -249,6 +260,11 @@ const RegistroAmbientePage = () => {
                   </div>
                 );
               })}
+              <div>
+                {errors.dia && (
+                  <span className="text-danger">Seleccione al menos un periodo para un día</span>
+                )}
+              </div>
             </div>
 
             <div className="d-flex justify-content-center">
