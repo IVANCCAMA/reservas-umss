@@ -48,6 +48,17 @@ h1 {
   .main-content {
     margin-top: 15px;
   }
+
+  .form-check-label {
+    font-size: 15px;
+  }
+
+  .horarios {
+    .card-body {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
 }
 
 /* .container-md {

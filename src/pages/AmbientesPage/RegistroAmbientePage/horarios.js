@@ -4,15 +4,15 @@ const horarios = [
     periodos: [
       {
         id: 1,
-        horario: '6:45 - 8:15',
+        horario: '06:45 - 08:15',
       },
       {
         id: 2,
-        horario: '8:15 - 9:45',
+        horario: '08:15 - 09:45',
       },
       {
         id: 3,
-        horario: '9:45 - 11:15',
+        horario: '09:45 - 11:15',
       },
       {
         id: 4,
@@ -49,15 +49,15 @@ const horarios = [
     periodos: [
       {
         id: 1,
-        horario: '6:45 - 8:15',
+        horario: '06:45 - 08:15',
       },
       {
         id: 2,
-        horario: '8:15 - 9:45',
+        horario: '08:15 - 09:45',
       },
       {
         id: 3,
-        horario: '9:45 - 11:15',
+        horario: '09:45 - 11:15',
       },
       {
         id: 4,
@@ -94,15 +94,15 @@ const horarios = [
     periodos: [
       {
         id: 1,
-        horario: '6:45 - 8:15',
+        horario: '06:45 - 08:15',
       },
       {
         id: 2,
-        horario: '8:15 - 9:45',
+        horario: '08:15 - 09:45',
       },
       {
         id: 3,
-        horario: '9:45 - 11:15',
+        horario: '09:45 - 11:15',
       },
       {
         id: 4,
@@ -139,15 +139,15 @@ const horarios = [
     periodos: [
       {
         id: 1,
-        horario: '6:45 - 8:15',
+        horario: '06:45 - 08:15',
       },
       {
         id: 2,
-        horario: '8:15 - 9:45',
+        horario: '08:15 - 09:45',
       },
       {
         id: 3,
-        horario: '9:45 - 11:15',
+        horario: '09:45 - 11:15',
       },
       {
         id: 4,
@@ -184,15 +184,15 @@ const horarios = [
     periodos: [
       {
         id: 1,
-        horario: '6:45 - 8:15',
+        horario: '06:45 - 08:15',
       },
       {
         id: 2,
-        horario: '8:15 - 9:45',
+        horario: '08:15 - 09:45',
       },
       {
         id: 3,
-        horario: '9:45 - 11:15',
+        horario: '09:45 - 11:15',
       },
       {
         id: 4,
@@ -229,15 +229,15 @@ const horarios = [
     periodos: [
       {
         id: 1,
-        horario: '6:45 - 8:15',
+        horario: '06:45 - 08:15',
       },
       {
         id: 2,
-        horario: '8:15 - 9:45',
+        horario: '08:15 - 09:45',
       },
       {
         id: 3,
-        horario: '9:45 - 11:15',
+        horario: '09:45 - 11:15',
       },
       {
         id: 4,

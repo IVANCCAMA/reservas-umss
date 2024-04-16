@@ -36,6 +36,7 @@ const RegistroAmbientePage = () => {
     reset,
     clearErrors,
     setValue,
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -79,7 +80,10 @@ const RegistroAmbientePage = () => {
           nombre_ambiente: '',
           tipo: '',
           capacidad: '',
-          computadora: '',
+          computadora: yup.number().when('tipo', {
+            is: 'Laboratorio',
+            then: yup.number().required('El campo es obligatorio'),
+          }),
           ubicacion: '',
           dia: '',
         });
@@ -96,6 +100,11 @@ const RegistroAmbientePage = () => {
         console.error('Error al crear ambiente:', error);
       });
   };
+
+  const tipoAmbiente = watch('tipo');
+
+  // visibilidad de la sección de computadoras
+  const mostrarComputadoras = tipoAmbiente === 'Laboratorio';
 
   return (
     <div className="container">
@@ -178,21 +187,24 @@ const RegistroAmbientePage = () => {
               </div>
             </div>
 
-            <div className="my-3">
-              <p className="fs-4">Equipamiento de ambiente</p>
-              <label className="form-label">Nº Computadoras *</label>
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Escriba el número de computadoras"
-                {...register('computadora')}
-              />
-              {errors.computadora && <span className="text-danger">El campo es obligatorio</span>}
-            </div>
+            {mostrarComputadoras && (
+              <div className="my-3">
+                <label className="form-label">Nº Computadoras *</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="Escriba el número de computadoras"
+                  {...register('computadora')}
+                />
+                {errors.computadora && (
+                  <span className="text-danger">{errors.computadora.message}</span>
+                )}
+              </div>
+            )}
 
             {/* Horarios */}
             <div className="my-3">
-              <label className="form-label fs-4">Días y horarios disponibles</label>
+              <label className="form-label">Días y horarios disponibles</label>
               {horarios.map((horario, index) => {
                 return (
                   <div key={index}>
@@ -206,41 +218,48 @@ const RegistroAmbientePage = () => {
                     >
                       {horario.nombre}
                     </button>
-                    <div className="collapse" id={`collapse${horario.nombre}`}>
+                    <div className="collapse horarios" id={`collapse${horario.nombre}`}>
                       <div className="card card-body">
                         <div className="d-flex flex-md-row justify-content-between">
-                          <p>Periodos</p>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              id={`selectAll_${index}`}
-                              {...register(`selectAll`)}
-                              onChange={(e) => {
-                                const checked = e.target.checked;
-                                horario.periodos.forEach((_, subIndex) => {
-                                  const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
-                                  setValue(
-                                    fieldName,
-                                    checked ? horario.periodos[subIndex].id : false,
-                                  );
-                                });
-                              }}
-                            />
-                            <label
-                              className="form-check-label me-md-2"
-                              htmlFor={`selectAll_${index}`}
-                            >
-                              Seleccionar todo
-                            </label>
+                          <p className="ms-3">Periodos</p>
+                          <div className="d-flex text-center">
+                            <div>
+                              <label className="form-check-label" htmlFor={`selectAll_${index}`}>
+                                Todo
+                              </label>
+                            </div>
+                            <div>
+                              <input
+                                className="form-check-input ms-md-2 me-3"
+                                type="checkbox"
+                                id={`selectAll_${index}`}
+                                {...register(`selectAll`)}
+                                onChange={(e) => {
+                                  const checked = e.target.checked;
+                                  horario.periodos.forEach((_, subIndex) => {
+                                    const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
+                                    setValue(
+                                      fieldName,
+                                      checked ? horario.periodos[subIndex].id : false,
+                                    );
+                                  });
+                                }}
+                              />
+                            </div>
                           </div>
                         </div>
                         <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
                           {horario.periodos.map((periodo, subIndex) => {
                             const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
                             return (
-                              <div className="col" key={subIndex}>
-                                <div className="form-check">
+                              <div className="col d-flex justify-content-around" key={subIndex}>
+                                <div>
+                                  <label
+                                    className="form-check-label me-md-2"
+                                    htmlFor={`periodo_${index}_${subIndex}`}
+                                  >
+                                    {periodo.horario}
+                                  </label>
                                   <input
                                     className="form-check-input"
                                     type="checkbox"
@@ -248,12 +267,6 @@ const RegistroAmbientePage = () => {
                                     value={periodo.id}
                                     {...register(fieldName)}
                                   />
-                                  <label
-                                    className="form-check-label"
-                                    htmlFor={`periodo_${index}_${subIndex}`}
-                                  >
-                                    {periodo.horario}
-                                  </label>
                                 </div>
                               </div>
                             );
