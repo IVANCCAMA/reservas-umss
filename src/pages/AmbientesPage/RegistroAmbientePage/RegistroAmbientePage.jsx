@@ -7,8 +7,6 @@ import { Link } from 'react-router-dom';
 
 const RegistroAmbientePage = () => {
   // states
-  //const [horarios, setHorarios] = useState([]);
-  const [selectedHorarios, setSelectedHorarios] = useState([]);
   const [periodos, setPeriodos] = useState([]);
 
   // yup validación, atributos de formulario
@@ -313,6 +311,7 @@ const RegistroAmbientePage = () => {
 
   // logic api
   const onSubmit = (data) => {
+    console.log('antes de filtrado', data);
     const filteredDia = Object.fromEntries(
       Object.entries(data.dia).filter(([key, value]) =>
         value.periodos.some((periodo) => periodo.id_periodo !== false),
@@ -341,15 +340,10 @@ const RegistroAmbientePage = () => {
           nombre_ambiente: '',
           tipo: '',
           capacidad: '',
-          disponible: '',
           computadora: '',
-          proyector: '',
           ubicacion: '',
-          porcentaje_min: '',
-          porcentaje_max: '',
           dia: '',
         });
-        setSelectedHorarios([]);
         clearErrors();
       })
       .catch((error) => {
@@ -533,6 +527,9 @@ const RegistroAmbientePage = () => {
                   </div>
                 );
               })}
+              {Object.keys(errors).length > 0 && (
+                <span className="text-danger">Seleccione un horario como mínimo</span>
+              )}
             </div>
 
             <div className="d-flex justify-content-center">
