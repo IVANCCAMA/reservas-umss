@@ -42,8 +42,8 @@ const RegistroAmbientePage = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      disponible: true, 
-      proyector: false, 
+      disponible: true,
+      proyector: false,
     },
   });
 
@@ -121,7 +121,7 @@ const RegistroAmbientePage = () => {
           <h2 className="text-md-center">Registrar ambientes</h2>
           <form className="forms" onSubmit={handleSubmit(onSubmit)}>
             <div className="my-3">
-              <label className="form-label">Nombre de ambiente *</label>
+              <label className="form-label fw-bold">Nombre de ambiente *</label>
               <input
                 type="text"
                 className="form-control"
@@ -133,7 +133,7 @@ const RegistroAmbientePage = () => {
               )}
             </div>
             <div className="my-3">
-              <label className="form-label">Tipo de ambiente *</label>
+              <label className="form-label fw-bold">Tipo de ambiente *</label>
               <select
                 className="form-select"
                 placeholder="Seleccione el tipo de ambiente"
@@ -147,7 +147,7 @@ const RegistroAmbientePage = () => {
               {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
             <div className="my-3">
-              <label className="form-label">Ubicación</label>
+              <label className="form-label fw-bold">Ubicación</label>
               <textarea
                 rows={2}
                 type="text"
@@ -158,7 +158,7 @@ const RegistroAmbientePage = () => {
             </div>
             <div className="row">
               <div className="my-3 col-md-6">
-                <label className="form-label">Capacidad de estudiantes *</label>
+                <label className="form-label fw-bold">Capacidad de estudiantes *</label>
                 <input
                   type="number"
                   className="form-control"
@@ -168,7 +168,7 @@ const RegistroAmbientePage = () => {
                 {errors.capacidad && <span className="text-danger">El campo es obligatorio</span>}
               </div>
               <div className="my-3 col-md-3">
-                <label className="form-label">Min (%)*</label>
+                <label className="form-label fw-bold">Min (%)*</label>
                 <input
                   defaultValue={85}
                   type="number"
@@ -181,7 +181,7 @@ const RegistroAmbientePage = () => {
                 )}
               </div>
               <div className="my-3 col-md-3">
-                <label className="form-label">Max (%)*</label>
+                <label className="form-label fw-bold">Max (%)*</label>
                 <input
                   defaultValue={115}
                   type="number"
@@ -197,7 +197,7 @@ const RegistroAmbientePage = () => {
 
             {mostrarComputadoras && (
               <div className="my-3">
-                <label className="form-label">Nº Computadoras *</label>
+                <label className="form-label fw-bold">Nº Computadoras *</label>
                 <input
                   type="number"
                   className="form-control"
@@ -212,7 +212,7 @@ const RegistroAmbientePage = () => {
 
             <div className="row">
               <div className="col-md">
-                <label className="form-check-label me-md-2" htmlFor={`proyector`}>
+                <label className="form-check-label me-md-2 fw-bold" htmlFor={`proyector`}>
                   Proyector de video
                 </label>
                 <input
@@ -223,7 +223,7 @@ const RegistroAmbientePage = () => {
                 />
               </div>
               <div className="col-md">
-                <label className="form-check-label me-md-2" htmlFor={`disponible`}>
+                <label className="form-check-label me-md-2 fw-bold" htmlFor={`disponible`}>
                   Disponiblidad de ambiente
                 </label>
                 <input
@@ -237,7 +237,7 @@ const RegistroAmbientePage = () => {
 
             {/* Horarios */}
             <div className="my-3">
-              <label className="form-label">Días y horarios disponibles</label>
+              <label className="form-label fw-bold">Días y horarios disponibles</label>
               {horarios.map((horario, index) => {
                 return (
                   <div key={index}>
@@ -254,7 +254,7 @@ const RegistroAmbientePage = () => {
                     <div className="collapse horarios" id={`collapse${horario.nombre}`}>
                       <div className="card card-body">
                         <div className="d-flex flex-md-row justify-content-between">
-                          <p className="ms-3">Periodos</p>
+                          <p className="ms-3 fw-bolds">Periodos</p>
                           <div className="d-flex text-center">
                             <div>
                               <label className="form-check-label" htmlFor={`selectAll_${index}`}>
@@ -318,10 +318,10 @@ const RegistroAmbientePage = () => {
             </div>
 
             <div className="d-flex justify-content-center">
-              <button type="submit" className="btn btn-primary me-md-5">
+              <button type="submit" className="btn btn-success me-md-5">
                 Registrar
               </button>
-              <Link to={'/'} className="btn btn-primary">
+              <Link to={'/'} className="btn btn-danger">
                 Cancelar
               </Link>
             </div>
