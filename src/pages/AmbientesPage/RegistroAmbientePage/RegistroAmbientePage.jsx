@@ -24,9 +24,13 @@ const RegistroAmbientePage = () => {
     formState: { errors },
     reset,
     clearErrors,
+    watch,
+    setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const selectAChecked = watch('dia');
 
   // json horarios
   const horarios = horariosJSON;
@@ -39,6 +43,7 @@ const RegistroAmbientePage = () => {
   const onSubmit = (data) => {
     console.log('antes de filtrado', data);
     const filteredDia = Object.fromEntries(
+      // eslint-disable-next-line no-unused-vars
       Object.entries(data.dia).filter(([key, value]) =>
         value.periodos.some((periodo) => periodo.id_periodo !== false),
       ),
@@ -195,6 +200,17 @@ const RegistroAmbientePage = () => {
                               className="form-check-input"
                               type="checkbox"
                               id={`selectAll_${index}`}
+                              {...register(`selectAll`)}
+                              onChange={(e) => {
+                                const checked = e.target.checked;
+                                horario.periodos.forEach((_, subIndex) => {
+                                  const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
+                                  setValue(
+                                    fieldName,
+                                    checked ? horario.periodos[subIndex].id : false,
+                                  );
+                                });
+                              }}
                             />
                             <label
                               className="form-check-label me-md-2"
@@ -206,6 +222,7 @@ const RegistroAmbientePage = () => {
                         </div>
                         <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
                           {horario.periodos.map((periodo, subIndex) => {
+                            const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
                             return (
                               <div className="col" key={subIndex}>
                                 <div className="form-check">
@@ -214,9 +231,7 @@ const RegistroAmbientePage = () => {
                                     type="checkbox"
                                     id={`periodo_${index}_${subIndex}`}
                                     value={periodo.id}
-                                    {...register(
-                                      `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`,
-                                    )}
+                                    {...register(fieldName)}
                                   />
                                   <label
                                     className="form-check-label"
@@ -234,9 +249,6 @@ const RegistroAmbientePage = () => {
                   </div>
                 );
               })}
-              {Object.keys(errors).length > 0 && (
-                <span className="text-danger">Seleccione un horario como mínimo</span>
-              )}
             </div>
 
             <div className="d-flex justify-content-center">
