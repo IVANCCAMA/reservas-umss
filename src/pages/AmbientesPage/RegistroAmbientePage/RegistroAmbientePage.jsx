@@ -1,14 +1,10 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
 const RegistroAmbientePage = () => {
-  // states
-  const [periodos, setPeriodos] = useState([]);
-
   // yup validación, atributos de formulario
   const schema = yup.object({
     nombre_ambiente: yup.string().required(),
@@ -350,25 +346,6 @@ const RegistroAmbientePage = () => {
         console.error('Error al crear ambiente:', error);
       });
   };
-
-  const loadPeriodos = () => {
-    axios
-      .get('http://localhost:4000/api/periodos')
-      .then((response) => {
-        const firstTenPeriodos = response.data.slice(0, 10);
-        /*  console.log('periodos>>>', firstTenPeriodos); */
-
-        setPeriodos(firstTenPeriodos);
-      })
-      .catch((error) => {
-        console.error('Error al obtener periodos:', error);
-      });
-  };
-
-  // load periodos
-  useEffect(() => {
-    loadPeriodos();
-  }, []);
 
   return (
     <div className="container">
