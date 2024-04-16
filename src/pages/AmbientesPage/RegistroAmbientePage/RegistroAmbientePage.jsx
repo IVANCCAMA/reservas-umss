@@ -35,13 +35,10 @@ const RegistroAmbientePage = () => {
     formState: { errors },
     reset,
     clearErrors,
-    watch,
     setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
-
-  const selectAChecked = watch('dia');
 
   // json horarios
   const horarios = horariosJSON;
@@ -87,6 +84,13 @@ const RegistroAmbientePage = () => {
           dia: '',
         });
         clearErrors();
+        // eslint-disable-next-line no-unused-vars
+        horarios.forEach((horario, index) => {
+          horario.periodos.forEach((_, subIndex) => {
+            const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
+            setValue(fieldName, false);
+          });
+        });
       })
       .catch((error) => {
         console.error('Error al crear ambiente:', error);
