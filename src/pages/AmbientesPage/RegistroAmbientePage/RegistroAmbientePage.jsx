@@ -15,6 +15,8 @@ const RegistroAmbientePage = () => {
     ubicacion: yup.string(),
     porcentaje_min: yup.number().required(),
     porcentaje_max: yup.number().required(),
+    disponible: yup.bool(),
+    proyector: yup.bool(),
     dia: yup
       .object()
       .test(
@@ -39,6 +41,10 @@ const RegistroAmbientePage = () => {
     watch,
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      disponible: true, 
+      proyector: false, 
+    },
   });
 
   // json horarios
@@ -86,7 +92,9 @@ const RegistroAmbientePage = () => {
           }),
           ubicacion: '',
           dia: '',
+          proyector: false,
         });
+        setValue('disponible', true);
         clearErrors();
         // eslint-disable-next-line no-unused-vars
         horarios.forEach((horario, index) => {
@@ -201,6 +209,31 @@ const RegistroAmbientePage = () => {
                 )}
               </div>
             )}
+
+            <div className="row">
+              <div className="col-md">
+                <label className="form-check-label me-md-2" htmlFor={`proyector`}>
+                  Proyector de video
+                </label>
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id={`proyector`}
+                  {...register('proyector')}
+                />
+              </div>
+              <div className="col-md">
+                <label className="form-check-label me-md-2" htmlFor={`disponible`}>
+                  Disponiblidad de ambiente
+                </label>
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id={`disponible`}
+                  {...register('disponible')}
+                />
+              </div>
+            </div>
 
             {/* Horarios */}
             <div className="my-3">
