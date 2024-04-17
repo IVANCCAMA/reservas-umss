@@ -16,6 +16,7 @@ interface SelectProps {
   required?: boolean;
   defaultValue?: string;
   placeholder?: string;
+  value?: string | undefined;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -28,6 +29,7 @@ const Select: React.FC<SelectProps> = ({
   required = false,
   defaultValue = 'default',
   placeholder = '',
+  value = undefined
 }) => {
   return (
     <div className='my-3'>
@@ -39,7 +41,7 @@ const Select: React.FC<SelectProps> = ({
         name={name}
         className='form-select'
         defaultValue={options.length !== 0 ? defaultValue : undefined}
-        value={options.length === 0 ? defaultValue : undefined}
+        value={options.length === 0 ? defaultValue : value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={(e) => onFocus(e.target.value)}
         onBlur={(e) => onBlur(e.target.value)}

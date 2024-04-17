@@ -24,7 +24,7 @@ const TextTarea: React.FC<TextTareaProps> = ({
   onBlur = () => { },
   required = false,
   minLength = 0,
-  maxLength = 40,
+  maxLength = 100,
   placeholder = '',
   autoComplete = '',
   textarea = 0

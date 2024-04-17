@@ -23,6 +23,7 @@ const RegistroReservaPage = () => {
   const [maxDate, setMaxDate] = useState('');
   const alertRef = useRef(null);
   const gruposRef = useRef(grupos);
+  const [allCheckbox, setAllCheckBox] = useState(false);
   // form
   const [solicitante, setSolicitante] = useState('');
   const [tipoAmbiente, setTipoAmbiente] = useState('');
@@ -75,6 +76,11 @@ const RegistroReservaPage = () => {
     }, 0);
     setEstudiantes(sum);
   }, [grupos]);
+  // update allChecked
+  useEffect(() => {
+    const uncheck = periodos.find(obj => obj.checked === false);
+    setAllCheckBox(!uncheck);
+  }, [periodos]);
 
   const handleSolicitante = (newValue) => {
     const filteredValue = newValue.replace(/[^a-zA-Z ]/g, '');
@@ -143,6 +149,14 @@ const RegistroReservaPage = () => {
     setPeriodos(updatedPeriodos);
   };
 
+  const checkedAll = (checked) => {
+    const updatedPeriodos = periodos.map(periodo =>
+      ({ ...periodo, checked: checked })
+    );
+    setAllCheckBox(checked);
+    setPeriodos(updatedPeriodos);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const ambienteDisp = {
@@ -182,6 +196,7 @@ const RegistroReservaPage = () => {
             />
 
             <Select
+              required
               name='tipoAmbiente'
               label='Tipo de ambiente *'
               options={tiposAmbiente}
@@ -190,8 +205,10 @@ const RegistroReservaPage = () => {
             />
 
             <Select
+              required
               name='materiaGrupo'
               label='Materias y grupos *'
+              value={'default'}
               options={grupos}
               onChange={addGropsSelected}
               placeholder='Seleccionar materias y grupos'
@@ -207,6 +224,7 @@ const RegistroReservaPage = () => {
               <div className="col-md-6">
                 <label className="form-label">Número de Estudiantes</label>
                 <input
+                  required
                   disabled
                   value={estudiantes}
                   type="text"
@@ -216,6 +234,7 @@ const RegistroReservaPage = () => {
               <div className="col-md-6">
                 <label className="form-label">Fecha de reserva *</label>
                 <input
+                  required
                   type="date"
                   min={minDate}
                   max={maxDate}
@@ -226,6 +245,7 @@ const RegistroReservaPage = () => {
             </div>
 
             <TextTarea
+              required
               name='motivo'
               label='Motivos de reserva'
               value={motivo}
@@ -243,7 +263,10 @@ const RegistroReservaPage = () => {
                   <div className="w-100">
                     <div className="d-flex justify-content-between pb-2">
                       <label>Periodos</label>
-                      <CheckboxInput label='Selecionar todos' name={`periodo-all`} value='' />
+                      <CheckboxInput
+                        checked={allCheckbox}
+                        label='Selecionar todos'
+                        onChange={checkedAll} />
                     </div>
 
                     <div className='row row-cols4'>
