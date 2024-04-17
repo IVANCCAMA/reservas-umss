@@ -4,6 +4,8 @@ import './FichaInformacionAmbientePage.scss';
 import axios from 'axios';
 
 const FichaInformacionAmbientePage = () => {
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
+
   const ambienteInitialState = {
     nombre_ambiente: '',
     tipo: '',
@@ -23,7 +25,7 @@ const FichaInformacionAmbientePage = () => {
 
   const loadAmbiente = (id) => {
     axios
-      .get('http://localhost:4000/api/disponibles/ambiente/' + id)
+      .get(`${baseURL}/disponibles/ambiente/` + id)
       .then((response) => {
         setAmbiente(response.data);
         setDisponibilidadPorDia(response.data.disponibilidadPorDia);
