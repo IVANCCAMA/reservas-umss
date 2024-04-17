@@ -1,0 +1,68 @@
+import { useEffect, useState } from 'react';
+import './ListadoAmbientesPage.scss';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import Table from '../../../components/Table/Table';
+import Pagination from '../../../components/Pagination/Pagination';
+import { Icon } from '@iconify/react/dist/iconify.js';
+
+const ListadoAmbientesPage = () => {
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
+  // estados
+  const [pageNumber, setPageNumber] = useState(1);
+  const [ambientes, setAmbientes] = useState([{}]);
+
+  // logica | api
+  const loadAmbientes = () => {
+    axios
+      .get(`${baseURL}/ambientes`)
+      .then((response) => {
+        setAmbientes(
+          response.data.map((amb) => {
+            return {
+              ID: amb.id_ambiente_tabla,
+              Aula: amb.nombre_ambiente,
+              Capacidad: amb.capacidad,
+              Estado: amb.disponible ? 'Habilitado' : 'Deshabilitado',
+              Tipo: amb.tipo,
+              Proyector: amb.proyector ? 'Si' : 'No',
+              'Ver más': (
+                <div className="boton-style w-auto text-center me-md-3 rounded">
+                  <Link
+                    to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
+                    className="btn border border-0"
+                  >
+                    <div>
+                      <Icon icon="gg:arrow-right-r" className="boton-icon" />
+                    </div>
+                  </Link>
+                </div>
+              ),
+            };
+          }),
+        );
+      })
+      .catch((error) => {
+        console.error('Error al obtener los ambientes:', error);
+      });
+  };
+
+  // rederización inicial
+  useEffect(() => {
+    loadAmbientes();
+  }, []);
+
+  return (
+    <div className="container-fluid listado-ambientes p-md-5">
+      <h2 className="text-start">Lista de ambientes</h2>
+      <Table rows={ambientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
+
+      <Pagination
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+        lastPage={Math.floor(ambientes.length / 10) + 1}
+      />
+    </div>
+  );
+};
+export default ListadoAmbientesPage;
