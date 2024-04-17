@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import horariosJSON from './horarios';
 import iconoError from '../../../assets/Images/iconoError.png';
 
@@ -59,7 +59,6 @@ const RegistroAmbientePage = () => {
 
   // logic api
   const onSubmit = (data) => {
-    console.log('antes de filtrado', data);
     const filteredDia = Object.fromEntries(
       // eslint-disable-next-line no-unused-vars
       Object.entries(data.dia).filter(([key, value]) =>
@@ -78,34 +77,36 @@ const RegistroAmbientePage = () => {
       ),
     };
 
-    // Envio de data con post
-    console.log(filteredData);
     axios
       .post('http://localhost:4000/api/ambientes/completo', filteredData)
       .then((response) => {
-        // Establecer los datos en el estado
         console.log(response);
-        reset({
-          nombre_ambiente: '',
-          tipo: '',
-          capacidad: '',
-          computadora: yup.number().when('tipo', {
-            is: 'Laboratorio',
-            then: yup.number().required('El campo es obligatorio'),
-          }),
-          ubicacion: '',
-          dia: '',
-          proyector: false,
-        });
-        setValue('disponible', true);
-        clearErrors();
-        // eslint-disable-next-line no-unused-vars
-        horarios.forEach((horario, index) => {
-          horario.periodos.forEach((_, subIndex) => {
-            const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
-            setValue(fieldName, false);
+        // Establecer los datos en el estado
+        if (response.status === 201) {
+          reset({
+            nombre_ambiente: '',
+            tipo: '',
+            capacidad: '',
+            computadora: yup.number().when('tipo', {
+              is: 'Laboratorio',
+              then: yup.number().required('El campo es obligatorio'),
+            }),
+            ubicacion: '',
+            dia: '',
+            proyector: false,
           });
-        });
+          setValue('disponible', true);
+          clearErrors();
+          // eslint-disable-next-line no-unused-vars
+          horarios.forEach((horario, index) => {
+            horario.periodos.forEach((_, subIndex) => {
+              const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
+              setValue(fieldName, false);
+            });
+          });
+        } else {
+          /* Modal error */
+        }
       })
       .catch((error) => {
         console.error('Error al crear ambiente:', error);
@@ -118,10 +119,6 @@ const RegistroAmbientePage = () => {
   const mostrarComputadoras = tipoAmbiente === 'Laboratorio';
 
   const handleClickYes = () => {
-    // Realiza cualquier lógica adicional aquí si es necesario
-    // Por ejemplo, enviar una solicitud al servidor antes de redirigir
-
-    // Redirige a la página de inicio
     navigate('/');
   };
 
@@ -346,17 +343,16 @@ const RegistroAmbientePage = () => {
                 Registrar
               </button>
 
-              <Link
-                to={'/'}
+              <button
                 className="btn btn-danger"
                 type="button"
                 data-bs-toggle="modal"
                 data-bs-target="#staticBackdrop"
               >
                 Cancelar
-              </Link>
+              </button>
 
-              {/* Modal */}
+              {/* Modal boton Cancelar*/}
               <div
                 className="modal fade"
                 id="staticBackdrop"
@@ -370,7 +366,7 @@ const RegistroAmbientePage = () => {
                   <div className="modal-content pt-md-3">
                     <div className="modal-body text-center">
                       <div>
-                        <img src={iconoError} alt="icono de error" className="" />
+                        <img src={iconoError} alt="icono de error" />
                       </div>
                       <div className="py-md-3">
                         ¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?
