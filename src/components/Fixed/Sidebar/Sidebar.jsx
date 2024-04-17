@@ -59,7 +59,7 @@ const Sidebar = () => {
                 </div>
               </button>
 
-              <div className="collapse sub-menu" id={`${btn.name}-collapse`}>
+              <div className="collapse ms-5" id={`${btn.name}-collapse`}>
                 <ul className="nav nav-pills flex-column mb-auto btn-toggle-nav list-unstyled">
                   {btn.subs.map((sub, subIndex) => (
                     <li key={`nav-item-${index}-${subIndex}`}>

@@ -5,9 +5,11 @@ import Navbar from './components/Fixed/Navbar/Navbar';
 import ListadoMateriasPage from './pages/MateriasPage/ListadoMateriasPage/ListadoMateriasPage';
 import SubirMatariasPage from './pages/MateriasPage/SubirMatariasPage/SubirMatariasPage';
 import ListadoAmbientesPage from './pages/AmbientesPage/ListadoAmbientesPage/ListadoAmbientesPage';
+import FichaInformacionAmbientePage from './pages/AmbientesPage/FichaInformacionAmbientePage/FichaInformacionAmbientePage';
 import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/RegistroAmbientePage';
 import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/RegistroReservaPage';
 import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
+import InformacionFormatoModal from './pages/MateriasPage/SubirMatariasPage/InformacionFormatoModal/InformacionFormatoModal';
 
 function App() {
   return (
@@ -24,8 +26,10 @@ function App() {
               <Route path="/" index element={<HomePage />} />
               <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
               <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
+              <Route path="/ambientes/listaAmbientes/fichaAmbiente/:id_ambiente" element={<FichaInformacionAmbientePage />} />
 
               <Route path="/materias/subirMaterias" element={<SubirMatariasPage />} />
+              <Route path='/materias/subirMaterias/infoFormato' element={<InformacionFormatoModal/>} />
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
 
               <Route path="/reservas/reservarAmbiente" element={<RegistroReservaPage />} />
