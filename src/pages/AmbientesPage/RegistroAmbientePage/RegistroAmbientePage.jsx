@@ -217,7 +217,9 @@ const RegistroAmbientePage = () => {
 
             {mostrarComputadoras && (
               <div className="my-3">
-                <label className="form-label fw-bold">Nº Computadoras *</label>
+                <label className="form-label fw-bold">
+                  Nº Computadoras <span className="text-danger ms-1">*</span>
+                </label>
                 <input
                   type="number"
                   className="form-control"
@@ -225,7 +227,7 @@ const RegistroAmbientePage = () => {
                   {...register('computadora')}
                 />
                 {errors.computadora && (
-                  <span className="text-danger">{errors.computadora.message}</span>
+                  <span className="text-danger">El campo es obligatorio</span>
                 )}
               </div>
             )}
