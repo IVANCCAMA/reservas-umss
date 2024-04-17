@@ -6,10 +6,15 @@ import { useNavigate } from 'react-router-dom';
 import horariosJSON from './horarios';
 import iconoError from '../../../assets/Images/iconoError.png';
 import iconoExito from '../../../assets/Images/iconoExito.png';
+import { useState } from 'react';
+import ModalForm from '../../../components/Modal/ModalForm';
 
 const RegistroAmbientePage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
   const navigate = useNavigate();
+
+  // estados modales
+  const [showModal, setShowModal] = useState(false);
 
   // yup validación, atributos de formulario
   const schema = yup.object({
@@ -53,7 +58,7 @@ const RegistroAmbientePage = () => {
     setValue,
     watch,
   } = useForm({
-    resolver: yupResolver(schema),
+    /* resolver: yupResolver(schema), */
     defaultValues: {
       disponible: true,
       proyector: false,
@@ -411,60 +416,27 @@ const RegistroAmbientePage = () => {
               </div>
 
               {/* Modal exito */}
-              <div
-                className="modal fade"
+              <ModalForm
                 id="modalExito"
-                data-bs-backdrop="static"
-                data-bs-keyboard="false"
-                tabIndex="-1"
-                aria-labelledby="staticBackdropLabel"
-                aria-hidden="true"
-              >
-                <div className="modal-dialog modal-dialog-centered ">
-                  <div className="modal-content pt-md-3">
-                    <div className="modal-body text-center">
-                      <div>
-                        <img src={iconoExito} alt="icono de error" />
-                      </div>
-                      <div className="py-md-3">Ambiente registrado con exito</div>
-                      <div className="d-flex justify-content-center">
-                        <button type="button" className="btn btn-success" data-bs-dismiss="modal">
-                          <p className="mx-4 my-auto">Aceptar</p>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                imgIcon={iconoExito}
+                content="Ambiente registrado con éxito"
+                btnColor="success"
+                handleConfirm={() => {
+                  setShowModal(false);
+                  // Restablecer formulario y otros cambios necesarios...
+                }}
+              />
 
-              {/* Modal error */}
-              <div
-                className="modal fade"
+              <ModalForm
                 id="modalError"
-                data-bs-backdrop="static"
-                data-bs-keyboard="false"
-                tabIndex="-1"
-                aria-labelledby="staticBackdropLabel"
-                aria-hidden="true"
-              >
-                <div className="modal-dialog modal-dialog-centered ">
-                  <div className="modal-content pt-md-3">
-                    <div className="modal-body text-center">
-                      <div>
-                        <img src={iconoError} alt="icono de error" />
-                      </div>
-                      <div className="py-md-3">
-                        Error al registrar ambiente <br /> intente de nuevo
-                      </div>
-                      <div className="d-flex justify-content-center">
-                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
-                          <p className="mx-4 my-auto">Aceptar</p>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                imgIcon={iconoError}
+                content="Error al registrar ambiente intente de nuevo"
+                btnColor="danger"
+                handleConfirm={() => {
+                  setShowModal(false);
+                  // Restablecer formulario y otros cambios necesarios...
+                }}
+              />
             </div>
           </form>
         </div>
