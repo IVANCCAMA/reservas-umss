@@ -1,371 +1,182 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import TextInput from '../../../components/Form/TextInput';
+import TextTarea from '../../../components/Form/TextTarea';
 import Select from '../../../components/Form/Select';
 import Accordion from '../../../components/Form/Accordion';
 import CheckboxInput from '../../../components/Form/CheckboxInput';
+import AlertContainer from '../../../components/Bootstrap/AlertContainer';
+import axios from 'axios';
 
 const RegistroReservaPage = () => {
-  const database = 'http://localhost:4000';
+  const database = 'http://localhost:4000/api';
+  const tiposAmbiente = [
+    { title: 'Aula común', value: 'aula comun' },
+    { title: 'Laboratorio', value: 'laboratorio' },
+    { title: 'Auditorio', value: 'auditorio' }
+  ];
   const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
-
-  const [solicitante, setSolicitante] = useState('');
-  const [tiposAmbiente, setTiposAmbiente] = useState([]);
-  const [tipoAmbiente, setTipoAmbiente] = useState('');
-
+  // aux
+  const [users, setUsers] = useState([]);
+  const [datalistSolicitante, setDatalistSolicitante] = useState([]);
   const [grupos, setGrupos] = useState([]);
+  const [minDate, setMinDate] = useState('');
+  const [maxDate, setMaxDate] = useState('');
+  const alertRef = useRef(null);
+  const gruposRef = useRef(grupos);
+  // form
+  const [solicitante, setSolicitante] = useState('');
+  const [tipoAmbiente, setTipoAmbiente] = useState('');
   const [listaGrupos, setListaGrupos] = useState([]);
-
   const [estudiantes, setEstudiantes] = useState(0);
   const [fecha, setFecha] = useState('');
   const [motivo, setMotivo] = useState('');
+  const [periodos, setPeriodos] = useState([]);
+  // cargar aux
+  useEffect(() => {
+    // recuperar users para el id del solicitante
+    axios
+      .get(`${database}/usuarios`)
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.error('Error al obtener los usuarios:', error);
+      });
+    // recuperar fechas max min
+    axios
+      .get(`${database}/aperturas/2`)
+      .then((response) => {
+        setMaxDate(response.data.apertura_fin);
+        setMinDate(response.data.apertura_inicio);
+      })
+      .catch((error) => {
+        console.error('Error al obtener la apertura 2:', error);
+      });
+    // recuperar periodos
+    axios
+      .get(`${database}/periodos`)
+      .then((response) => {
+        setPeriodos(response.data.map(periodo => {
+          return { ...periodo, checked: false };
+        }));
+      })
+      .catch((error) => {
+        console.error('Error al obtener los periodos:', error);
+      });
+  }, []);
+  // actualizar num estudiantes
+  useEffect(() => {
+    gruposRef.current = grupos;
+    const sum = grupos.reduce((acc, group) => {
+      if (group.hidden) {
+        return acc + group.inscritos;
+      }
+      return acc;
+    }, 0);
+    setEstudiantes(sum);
+  }, [grupos]);
 
-  // resuperar tipos de ambientes
-  useEffect(() => { setTiposAmbiente(['Aula común', 'Laboratorio', 'Auditorio']); }, []);
-
-  // json horarios
-  const horarios = [
-    {
-      nombre: 'Lunes',
-      periodos: [
-        {
-          id: 1,
-          horario: '6:45 - 8:15',
-        },
-        {
-          id: 2,
-          horario: '8:15 - 9:45',
-        },
-        {
-          id: 3,
-          horario: '9:45 - 11:15',
-        },
-        {
-          id: 4,
-          horario: '11:15 - 12:45',
-        },
-        {
-          id: 5,
-          horario: '12:45 - 14:15',
-        },
-        {
-          id: 6,
-          horario: '14:15 - 15:45',
-        },
-        {
-          id: 7,
-          horario: '15:45 - 17:15',
-        },
-        {
-          id: 8,
-          horario: '17:15 - 18:45',
-        },
-        {
-          id: 9,
-          horario: '18:45 - 20:15',
-        },
-        {
-          id: 10,
-          horario: '20:15 - 21:45',
-        },
-      ],
-    },
-    {
-      nombre: 'Martes',
-      periodos: [
-        {
-          id: 1,
-          horario: '6:45 - 8:15',
-        },
-        {
-          id: 2,
-          horario: '8:15 - 9:45',
-        },
-        {
-          id: 3,
-          horario: '9:45 - 11:15',
-        },
-        {
-          id: 4,
-          horario: '11:15 - 12:45',
-        },
-        {
-          id: 5,
-          horario: '12:45 - 14:15',
-        },
-        {
-          id: 6,
-          horario: '14:15 - 15:45',
-        },
-        {
-          id: 7,
-          horario: '15:45 - 17:15',
-        },
-        {
-          id: 8,
-          horario: '17:15 - 18:45',
-        },
-        {
-          id: 9,
-          horario: '18:45 - 20:15',
-        },
-        {
-          id: 10,
-          horario: '20:15 - 21:45',
-        },
-      ],
-    },
-    {
-      nombre: 'Miércoles',
-      periodos: [
-        {
-          id: 1,
-          horario: '6:45 - 8:15',
-        },
-        {
-          id: 2,
-          horario: '8:15 - 9:45',
-        },
-        {
-          id: 3,
-          horario: '9:45 - 11:15',
-        },
-        {
-          id: 4,
-          horario: '11:15 - 12:45',
-        },
-        {
-          id: 5,
-          horario: '12:45 - 14:15',
-        },
-        {
-          id: 6,
-          horario: '14:15 - 15:45',
-        },
-        {
-          id: 7,
-          horario: '15:45 - 17:15',
-        },
-        {
-          id: 8,
-          horario: '17:15 - 18:45',
-        },
-        {
-          id: 9,
-          horario: '18:45 - 20:15',
-        },
-        {
-          id: 10,
-          horario: '20:15 - 21:45',
-        },
-      ],
-    },
-    {
-      nombre: 'Juevez',
-      periodos: [
-        {
-          id: 1,
-          horario: '6:45 - 8:15',
-        },
-        {
-          id: 2,
-          horario: '8:15 - 9:45',
-        },
-        {
-          id: 3,
-          horario: '9:45 - 11:15',
-        },
-        {
-          id: 4,
-          horario: '11:15 - 12:45',
-        },
-        {
-          id: 5,
-          horario: '12:45 - 14:15',
-        },
-        {
-          id: 6,
-          horario: '14:15 - 15:45',
-        },
-        {
-          id: 7,
-          horario: '15:45 - 17:15',
-        },
-        {
-          id: 8,
-          horario: '17:15 - 18:45',
-        },
-        {
-          id: 9,
-          horario: '18:45 - 20:15',
-        },
-        {
-          id: 10,
-          horario: '20:15 - 21:45',
-        },
-      ],
-    },
-    {
-      nombre: 'Viernes',
-      periodos: [
-        {
-          id: 1,
-          horario: '6:45 - 8:15',
-        },
-        {
-          id: 2,
-          horario: '8:15 - 9:45',
-        },
-        {
-          id: 3,
-          horario: '9:45 - 11:15',
-        },
-        {
-          id: 4,
-          horario: '11:15 - 12:45',
-        },
-        {
-          id: 5,
-          horario: '12:45 - 14:15',
-        },
-        {
-          id: 6,
-          horario: '14:15 - 15:45',
-        },
-        {
-          id: 7,
-          horario: '15:45 - 17:15',
-        },
-        {
-          id: 8,
-          horario: '17:15 - 18:45',
-        },
-        {
-          id: 9,
-          horario: '18:45 - 20:15',
-        },
-        {
-          id: 10,
-          horario: '20:15 - 21:45',
-        },
-      ],
-    },
-    {
-      nombre: 'Sabado',
-      periodos: [
-        {
-          id: 1,
-          horario: '6:45 - 8:15',
-        },
-        {
-          id: 2,
-          horario: '8:15 - 9:45',
-        },
-        {
-          id: 3,
-          horario: '9:45 - 11:15',
-        },
-        {
-          id: 4,
-          horario: '11:15 - 12:45',
-        },
-        {
-          id: 5,
-          horario: '12:45 - 14:15',
-        },
-        {
-          id: 6,
-          horario: '14:15 - 15:45',
-        },
-        {
-          id: 7,
-          horario: '15:45 - 17:15',
-        },
-        {
-          id: 8,
-          horario: '17:15 - 18:45',
-        },
-        {
-          id: 9,
-          horario: '18:45 - 20:15',
-        },
-        {
-          id: 10,
-          horario: '20:15 - 21:45',
-        },
-      ],
-    },
-  ];
-
+  const handleSolicitante = (newValue) => {
+    const filteredValue = newValue.replace(/[^a-zA-Z ]/g, '');
+    setSolicitante(filteredValue.toUpperCase());
+    // update datalist solicitantes
+    const filteredValues = users
+      .filter(obj => obj.nombre_usuario.includes(filteredValue.toUpperCase()))
+      .map(filteredObj => filteredObj.nombre_usuario);
+    if (filteredValues.length < 5) {
+      setDatalistSolicitante(filteredValues);
+    } else {
+      setDatalistSolicitante([]);
+    }
+  };
   // resuperar materias y grupos
   const searchGroupsByApplicant = (newValue) => {
-    // recuperar de db
-    const gruposJSON = [
-      {
-        id_grupo: 1,
-        nombre_grupo: "G1",
-        nombre_materia: "Ingles I"
-      },
-      {
-        id_grupo: 2,
-        nombre_grupo: "G2",
-        nombre_materia: "Ingles I"
-      },
-      {
-        id_grupo: 3,
-        nombre_grupo: "G3",
-        nombre_materia: "Ingles I"
-      },
-      {
-        id_grupo: 4,
-        nombre_grupo: "G1",
-        nombre_materia: "Ingles II"
-      },
-      {
-        id_grupo: 5,
-        nombre_grupo: "G3",
-        nombre_materia: "Ingles II"
-      },
-      {
-        id_grupo: 6,
-        nombre_grupo: "G2",
-        nombre_materia: "Ingles II"
-      },
-      {
-        id_grupo: 7,
-        nombre_grupo: "G3",
-        nombre_materia: "Ingles III"
-      },
-      {
-        id_grupo: 8,
-        nombre_grupo: "G2",
-        nombre_materia: "Ingles III"
-      },
-      {
-        id_grupo: 9,
-        nombre_grupo: "G1",
-        nombre_materia: "Ingles III"
+    // recuperar de db los grupos del docente
+    const foundId = users.find(obj => obj.nombre_usuario === newValue)?.id_usuario;
+    if (!foundId) { return }
+    axios
+      .get(`${database}/usuarios/${foundId}/materias-grupos`)
+      .then((response) => {
+        // mapear y dar formato
+        setGrupos(response.data['materia-grupo'].map(group => ({
+          value: String(group.id_grupo),
+          title: `${group.nombre_materia} - ${group.nombre_grupo}`,
+          inscritos: group.cantidad_est,
+          hidden: false
+        })));
+      })
+      .catch((error) => {
+        console.error('Error al obtener las materias y grupos:', error);
+      });
+    // reset form
+    setListaGrupos([]);
+    alertRef.current.removeAllAlerts();
+  };
+
+  const removeGropsSelected = (groupID) => {
+    const updatedGrupos = gruposRef.current.map(group => {
+      if (group.value === groupID) {
+        return { ...group, hidden: false };
       }
-    ];
-    // mapear y dear formato
-    setGrupos(gruposJSON.map(({ id_grupo, nombre_grupo, nombre_materia }) => ({
-      value: id_grupo,
-      title: `${nombre_materia} - ${nombre_grupo} de ${solicitante}`
-    })));
+      return group;
+    });
+    setGrupos(updatedGrupos);
+    setListaGrupos(currentList => currentList.filter(group => group !== groupID));
+  };
+
+  const addGropsSelected = (newValue) => {
+    const updatedGrupos = grupos.map((group) => {
+      if (group.value === newValue) {
+        alertRef.current.addAlert(alerts[listaGrupos.length % 8], group.title, () => removeGropsSelected(newValue));
+        return { ...group, hidden: true };
+      }
+      return group;
+    });
+    setGrupos(updatedGrupos);
+    setListaGrupos(prevGroups => [...prevGroups, newValue]);
+  };
+
+  const handleCheckboxChange = (id_periodo) => {
+    const updatedPeriodos = periodos.map(periodo =>
+      periodo.id_periodo === id_periodo ? { ...periodo, checked: !periodo.checked } : periodo
+    );
+    setPeriodos(updatedPeriodos);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const ambienteDisp = {
+      tipo_ambiente: tipoAmbiente,
+      cantidad_est: estudiantes,
+      fecha_reserva: fecha,
+      periodos: periodos.filter(periodo => periodo.checked).map(periodo => periodo.id_periodo)
+    };
+    console.log(ambienteDisp);
+
+    axios
+      .post(`${database}/reservas`, ambienteDisp)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error('Error al obtener las materias y grupos:', error);
+      });
   };
 
   return (
     <div className="container">
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-6">
-          <h2 className="text-md-center">Registrar ambientes</h2>
+          <h2 className="text-md-center">Formulario de reserva</h2>
 
-          <form className="needs-validation">
+          <form className="needs-validation" onSubmit={handleSubmit}>
             <TextInput
               required
               name='solicitante'
               label='Nombre del solicitante *'
               value={solicitante}
-              onChange={setSolicitante}
+              datalist={datalistSolicitante}
+              onChange={handleSolicitante}
               onBlur={searchGroupsByApplicant}
               placeholder='Escriba el nombre del solicitante'
             />
@@ -382,72 +193,73 @@ const RegistroReservaPage = () => {
               name='materiaGrupo'
               label='Materias y grupos *'
               options={grupos}
-              onChange={setTipoAmbiente}
+              onChange={addGropsSelected}
               placeholder='Seleccionar materias y grupos'
             />
 
-            {/* A simple primary alert with <a href="#" class="alert-link">an example link</a>. Give it a click if you like. */}
-            <div className="">
+            <div className="my-3">
               <label className="form-label">Lista de materias y grupos añadidos</label>
-              <div className="mb-0 px-3 py-1 alert alert-primary alert-dismissible fade show" role="alert">
-                Materia 1 - Grupo 1
-                <button type="button" className="pe-1 py-2 btn-close" data-bs-dismiss="alert" aria-label="Close" />
-              </div>
+
+              <AlertContainer ref={alertRef} />
             </div>
 
             <div className="my-3 row row-cols6">
               <div className="col-md-6">
-                <label className="form-label">Número de Estudiantes *</label>
+                <label className="form-label">Número de Estudiantes</label>
                 <input
+                  disabled
+                  value={estudiantes}
                   type="text"
                   className="form-control"
-                  placeholder="Escriba el número de Estudiantes"
                 />
               </div>
               <div className="col-md-6">
                 <label className="form-label">Fecha de reserva *</label>
                 <input
                   type="date"
+                  min={minDate}
+                  max={maxDate}
+                  onChange={(e) => { setFecha(e.target.value) }}
                   className="form-control"
-                  placeholder="Cap. maxima"
                 />
               </div>
             </div>
 
-            <div className="my-3">
-              <label className="form-label">Motivos de reserva</label>
-              <textarea
-                type="text"
-                className="form-control"
-                placeholder="Escriba el motivo de la reserva"
-              />
-            </div>
+            <TextTarea
+              name='motivo'
+              label='Motivos de reserva'
+              value={motivo}
+              onChange={setMotivo}
+              placeholder='Escriba el motivo de la reserva'
+              maxLength={200}
+            />
 
             <div className='my-3'>
               <label className='form-label'>Periodos y horarios *</label>
 
-              <Accordion id='periodos' accordionItems={horarios.map((item, index) => {
-                return {
-                  title: item.nombre,
-                  body:
-                    <div className="w-100">
-                      <div className="d-flex justify-content-between pb-2">
-                        <label>Periodos</label>
-                        <CheckboxInput label='Selecionar todos' name={`periodo-${index}-all`} value='' />
-                      </div>
-
-                      <div className='row row-cols4'>
-                        {item.periodos.map((periodo, subIndex) => {
-                          return (
-                            <div key={`periodo-${index}-${subIndex}`} className='col-md-4'>
-                              <CheckboxInput label={periodo.horario} name={`periodo-${index}-${subIndex}`} value={periodo.id} />
-                            </div>
-                          );
-                        })}
-                      </div>
+              <Accordion id='periodos' accordionItems={[{
+                title: 'Selecione periodo/s',
+                body:
+                  <div className="w-100">
+                    <div className="d-flex justify-content-between pb-2">
+                      <label>Periodos</label>
+                      <CheckboxInput label='Selecionar todos' name={`periodo-all`} value='' />
                     </div>
-                };
-              })} />
+
+                    <div className='row row-cols4'>
+                      {periodos.map((periodo, index) => {
+                        return (
+                          <div key={`periodo-${index}`} className='col-md-4'>
+                            <CheckboxInput
+                              checked={periodo.checked}
+                              label={`${periodo.hora_inicio?.slice(0, 5)} - ${periodo.hora_fin?.slice(0, 5)}`}
+                              onChange={() => handleCheckboxChange(periodo.id_periodo)} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+              }]} />
             </div>
 
             <div className="d-flex justify-content-center">

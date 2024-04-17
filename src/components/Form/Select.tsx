@@ -2,7 +2,8 @@ import React from 'react';
 
 interface option {
   value: string;
-  title: string
+  title: string;
+  hidden?: boolean;
 }
 
 interface SelectProps {
@@ -36,7 +37,7 @@ const Select: React.FC<SelectProps> = ({
         required={required}
         id={name}
         name={name}
-        className="form-select"
+        className='form-select'
         defaultValue={options.length !== 0 ? defaultValue : undefined}
         value={options.length === 0 ? defaultValue : undefined}
         onChange={(e) => onChange(e.target.value)}
@@ -51,6 +52,7 @@ const Select: React.FC<SelectProps> = ({
           <option
             key={`${name}-${index}`}
             value={typeof option === 'string' ? option : option.value}
+            hidden={typeof option === 'string' ? undefined : option.hidden}
           >
             {typeof option === 'string' ? option : option.title}
           </option>

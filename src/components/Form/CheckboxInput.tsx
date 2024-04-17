@@ -8,7 +8,7 @@ interface CheckboxInputProps {
   onFocus?: (newValue: string) => void;
   onBlur?: (newValue: string) => void;
   required?: boolean;
-  autoComplete?: string;
+  checked?: boolean;
 }
 
 const CheckboxInput: React.FC<CheckboxInputProps> = ({
@@ -19,12 +19,14 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   onFocus = () => { },
   onBlur = () => { },
   required = false,
+  checked = false
 }) => {
   return (
     <div className='form-check'>
       <label htmlFor={name} className='form-check-label'>{label}</label>
 
       <input
+        checked={checked}
         required={required}
         id={name}
         name={name}

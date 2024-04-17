@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface TextInputProps {
+interface TextTareaProps {
   name: string;
   label: string;
   value: string;
@@ -12,10 +12,10 @@ interface TextInputProps {
   maxLength?: number;
   placeholder?: string;
   autoComplete?: string;
-  datalist?: string[];
+  textarea?: number;
 }
 
-const TextInput: React.FC<TextInputProps> = ({
+const TextTarea: React.FC<TextTareaProps> = ({
   name,
   label,
   value,
@@ -27,18 +27,18 @@ const TextInput: React.FC<TextInputProps> = ({
   maxLength = 40,
   placeholder = '',
   autoComplete = '',
-  datalist = []
+  textarea = 0
 }) => {
   return (
     <div className='my-3'>
       <label htmlFor={name} className='form-label'>{label}</label>
 
-      <input
+      <textarea
         required={required}
         autoComplete={autoComplete || undefined}
         id={name}
         name={name}
-        list={`datalist-${name}`}
+        rows={textarea}
         className='form-control'
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -48,14 +48,8 @@ const TextInput: React.FC<TextInputProps> = ({
         maxLength={maxLength || undefined}
         placeholder={placeholder || undefined}
       />
-
-      <datalist id={`datalist-${name}`}>
-        {datalist.map((value, index) => (
-          <option key={`datalist-${name}-item-${index}`} value={value}/>
-        ))}
-      </datalist>
     </div>
   );
 };
 
-export default TextInput;
+export default TextTarea;
