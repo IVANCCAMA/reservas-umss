@@ -61,3 +61,22 @@ h1 {
   max-width: 1920px;
 }
  */
+
+.registro-ambientes {
+  .form-check-input {
+    border: 1.15px solid #bababa;
+  }
+
+  .modal {
+    color: #8c8686;
+    img {
+      width: 60px;
+      height: 60px;
+    }
+
+    .modal-dialog {
+      padding-left: 85px;
+      padding-right: 85px;
+    }
+  }
+}

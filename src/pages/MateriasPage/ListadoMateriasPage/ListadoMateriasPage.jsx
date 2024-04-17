@@ -5,6 +5,8 @@ import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
 
 const ListadoMateriasPage = () => {
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
+  // estados
   const [pageNumber, setPageNumber] = useState(1);
   const [materias, setMaterias] = useState([{}]);
 
@@ -16,7 +18,7 @@ const ListadoMateriasPage = () => {
 
   const loadMaterias = () => {
     axios
-      .get('http://localhost:4000/api/grupos/tablamaterias')
+      .get(`${baseURL}/grupos/tablamaterias`)
       .then((response) => {
         setMaterias(
           response.data.map((mat) => {

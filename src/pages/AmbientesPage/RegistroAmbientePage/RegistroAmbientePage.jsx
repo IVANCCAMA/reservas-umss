@@ -2,10 +2,14 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import horariosJSON from './horarios';
+import iconoError from '../../../assets/Images/iconoError.png';
 
 const RegistroAmbientePage = () => {
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
+  const navigate = useNavigate();
+
   // yup validación, atributos de formulario
   const schema = yup.object({
     nombre_ambiente: yup.string().required(),
@@ -56,7 +60,6 @@ const RegistroAmbientePage = () => {
 
   // logic api
   const onSubmit = (data) => {
-    console.log('antes de filtrado', data);
     const filteredDia = Object.fromEntries(
       // eslint-disable-next-line no-unused-vars
       Object.entries(data.dia).filter(([key, value]) =>
@@ -75,34 +78,36 @@ const RegistroAmbientePage = () => {
       ),
     };
 
-    // Envio de data con post
-    console.log(filteredData);
     axios
-      .post('http://localhost:4000/api/ambientes/completo', filteredData)
+      .post(`${baseURL}/ambientes/completo`, filteredData)
       .then((response) => {
-        // Establecer los datos en el estado
         console.log(response);
-        reset({
-          nombre_ambiente: '',
-          tipo: '',
-          capacidad: '',
-          computadora: yup.number().when('tipo', {
-            is: 'Laboratorio',
-            then: yup.number().required('El campo es obligatorio'),
-          }),
-          ubicacion: '',
-          dia: '',
-          proyector: false,
-        });
-        setValue('disponible', true);
-        clearErrors();
-        // eslint-disable-next-line no-unused-vars
-        horarios.forEach((horario, index) => {
-          horario.periodos.forEach((_, subIndex) => {
-            const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
-            setValue(fieldName, false);
+        // Establecer los datos en el estado
+        if (response.status === 201) {
+          reset({
+            nombre_ambiente: '',
+            tipo: '',
+            capacidad: '',
+            computadora: yup.number().when('tipo', {
+              is: 'Laboratorio',
+              then: yup.number().required('El campo es obligatorio'),
+            }),
+            ubicacion: '',
+            dia: '',
+            proyector: false,
           });
-        });
+          setValue('disponible', true);
+          clearErrors();
+          // eslint-disable-next-line no-unused-vars
+          horarios.forEach((horario, index) => {
+            horario.periodos.forEach((_, subIndex) => {
+              const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
+              setValue(fieldName, false);
+            });
+          });
+        } else {
+          /* Modal error */
+        }
       })
       .catch((error) => {
         console.error('Error al crear ambiente:', error);
@@ -114,14 +119,21 @@ const RegistroAmbientePage = () => {
   // visibilidad de la sección de computadoras
   const mostrarComputadoras = tipoAmbiente === 'Laboratorio';
 
+  const handleClickYes = () => {
+    navigate('/');
+  };
+
   return (
-    <div className="container">
+    <div className="container registro-ambientes">
       <div className="row py-md-3 justify-content-center">
-        <div className="col-md-6">
+        <div className="col-md-8">
           <h2 className="text-md-center">Registrar ambientes</h2>
           <form className="forms" onSubmit={handleSubmit(onSubmit)}>
             <div className="my-3">
-              <label className="form-label fw-bold">Nombre de ambiente *</label>
+              <label className="form-label fw-bold">
+                Nombre de ambiente
+                <span className="text-danger ms-1">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -133,7 +145,9 @@ const RegistroAmbientePage = () => {
               )}
             </div>
             <div className="my-3">
-              <label className="form-label fw-bold">Tipo de ambiente *</label>
+              <label className="form-label fw-bold">
+                Tipo de ambiente <span className="text-danger ms-1">*</span>
+              </label>
               <select
                 className="form-select"
                 placeholder="Seleccione el tipo de ambiente"
@@ -158,7 +172,9 @@ const RegistroAmbientePage = () => {
             </div>
             <div className="row">
               <div className="my-3 col-md-6">
-                <label className="form-label fw-bold">Capacidad de estudiantes *</label>
+                <label className="form-label fw-bold">
+                  Capacidad de estudiantes <span className="text-danger ms-1">*</span>
+                </label>
                 <input
                   type="number"
                   className="form-control"
@@ -168,7 +184,9 @@ const RegistroAmbientePage = () => {
                 {errors.capacidad && <span className="text-danger">El campo es obligatorio</span>}
               </div>
               <div className="my-3 col-md-3">
-                <label className="form-label fw-bold">Min (%)*</label>
+                <label className="form-label fw-bold">
+                  Min (%)<span className="text-danger ms-1">*</span>
+                </label>
                 <input
                   defaultValue={85}
                   type="number"
@@ -181,7 +199,9 @@ const RegistroAmbientePage = () => {
                 )}
               </div>
               <div className="my-3 col-md-3">
-                <label className="form-label fw-bold">Max (%)*</label>
+                <label className="form-label fw-bold">
+                  Max (%)<span className="text-danger ms-1">*</span>
+                </label>
                 <input
                   defaultValue={115}
                   type="number"
@@ -197,7 +217,9 @@ const RegistroAmbientePage = () => {
 
             {mostrarComputadoras && (
               <div className="my-3">
-                <label className="form-label fw-bold">Nº Computadoras *</label>
+                <label className="form-label fw-bold">
+                  Nº Computadoras <span className="text-danger ms-1">*</span>
+                </label>
                 <input
                   type="number"
                   className="form-control"
@@ -205,7 +227,7 @@ const RegistroAmbientePage = () => {
                   {...register('computadora')}
                 />
                 {errors.computadora && (
-                  <span className="text-danger">{errors.computadora.message}</span>
+                  <span className="text-danger">El campo es obligatorio</span>
                 )}
               </div>
             )}
@@ -237,7 +259,9 @@ const RegistroAmbientePage = () => {
 
             {/* Horarios */}
             <div className="my-3">
-              <label className="form-label fw-bold">Días y horarios disponibles</label>
+              <label className="form-label fw-bold">
+                Días y horarios disponibles <span className="text-danger ms-1">*</span>
+              </label>
               {horarios.map((horario, index) => {
                 return (
                   <div key={index}>
@@ -321,9 +345,52 @@ const RegistroAmbientePage = () => {
               <button type="submit" className="btn btn-success me-5">
                 Registrar
               </button>
-              <Link to={'/'} className="btn btn-danger">
+
+              <button
+                className="btn btn-danger"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+              >
                 Cancelar
-              </Link>
+              </button>
+
+              {/* Modal boton Cancelar*/}
+              <div
+                className="modal fade"
+                id="staticBackdrop"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
+                tabIndex="-1"
+                aria-labelledby="staticBackdropLabel"
+                aria-hidden="true"
+              >
+                <div className="modal-dialog modal-dialog-centered ">
+                  <div className="modal-content pt-md-3">
+                    <div className="modal-body text-center">
+                      <div>
+                        <img src={iconoError} alt="icono de error" />
+                      </div>
+                      <div className="py-md-3">
+                        ¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?
+                      </div>
+                      <div className="d-flex justify-content-between">
+                        <button
+                          type="button"
+                          className="btn btn-success"
+                          data-bs-dismiss="modal"
+                          onClick={handleClickYes}
+                        >
+                          <p className="mx-4 my-auto">Si</p>
+                        </button>
+                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
+                          <p className="mx-4 my-auto">No</p>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
         </div>
