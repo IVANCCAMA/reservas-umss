@@ -19,7 +19,6 @@ const ListadoAmbientesPage = () => {
       .then((response) => {
         setAmbientes(
           response.data.map((amb) => {
-            console.log(response);
             return {
               ID: amb.id_ambiente_tabla,
               Aula: amb.nombre_ambiente,

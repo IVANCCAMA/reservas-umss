@@ -5,17 +5,31 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import horariosJSON from './horarios';
 import iconoError from '../../../assets/Images/iconoError.png';
+import iconoExito from '../../../assets/Images/iconoExito.png';
+import { useState } from 'react';
+import ModalForm from '../../../components/Modal/ModalForm';
 
 const RegistroAmbientePage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
   const navigate = useNavigate();
+
+  // estados modales
+  const [showModal, setShowModal] = useState(false);
 
   // yup validación, atributos de formulario
   const schema = yup.object({
     nombre_ambiente: yup.string().required(),
     tipo: yup.string().required(),
     capacidad: yup.number().required(),
-    computadora: yup.number().required(),
+    computadora: yup
+      .number()
+      .test('is-required', 'El campo es obligatorio para laboratorios', function (value) {
+        const tipoAmbiente = this.parent.tipo;
+        if (tipoAmbiente === 'Laboratorio') {
+          return typeof value === 'number';
+        }
+        return true;
+      }),
     ubicacion: yup.string(),
     porcentaje_min: yup.number().required(),
     porcentaje_max: yup.number().required(),
@@ -44,7 +58,7 @@ const RegistroAmbientePage = () => {
     setValue,
     watch,
   } = useForm({
-    resolver: yupResolver(schema),
+    /* resolver: yupResolver(schema), */
     defaultValues: {
       disponible: true,
       proyector: false,
@@ -60,6 +74,7 @@ const RegistroAmbientePage = () => {
 
   // logic api
   const onSubmit = (data) => {
+    console.log('Datos inicial', data);
     const filteredDia = Object.fromEntries(
       // eslint-disable-next-line no-unused-vars
       Object.entries(data.dia).filter(([key, value]) =>
@@ -70,6 +85,7 @@ const RegistroAmbientePage = () => {
     const filteredData = {
       ...data,
       tipo: removeAccents(data.tipo.toLowerCase()),
+      computadora: data.computadora === '' ? 0 : data.computadora,
       dia: Object.fromEntries(
         Object.entries(filteredDia).map(([key, value]) => [
           removeAccents(key.toLowerCase()),
@@ -77,13 +93,17 @@ const RegistroAmbientePage = () => {
         ]),
       ),
     };
-
+    console.log('Datos enviados', filteredData);
     axios
       .post(`${baseURL}/ambientes/completo`, filteredData)
       .then((response) => {
         console.log(response);
         // Establecer los datos en el estado
         if (response.status === 201) {
+          const myModalExito = new bootstrap.Modal(document.getElementById('modalExito'));
+          myModalExito.show();
+
+          // restablecer formulario
           reset({
             nombre_ambiente: '',
             tipo: '',
@@ -107,10 +127,15 @@ const RegistroAmbientePage = () => {
           });
         } else {
           /* Modal error */
+          const myModalError = new bootstrap.Modal(document.getElementById('modalError'));
+          myModalError.show();
         }
       })
       .catch((error) => {
         console.error('Error al crear ambiente:', error);
+        /* Modal error */
+        const myModalError = new bootstrap.Modal(document.getElementById('modalError'));
+        myModalError.show();
       });
   };
 
@@ -226,9 +251,7 @@ const RegistroAmbientePage = () => {
                   placeholder="Escriba el número de computadoras"
                   {...register('computadora')}
                 />
-                {errors.computadora && (
-                  <span className="text-danger">El campo es obligatorio</span>
-                )}
+                {errors.computadora && <span className="text-danger">El campo es obligatorio</span>}
               </div>
             )}
 
@@ -391,6 +414,29 @@ const RegistroAmbientePage = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Modal exito */}
+              <ModalForm
+                id="modalExito"
+                imgIcon={iconoExito}
+                content="Ambiente registrado con éxito"
+                btnColor="success"
+                handleConfirm={() => {
+                  setShowModal(false);
+                  // Restablecer formulario y otros cambios necesarios...
+                }}
+              />
+
+              <ModalForm
+                id="modalError"
+                imgIcon={iconoError}
+                content="Error al registrar ambiente intente de nuevo"
+                btnColor="danger"
+                handleConfirm={() => {
+                  setShowModal(false);
+                  // Restablecer formulario y otros cambios necesarios...
+                }}
+              />
             </div>
           </form>
         </div>
