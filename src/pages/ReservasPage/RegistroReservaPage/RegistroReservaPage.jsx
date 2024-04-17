@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import TextInput from '../../../components/Form/TextInput';
-import TextTarea from '../../../components/Form/TextTarea';
-import Select from '../../../components/Form/Select';
-import Accordion from '../../../components/Form/Accordion';
-import CheckboxInput from '../../../components/Form/CheckboxInput';
+import { useNavigate } from 'react-router-dom';
+import { TextInput, TextTarea, Select, Accordion, CheckboxInput } from '../../../components/Form';
 import AlertContainer from '../../../components/Bootstrap/AlertContainer';
 import axios from 'axios';
 
@@ -21,17 +18,20 @@ const RegistroReservaPage = () => {
   const [grupos, setGrupos] = useState([]);
   const [minDate, setMinDate] = useState('');
   const [maxDate, setMaxDate] = useState('');
+  const [allCheckbox, setAllCheckBox] = useState(false);
+  const navigate = useNavigate();
   const alertRef = useRef(null);
   const gruposRef = useRef(grupos);
-  const [allCheckbox, setAllCheckBox] = useState(false);
-  // form
-  const [solicitante, setSolicitante] = useState('');
-  const [tipoAmbiente, setTipoAmbiente] = useState('');
-  const [listaGrupos, setListaGrupos] = useState([]);
-  const [estudiantes, setEstudiantes] = useState(0);
-  const [fecha, setFecha] = useState('');
-  const [motivo, setMotivo] = useState('');
-  const [periodos, setPeriodos] = useState([]);
+  // formData
+  const [formData, setFormData] = useState({
+    solicitante: '',
+    tipo_ambiente: '',
+    listaGrupos: [], // array number
+    cantidad_est: 0,
+    fecha_reserva: '',
+    motivo: '',
+    periodos: []
+  });
   // cargar aux
   useEffect(() => {
     // recuperar users para el id del solicitante
@@ -57,9 +57,11 @@ const RegistroReservaPage = () => {
     axios
       .get(`${database}/periodos`)
       .then((response) => {
-        setPeriodos(response.data.map(periodo => {
-          return { ...periodo, checked: false };
-        }));
+        setFormData({
+          ...formData, periodos: response.data.map(periodo => {
+            return { ...periodo, checked: false };
+          })
+        });
       })
       .catch((error) => {
         console.error('Error al obtener los periodos:', error);
@@ -74,17 +76,17 @@ const RegistroReservaPage = () => {
       }
       return acc;
     }, 0);
-    setEstudiantes(sum);
+    setFormData({ ...formData, cantidad_est: sum });
   }, [grupos]);
   // update allChecked
   useEffect(() => {
-    const uncheck = periodos.find(obj => obj.checked === false);
+    const uncheck = formData.periodos.find(obj => obj.checked === false);
     setAllCheckBox(!uncheck);
-  }, [periodos]);
+  }, [formData]);
 
   const handleSolicitante = (newValue) => {
     const filteredValue = newValue.replace(/[^a-zA-Z ]/g, '');
-    setSolicitante(filteredValue.toUpperCase());
+    setFormData({ ...formData, solicitante: filteredValue.toUpperCase() });
     // update datalist solicitantes
     const filteredValues = users
       .filter(obj => obj.nombre_usuario.includes(filteredValue.toUpperCase()))
@@ -115,7 +117,7 @@ const RegistroReservaPage = () => {
         console.error('Error al obtener las materias y grupos:', error);
       });
     // reset form
-    setListaGrupos([]);
+    setFormData({ ...formData, listaGrupos: [] });
     alertRef.current.removeAllAlerts();
   };
 
@@ -127,50 +129,45 @@ const RegistroReservaPage = () => {
       return group;
     });
     setGrupos(updatedGrupos);
-    setListaGrupos(currentList => currentList.filter(group => group !== groupID));
+    setFormData({ ...formData, listaGrupos: formData.listaGrupos.filter(group => group !== groupID) });
+    // setListaGrupos(currentList => currentList.filter(group => group !== groupID));
   };
 
   const addGropsSelected = (newValue) => {
     const updatedGrupos = grupos.map((group) => {
       if (group.value === newValue) {
-        alertRef.current.addAlert(alerts[listaGrupos.length % 8], group.title, () => removeGropsSelected(newValue));
+        alertRef.current.addAlert(alerts[formData.listaGrupos.length % 8], group.title, () => removeGropsSelected(newValue));
         return { ...group, hidden: true };
       }
       return group;
     });
     setGrupos(updatedGrupos);
-    setListaGrupos(prevGroups => [...prevGroups, newValue]);
+    setFormData({ ...formData, listaGrupos: [...formData.listaGrupos, newValue] });
+    // setListaGrupos(prevGroups => [...prevGroups, newValue]);
   };
 
   const handleCheckboxChange = (id_periodo) => {
-    const updatedPeriodos = periodos.map(periodo =>
+    const updatedPeriodos = formData.periodos.map(periodo =>
       periodo.id_periodo === id_periodo ? { ...periodo, checked: !periodo.checked } : periodo
     );
-    setPeriodos(updatedPeriodos);
+    setFormData({ ...formData, periodos: updatedPeriodos });
   };
 
   const checkedAll = (checked) => {
-    const updatedPeriodos = periodos.map(periodo =>
+    const updatedPeriodos = formData.periodos.map(periodo =>
       ({ ...periodo, checked: checked })
     );
     setAllCheckBox(checked);
-    setPeriodos(updatedPeriodos);
+    setFormData({ ...formData, periodos: updatedPeriodos });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const ambienteDisp = {
-      tipo_ambiente: tipoAmbiente,
-      cantidad_est: estudiantes,
-      fecha_reserva: fecha,
-      periodos: periodos.filter(periodo => periodo.checked).map(periodo => periodo.id_periodo)
-    };
-    console.log(ambienteDisp);
-
+    const fomrSate = { ...formData, periodos: formData.periodos.filter(periodo => periodo.checked)};
     axios
-      .post(`${database}/reservas`, ambienteDisp)
+      .post(`${database}/reservas`, fomrSate)
       .then((response) => {
-        console.log(response);
+        navigate('./ambientesDisponibles', { state: {...fomrSate, ambienteDisp: response.data} });
       })
       .catch((error) => {
         console.error('Error al obtener las materias y grupos:', error);
@@ -188,7 +185,7 @@ const RegistroReservaPage = () => {
               required
               name='solicitante'
               label='Nombre del solicitante *'
-              value={solicitante}
+              value={formData.solicitante}
               datalist={datalistSolicitante}
               onChange={handleSolicitante}
               onBlur={searchGroupsByApplicant}
@@ -200,7 +197,7 @@ const RegistroReservaPage = () => {
               name='tipoAmbiente'
               label='Tipo de ambiente *'
               options={tiposAmbiente}
-              onChange={setTipoAmbiente}
+              onChange={(e) => setFormData({ ...formData, tipo_ambiente: e })}
               placeholder='Seleccionar el tipo de ambiente'
             />
 
@@ -226,7 +223,7 @@ const RegistroReservaPage = () => {
                 <input
                   required
                   disabled
-                  value={estudiantes}
+                  value={formData.cantidad_est}
                   type="text"
                   className="form-control"
                 />
@@ -238,18 +235,17 @@ const RegistroReservaPage = () => {
                   type="date"
                   min={minDate}
                   max={maxDate}
-                  onChange={(e) => { setFecha(e.target.value) }}
+                  onChange={(e) => { setFormData({ ...formData, fecha_reserva: e.target.value }) }}
                   className="form-control"
                 />
               </div>
             </div>
 
             <TextTarea
-              required
               name='motivo'
               label='Motivos de reserva'
-              value={motivo}
-              onChange={setMotivo}
+              value={formData.motivo}
+              onChange={(e) => setFormData({ ...formData, motivo: e })}
               placeholder='Escriba el motivo de la reserva'
               maxLength={200}
             />
@@ -270,7 +266,7 @@ const RegistroReservaPage = () => {
                     </div>
 
                     <div className='row row-cols4'>
-                      {periodos.map((periodo, index) => {
+                      {formData.periodos.map((periodo, index) => {
                         return (
                           <div key={`periodo-${index}`} className='col-md-4'>
                             <CheckboxInput

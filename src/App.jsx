@@ -7,6 +7,7 @@ import SubirMatariasPage from './pages/MateriasPage/SubirMatariasPage/SubirMatar
 import ListadoAmbientesPage from './pages/AmbientesPage/ListadoAmbientesPage/ListadoAmbientesPage';
 import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/RegistroAmbientePage';
 import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/RegistroReservaPage';
+import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
 
               <Route path="/reservas/reservarAmbiente" element={<RegistroReservaPage />} />
+              <Route path="/reservas/reservarAmbiente/ambientesDisponibles" element={<AmbientesDisponiblesPage />} />
               <Route path="/reservas/listaReservas" element={<ListadoMateriasPage />} />
             </Routes>
           </div>
