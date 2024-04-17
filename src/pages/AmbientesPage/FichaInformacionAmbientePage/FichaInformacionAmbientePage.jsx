@@ -25,7 +25,6 @@ const FichaInformacionAmbientePage = () => {
     axios
       .get('http://localhost:4000/api/disponibles/ambiente/' + id)
       .then((response) => {
-        console.log('id_ambiente', id);
         setAmbiente(response.data);
         setDisponibilidadPorDia(response.data.disponibilidadPorDia);
       })
@@ -42,8 +41,6 @@ const FichaInformacionAmbientePage = () => {
     <div className="container ficha-ambientes">
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-9">
-          {console.log('ambiente', ambiente)}
-          {console.log('dias', disponibilidadPorDia)}
           <h2 className="text-center pb-3">Ambiente {ambiente.nombre_ambiente}</h2>
           <div className="row">
             <p className="col">Tipo de ambiente</p>
