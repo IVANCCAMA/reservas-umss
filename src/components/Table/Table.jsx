@@ -23,7 +23,6 @@ const Tabla = ({ rows, firstRow = 1, lastRow = rows?.length, enumeration = true 
                 index >= firstRow && (
                   <tr key={`row-${index}`}>
                     {enumeration && <th scope="row">{index + 1}</th>}
-
                     {Object.keys(rows[0]).map((col) => (
                       <td key={`row-${index}-${col}`}>{row[col] ? row[col] : '-'}</td>
                     ))}
