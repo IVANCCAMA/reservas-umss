@@ -26,7 +26,7 @@ const ListadoAmbientesPage = () => {
               Tipo: amb.tipo,
               Proyector: amb.proyector ? 'Si' : 'No',
               'Ver más': (
-                <div className="boton-style w-auto text-center me-md-3">
+                <div className="boton-style w-auto text-center me-md-3 rounded">
                   <Link
                     to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
                     className="btn border border-0"
