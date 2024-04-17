@@ -7,6 +7,7 @@ import horariosJSON from './horarios';
 import iconoError from '../../../assets/Images/iconoError.png';
 
 const RegistroAmbientePage = () => {
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
   const navigate = useNavigate();
 
   // yup validación, atributos de formulario
@@ -78,7 +79,7 @@ const RegistroAmbientePage = () => {
     };
 
     axios
-      .post('http://localhost:4000/api/ambientes/completo', filteredData)
+      .post(`${baseURL}/ambientes/completo`, filteredData)
       .then((response) => {
         console.log(response);
         // Establecer los datos en el estado

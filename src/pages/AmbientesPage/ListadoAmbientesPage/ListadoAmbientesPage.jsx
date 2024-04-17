@@ -7,6 +7,7 @@ import Pagination from '../../../components/Pagination/Pagination';
 import { Icon } from '@iconify/react/dist/iconify.js';
 
 const ListadoAmbientesPage = () => {
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
   // estados
   const [pageNumber, setPageNumber] = useState(1);
   const [ambientes, setAmbientes] = useState([{}]);
@@ -14,7 +15,7 @@ const ListadoAmbientesPage = () => {
   // logica | api
   const loadAmbientes = () => {
     axios
-      .get('http://localhost:4000/api/ambientes')
+      .get(`${baseURL}/ambientes`)
       .then((response) => {
         setAmbientes(
           response.data.map((amb) => {
