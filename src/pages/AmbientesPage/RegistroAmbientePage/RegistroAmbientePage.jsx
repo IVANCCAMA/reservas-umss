@@ -117,11 +117,14 @@ const RegistroAmbientePage = () => {
   return (
     <div className="container">
       <div className="row py-md-3 justify-content-center">
-        <div className="col-md-6">
+        <div className="col-md-8">
           <h2 className="text-md-center">Registrar ambientes</h2>
           <form className="forms" onSubmit={handleSubmit(onSubmit)}>
             <div className="my-3">
-              <label className="form-label fw-bold">Nombre de ambiente *</label>
+              <label className="form-label fw-bold">
+                Nombre de ambiente
+                <span className="text-danger ms-1">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -133,7 +136,9 @@ const RegistroAmbientePage = () => {
               )}
             </div>
             <div className="my-3">
-              <label className="form-label fw-bold">Tipo de ambiente *</label>
+              <label className="form-label fw-bold">
+                Tipo de ambiente <span className="text-danger ms-1">*</span>
+              </label>
               <select
                 className="form-select"
                 placeholder="Seleccione el tipo de ambiente"
@@ -158,7 +163,9 @@ const RegistroAmbientePage = () => {
             </div>
             <div className="row">
               <div className="my-3 col-md-6">
-                <label className="form-label fw-bold">Capacidad de estudiantes *</label>
+                <label className="form-label fw-bold">
+                  Capacidad de estudiantes <span className="text-danger ms-1">*</span>
+                </label>
                 <input
                   type="number"
                   className="form-control"
@@ -168,7 +175,9 @@ const RegistroAmbientePage = () => {
                 {errors.capacidad && <span className="text-danger">El campo es obligatorio</span>}
               </div>
               <div className="my-3 col-md-3">
-                <label className="form-label fw-bold">Min (%)*</label>
+                <label className="form-label fw-bold">
+                  Min (%)<span className="text-danger ms-1">*</span>
+                </label>
                 <input
                   defaultValue={85}
                   type="number"
@@ -181,7 +190,9 @@ const RegistroAmbientePage = () => {
                 )}
               </div>
               <div className="my-3 col-md-3">
-                <label className="form-label fw-bold">Max (%)*</label>
+                <label className="form-label fw-bold">
+                  Max (%)<span className="text-danger ms-1">*</span>
+                </label>
                 <input
                   defaultValue={115}
                   type="number"
@@ -237,7 +248,9 @@ const RegistroAmbientePage = () => {
 
             {/* Horarios */}
             <div className="my-3">
-              <label className="form-label fw-bold">Días y horarios disponibles</label>
+              <label className="form-label fw-bold">
+                Días y horarios disponibles <span className="text-danger ms-1">*</span>
+              </label>
               {horarios.map((horario, index) => {
                 return (
                   <div key={index}>
