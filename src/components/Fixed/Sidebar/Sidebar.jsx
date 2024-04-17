@@ -10,8 +10,8 @@ const Sidebar = () => {
       name: 'Ambientes',
       icon: 'mdi:google-classroom',
       subs: [
-        { to: 'ambientes/registrarAmbiente', name: 'Registrar ambiente' },
-        { to: 'ambientes/listaAmbientes', name: 'Lista de ambientes' },
+        { to: '/ambientes/registrarAmbiente', name: 'Registrar ambiente' },
+        { to: '/ambientes/listaAmbientes', name: 'Lista de ambientes' },
       ],
     },
     {
