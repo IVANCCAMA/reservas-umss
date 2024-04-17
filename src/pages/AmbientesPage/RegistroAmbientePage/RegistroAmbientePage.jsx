@@ -2,10 +2,13 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import horariosJSON from './horarios';
+import iconoError from '../../../assets/Images/iconoError.png';
 
 const RegistroAmbientePage = () => {
+  const navigate = useNavigate();
+
   // yup validación, atributos de formulario
   const schema = yup.object({
     nombre_ambiente: yup.string().required(),
@@ -114,8 +117,16 @@ const RegistroAmbientePage = () => {
   // visibilidad de la sección de computadoras
   const mostrarComputadoras = tipoAmbiente === 'Laboratorio';
 
+  const handleClickYes = () => {
+    // Realiza cualquier lógica adicional aquí si es necesario
+    // Por ejemplo, enviar una solicitud al servidor antes de redirigir
+
+    // Redirige a la página de inicio
+    navigate('/');
+  };
+
   return (
-    <div className="container">
+    <div className="container registro-ambientes">
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
           <h2 className="text-md-center">Registrar ambientes</h2>
@@ -334,9 +345,53 @@ const RegistroAmbientePage = () => {
               <button type="submit" className="btn btn-success me-5">
                 Registrar
               </button>
-              <Link to={'/'} className="btn btn-danger">
+
+              <Link
+                to={'/'}
+                className="btn btn-danger"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+              >
                 Cancelar
               </Link>
+
+              {/* Modal */}
+              <div
+                className="modal fade"
+                id="staticBackdrop"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
+                tabIndex="-1"
+                aria-labelledby="staticBackdropLabel"
+                aria-hidden="true"
+              >
+                <div className="modal-dialog modal-dialog-centered ">
+                  <div className="modal-content pt-md-3">
+                    <div className="modal-body text-center">
+                      <div>
+                        <img src={iconoError} alt="icono de error" className="" />
+                      </div>
+                      <div className="py-md-3">
+                        ¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?
+                      </div>
+                      <div className="d-flex justify-content-between">
+                        <button
+                          type="button"
+                          className="btn btn-success"
+                          data-bs-dismiss="modal"
+                          onClick={handleClickYes}
+                        >
+                          <p className="mx-4 my-auto">Si</p>
+                        </button>
+                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
+                          <p className="mx-4 my-auto">No</p>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
         </div>
