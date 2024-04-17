@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import horariosJSON from './horarios';
 import iconoError from '../../../assets/Images/iconoError.png';
+import iconoExito from '../../../assets/Images/iconoExito.png';
 
 const RegistroAmbientePage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
@@ -15,7 +16,15 @@ const RegistroAmbientePage = () => {
     nombre_ambiente: yup.string().required(),
     tipo: yup.string().required(),
     capacidad: yup.number().required(),
-    computadora: yup.number().required(),
+    computadora: yup
+      .number()
+      .test('is-required', 'El campo es obligatorio para laboratorios', function (value) {
+        const tipoAmbiente = this.parent.tipo;
+        if (tipoAmbiente === 'Laboratorio') {
+          return typeof value === 'number';
+        }
+        return true;
+      }),
     ubicacion: yup.string(),
     porcentaje_min: yup.number().required(),
     porcentaje_max: yup.number().required(),
@@ -60,6 +69,7 @@ const RegistroAmbientePage = () => {
 
   // logic api
   const onSubmit = (data) => {
+    console.log('Datos inicial', data);
     const filteredDia = Object.fromEntries(
       // eslint-disable-next-line no-unused-vars
       Object.entries(data.dia).filter(([key, value]) =>
@@ -70,6 +80,7 @@ const RegistroAmbientePage = () => {
     const filteredData = {
       ...data,
       tipo: removeAccents(data.tipo.toLowerCase()),
+      computadora: data.computadora === '' ? 0 : data.computadora,
       dia: Object.fromEntries(
         Object.entries(filteredDia).map(([key, value]) => [
           removeAccents(key.toLowerCase()),
@@ -77,13 +88,17 @@ const RegistroAmbientePage = () => {
         ]),
       ),
     };
-
+    console.log('Datos enviados', filteredData);
     axios
       .post(`${baseURL}/ambientes/completo`, filteredData)
       .then((response) => {
         console.log(response);
         // Establecer los datos en el estado
         if (response.status === 201) {
+          const myModalExito = new bootstrap.Modal(document.getElementById('modalExito'));
+          myModalExito.show();
+
+          // restablecer formulario
           reset({
             nombre_ambiente: '',
             tipo: '',
@@ -107,10 +122,15 @@ const RegistroAmbientePage = () => {
           });
         } else {
           /* Modal error */
+          const myModalError = new bootstrap.Modal(document.getElementById('modalError'));
+          myModalError.show();
         }
       })
       .catch((error) => {
         console.error('Error al crear ambiente:', error);
+        /* Modal error */
+        const myModalError = new bootstrap.Modal(document.getElementById('modalError'));
+        myModalError.show();
       });
   };
 
@@ -226,9 +246,7 @@ const RegistroAmbientePage = () => {
                   placeholder="Escriba el número de computadoras"
                   {...register('computadora')}
                 />
-                {errors.computadora && (
-                  <span className="text-danger">El campo es obligatorio</span>
-                )}
+                {errors.computadora && <span className="text-danger">El campo es obligatorio</span>}
               </div>
             )}
 
@@ -385,6 +403,62 @@ const RegistroAmbientePage = () => {
                         </button>
                         <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
                           <p className="mx-4 my-auto">No</p>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal exito */}
+              <div
+                className="modal fade"
+                id="modalExito"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
+                tabIndex="-1"
+                aria-labelledby="staticBackdropLabel"
+                aria-hidden="true"
+              >
+                <div className="modal-dialog modal-dialog-centered ">
+                  <div className="modal-content pt-md-3">
+                    <div className="modal-body text-center">
+                      <div>
+                        <img src={iconoExito} alt="icono de error" />
+                      </div>
+                      <div className="py-md-3">Ambiente registrado con exito</div>
+                      <div className="d-flex justify-content-center">
+                        <button type="button" className="btn btn-success" data-bs-dismiss="modal">
+                          <p className="mx-4 my-auto">Aceptar</p>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal error */}
+              <div
+                className="modal fade"
+                id="modalError"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
+                tabIndex="-1"
+                aria-labelledby="staticBackdropLabel"
+                aria-hidden="true"
+              >
+                <div className="modal-dialog modal-dialog-centered ">
+                  <div className="modal-content pt-md-3">
+                    <div className="modal-body text-center">
+                      <div>
+                        <img src={iconoError} alt="icono de error" />
+                      </div>
+                      <div className="py-md-3">
+                        Error al registrar ambiente <br /> intente de nuevo
+                      </div>
+                      <div className="d-flex justify-content-center">
+                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
+                          <p className="mx-4 my-auto">Aceptar</p>
                         </button>
                       </div>
                     </div>
