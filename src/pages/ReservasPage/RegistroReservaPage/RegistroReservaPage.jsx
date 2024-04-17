@@ -5,7 +5,7 @@ import AlertContainer from '../../../components/Bootstrap/AlertContainer';
 import axios from 'axios';
 
 const RegistroReservaPage = () => {
-  const database = 'http://localhost:4000/api';
+  const database = 'https://backendtis-production.up.railway.app/api';
   const tiposAmbiente = [
     { title: 'Aula común', value: 'aula comun' },
     { title: 'Laboratorio', value: 'laboratorio' },
@@ -25,10 +25,10 @@ const RegistroReservaPage = () => {
   // formData
   const [formData, setFormData] = useState({
     solicitante: '',
-    tipo_ambiente: '',
+    tipoAmbiente: '',
     listaGrupos: [], // array number
-    cantidad_est: 0,
-    fecha_reserva: '',
+    estudiantes: 0,
+    fecha: '',
     motivo: '',
     periodos: []
   });
@@ -76,7 +76,7 @@ const RegistroReservaPage = () => {
       }
       return acc;
     }, 0);
-    setFormData({ ...formData, cantidad_est: sum });
+    setFormData({ ...formData, estudiantes: sum });
   }, [grupos]);
   // update allChecked
   useEffect(() => {
@@ -107,7 +107,7 @@ const RegistroReservaPage = () => {
       .then((response) => {
         // mapear y dar formato
         setGrupos(response.data['materia-grupo'].map(group => ({
-          value: String(group.id_grupo),
+          value: String(group.id_aux_grupo),
           title: `${group.nombre_materia} - ${group.nombre_grupo}`,
           inscritos: group.cantidad_est,
           hidden: false
@@ -130,7 +130,6 @@ const RegistroReservaPage = () => {
     });
     setGrupos(updatedGrupos);
     setFormData({ ...formData, listaGrupos: formData.listaGrupos.filter(group => group !== groupID) });
-    // setListaGrupos(currentList => currentList.filter(group => group !== groupID));
   };
 
   const addGropsSelected = (newValue) => {
@@ -143,7 +142,6 @@ const RegistroReservaPage = () => {
     });
     setGrupos(updatedGrupos);
     setFormData({ ...formData, listaGrupos: [...formData.listaGrupos, newValue] });
-    // setListaGrupos(prevGroups => [...prevGroups, newValue]);
   };
 
   const handleCheckboxChange = (id_periodo) => {
@@ -163,11 +161,23 @@ const RegistroReservaPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const fomrSate = { ...formData, periodos: formData.periodos.filter(periodo => periodo.checked)};
     axios
-      .post(`${database}/reservas`, fomrSate)
+      .post(`${database}/reservas`, {
+        tipo_ambiente: formData.tipoAmbiente,
+        cantidad_est: formData.estudiantes,
+        fecha_reserva: formData.fecha,
+        periodos: formData.periodos.filter(periodo => periodo.checked)
+      })
       .then((response) => {
-        navigate('./ambientesDisponibles', { state: {...fomrSate, ambienteDisp: response.data} });
+        navigate('./ambientesDisponibles', {
+          state: {
+            fecha_reserva: formData.fecha,
+            motivo: formData.motivo,
+            listaGrupos: formData.listaGrupos,
+            id_apertura: 2,
+            ambienteDisp: response.data
+          }
+        });
       })
       .catch((error) => {
         console.error('Error al obtener las materias y grupos:', error);
@@ -197,7 +207,7 @@ const RegistroReservaPage = () => {
               name='tipoAmbiente'
               label='Tipo de ambiente *'
               options={tiposAmbiente}
-              onChange={(e) => setFormData({ ...formData, tipo_ambiente: e })}
+              onChange={(e) => setFormData({ ...formData, tipoAmbiente: e })}
               placeholder='Seleccionar el tipo de ambiente'
             />
 
@@ -223,7 +233,7 @@ const RegistroReservaPage = () => {
                 <input
                   required
                   disabled
-                  value={formData.cantidad_est}
+                  value={formData.estudiantes}
                   type="text"
                   className="form-control"
                 />
@@ -235,7 +245,7 @@ const RegistroReservaPage = () => {
                   type="date"
                   min={minDate}
                   max={maxDate}
-                  onChange={(e) => { setFormData({ ...formData, fecha_reserva: e.target.value }) }}
+                  onChange={(e) => { setFormData({ ...formData, fecha: e.target.value }) }}
                   className="form-control"
                 />
               </div>
