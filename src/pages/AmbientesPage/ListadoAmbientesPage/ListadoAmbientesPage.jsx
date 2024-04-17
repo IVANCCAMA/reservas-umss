@@ -26,19 +26,16 @@ const ListadoAmbientesPage = () => {
               Tipo: amb.tipo,
               Proyector: amb.proyector ? 'Si' : 'No',
               'Ver más': (
-              <div className='boton-style w-75 '>
-                <Link
-                  to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
-                  className="btn border border-0"
-                >
-                  <div className=''>
-                  <Icon 
-                    icon="gg:arrow-right-r"  className='boton-icon ms-xl-4 ms-lg-1 ms-md-0 ' />
-                  </div>
-                  
-                </Link>
-              </div> 
-                
+                <div className="boton-style w-auto text-center me-md-3">
+                  <Link
+                    to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
+                    className="btn border border-0"
+                  >
+                    <div>
+                      <Icon icon="gg:arrow-right-r" className="boton-icon" />
+                    </div>
+                  </Link>
+                </div>
               ),
             };
           }),
@@ -54,19 +51,17 @@ const ListadoAmbientesPage = () => {
     loadAmbientes();
   }, []);
 
-
   return (
+    <div className="container-fluid listado-ambientes p-md-5">
+      <h2 className="text-start">Lista de ambientes</h2>
+      <Table rows={ambientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
 
-        <div className="container-fluid listado-ambientes p-md-5">
-          <h2 className="text-start">Lista de ambientes</h2>
-          <Table rows={ambientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
-
-          <Pagination
-            pageNumber={pageNumber}
-            setPageNumber={setPageNumber}
-            lastPage={Math.floor(ambientes.length / 10) + 1}
-          />
-        </div>
-  )
+      <Pagination
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+        lastPage={Math.floor(ambientes.length / 10) + 1}
+      />
+    </div>
+  );
 };
 export default ListadoAmbientesPage;
