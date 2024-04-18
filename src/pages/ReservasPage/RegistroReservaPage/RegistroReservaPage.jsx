@@ -8,6 +8,10 @@ import AlertContainer from '../../../components/Bootstrap/AlertContainer';
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
 
+  // json horarios
+  const horarios = horariosJSON;
+
+  // estados
   const [users, setUsers] = useState([]);
   const [grupos, setGrupos] = useState([]);
 
@@ -20,7 +24,13 @@ const RegistroReservaPage = () => {
     fecha: yup.string().required(),
     motivo: yup.string(),
     // Validación de los periodos seleccionados
-    periodos: yup.array().min(1, 'Seleccione al menos un periodo'),
+    periodos: yup
+      .array()
+      .min(1, 'Seleccione al menos un horario')
+      .test('at-least-one-period-selected', 'Seleccione al menos un horario', function (value) {
+        if (!value) return false; // Si no hay ningún periodo seleccionado, falla la validación
+        return value.some((periodo) => periodo.id_periodo !== false);
+      }),
   });
 
   const {
@@ -38,9 +48,6 @@ const RegistroReservaPage = () => {
       periodos: [],
     },
   });
-
-  // json horarios
-  const horarios = horariosJSON;
 
   // cargar aux
   useEffect(() => {
@@ -90,10 +97,7 @@ const RegistroReservaPage = () => {
           <form className="needs-validation" onSubmit={handleSubmit(onSubmit)}>
             {/* Solicitante */}
             <div className="my-3">
-              <label className="form-label fw-bold">
-                Nombre del solicitante
-                <span className="text-danger ms-1">*</span>
-              </label>
+              <label className="form-label fw-bold">Nombre del solicitante</label>
               <input
                 type="text"
                 className="form-control"
@@ -246,13 +250,9 @@ const RegistroReservaPage = () => {
                   </div>
                 </div>
               </div>
-              {errors.periodos && <span className="text-danger">{errors.periodos.message}</span>}
-
-              {/* <div>
-                {errors.dia && (
-                  <span className="text-danger">Seleccione al menos un periodo para un día</span>
-                )}
-              </div> */}
+              {errors.periodos && (
+                <span className="text-danger">Seleccione al menos un horario</span>
+              )}
             </div>
 
             <div className="d-flex justify-content-center">
