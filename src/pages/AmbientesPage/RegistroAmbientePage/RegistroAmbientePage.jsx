@@ -58,7 +58,7 @@ const RegistroAmbientePage = () => {
     setValue,
     watch,
   } = useForm({
-    /* resolver: yupResolver(schema), */
+    resolver: yupResolver(schema),
     defaultValues: {
       disponible: true,
       proyector: false,
