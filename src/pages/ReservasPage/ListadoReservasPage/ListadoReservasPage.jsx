@@ -5,6 +5,8 @@ import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
 
 const ListadoMateriasPage = () => {
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
+
   const [pageNumber, setPageNumber] = useState(1);
   const [reservas, setReservas] = useState([{}]);
 
@@ -16,7 +18,7 @@ const ListadoMateriasPage = () => {
 
   const loadMaterias = () => {
     axios
-      .get('https://backendtis-production.up.railway.app/api/reservas/lista_reservas')
+      .get(`${baseURL}/reservas/lista_reservas`)
       .then((response) => {
         setReservas(
           response.data.map((reserv) => {
