@@ -19,11 +19,8 @@ const RegistroReservaPage = () => {
     estudiantes: yup.number(),
     fecha: yup.string().required(),
     motivo: yup.string(),
-    periodos: yup.array().of(
-      yup.object().shape({
-        id_periodo: yup.boolean().oneOf([true], 'Seleccione al menos un periodo'),
-      }),
-    ),
+    // Validación de los periodos seleccionados
+    periodos: yup.array().min(1, 'Seleccione al menos un periodo'),
   });
 
   const {
@@ -38,6 +35,7 @@ const RegistroReservaPage = () => {
     resolver: yupResolver(schema),
     defaultValues: {
       solicitante: 'CARLA SALAZAR SERRUDO',
+      periodos: [],
     },
   });
 
