@@ -10,6 +10,7 @@ import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/Reg
 import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/RegistroReservaPage';
 import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
 import InformacionFormatoModal from './pages/MateriasPage/SubirMatariasPage/InformacionFormatoModal/InformacionFormatoModal';
+import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
 
 function App() {
   return (
@@ -26,15 +27,24 @@ function App() {
               <Route path="/" index element={<HomePage />} />
               <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
               <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
-              <Route path="/ambientes/listaAmbientes/fichaAmbiente/:id_ambiente" element={<FichaInformacionAmbientePage />} />
+              <Route
+                path="/ambientes/listaAmbientes/fichaAmbiente/:id_ambiente"
+                element={<FichaInformacionAmbientePage />}
+              />
 
               <Route path="/materias/subirMaterias" element={<SubirMatariasPage />} />
-              <Route path='/materias/subirMaterias/infoFormato' element={<InformacionFormatoModal/>} />
+              <Route
+                path="/materias/subirMaterias/infoFormato"
+                element={<InformacionFormatoModal />}
+              />
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
 
               <Route path="/reservas/reservarAmbiente" element={<RegistroReservaPage />} />
-              <Route path="/reservas/reservarAmbiente/ambientesDisponibles" element={<AmbientesDisponiblesPage />} />
-              <Route path="/reservas/listaReservas" element={<ListadoMateriasPage />} />
+              <Route
+                path="/reservas/reservarAmbiente/ambientesDisponibles"
+                element={<AmbientesDisponiblesPage />}
+              />
+              <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
             </Routes>
           </div>
         </div>
