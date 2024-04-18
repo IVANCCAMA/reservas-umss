@@ -49,19 +49,36 @@ const RegistroReservaPage = () => {
     },
   });
 
-  // cargar aux
+  // Estado para almacenar la lista completa de docentes
+  const [docentes, setDocentes] = useState([]);
+  // Estado para almacenar el texto de búsqueda
+  const [busqueda, setBusqueda] = useState('');
+  // Estado para almacenar las opciones filtradas del select
+  const [opcionesFiltradas, setOpcionesFiltradas] = useState([]);
+
+  // Función para obtener la lista de docentes
   useEffect(() => {
-    // recuperar users para el id del solicitante
     axios
       .get(`${database}/usuarios`)
       .then((response) => {
-        setUsers(response.data);
-        console.log('Usuariosss', response.data);
+        setDocentes(response.data);
       })
       .catch((error) => {
         console.error('Error al obtener los usuarios:', error);
       });
   }, []);
+
+  // Función para manejar cambios en el input de búsqueda
+  const handleBusquedaChange = (event) => {
+    const textoBusqueda = event.target.value;
+    setBusqueda(textoBusqueda);
+
+    // Filtrar las opciones de acuerdo al texto de búsqueda
+    const opcionesFiltradas = docentes.filter((docente) =>
+      docente.nombre_usuario.toLowerCase().includes(textoBusqueda.toLowerCase()),
+    );
+    setOpcionesFiltradas(opcionesFiltradas);
+  };
 
   const onSubmit = (data) => {
     console.log('Datos entrada', data);
@@ -95,15 +112,23 @@ const RegistroReservaPage = () => {
           <h2 className="text-md-center">Formulario de reserva</h2>
 
           <form className="needs-validation" onSubmit={handleSubmit(onSubmit)}>
-            {/* Solicitante */}
+            {/* Select para seleccionar el docente */}
             <div className="my-3">
               <label className="form-label fw-bold">Nombre del solicitante</label>
               <input
                 type="text"
                 className="form-control"
-                placeholder="Escriba el nombre del solicitante"
-                {...register('solicitante')}
+                placeholder="Ingrese el nombre del docente"
+                value={busqueda}
+                onChange={handleBusquedaChange}
               />
+              <select className="form-select" {...register('solicitante')}>
+                {opcionesFiltradas.map((docente) => (
+                  <option key={docente.id_usuario} value={docente.id_usuario}>
+                    {docente.nombre_usuario}
+                  </option>
+                ))}
+              </select>
               {errors.solicitante && <span className="text-danger">El campo es obligatorio</span>}
             </div>
 
