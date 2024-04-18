@@ -3,7 +3,6 @@ import HomePage from './pages/HomePage/HomePage';
 import Sidebar from './components/Fixed/Sidebar/Sidebar';
 import Navbar from './components/Fixed/Navbar/Navbar';
 import ListadoMateriasPage from './pages/MateriasPage/ListadoMateriasPage/ListadoMateriasPage';
-import SubirMatariasPage from './pages/MateriasPage/SubirMatariasPage/SubirMatariasPage';
 import ListadoAmbientesPage from './pages/AmbientesPage/ListadoAmbientesPage/ListadoAmbientesPage';
 import FichaInformacionAmbientePage from './pages/AmbientesPage/FichaInformacionAmbientePage/FichaInformacionAmbientePage';
 import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/RegistroAmbientePage';
@@ -32,7 +31,6 @@ function App() {
                 element={<FichaInformacionAmbientePage />}
               />
 
-              <Route path="/materias/subirMaterias" element={<SubirMatariasPage />} />
               <Route
                 path="/materias/subirMaterias/infoFormato"
                 element={<InformacionFormatoModal />}
@@ -40,10 +38,12 @@ function App() {
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
 
               <Route path="/reservas/reservarAmbiente" element={<RegistroReservaPage />} />
+
               <Route
                 path="/reservas/reservarAmbiente/ambientesDisponibles"
                 element={<AmbientesDisponiblesPage />}
               />
+
               <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
             </Routes>
           </div>

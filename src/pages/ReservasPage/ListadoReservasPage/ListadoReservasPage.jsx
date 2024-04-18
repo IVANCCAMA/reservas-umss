@@ -13,6 +13,7 @@ const ListadoMateriasPage = () => {
   // >>> FUTURO : FILTROS <<<
   // obtener valores de un key
   // const materiasKey = reservas.map(mat => mat.Nivel);
+
   // filtro para obtener solo los valores únicos
   // const keyUnicos = [...new Set(materiasKey)];
 
