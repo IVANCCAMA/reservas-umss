@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import horariosJSON from './horarios';
+import AlertContainer from '../../../components/Bootstrap/AlertContainer';
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
 
@@ -14,21 +15,15 @@ const RegistroReservaPage = () => {
   const schema = yup.object({
     solicitante: yup.string().required(),
     tipoAmbiente: yup.string().required(),
-    listaGrupos: yup.array().required(),
+    listaGrupos: yup.string().required(),
     estudiantes: yup.number(),
     fecha: yup.string().required(),
-    motivo: yup.number(),
-    /*  periodos: yup
-      .object()
-      .test(
-        'at-least-one-period-selected',
-        'Seleccione al menos un periodo para un día',
-        (value) => {
-          return Object.values(value).some((day) =>
-            day.periodos.some((periodo) => periodo.id_periodo !== false),
-          );
-        },
-      ), */
+    motivo: yup.string(),
+    periodos: yup.array().of(
+      yup.object().shape({
+        id_periodo: yup.boolean().oneOf([true], 'Seleccione al menos un periodo'),
+      }),
+    ),
   });
 
   const {
@@ -40,7 +35,7 @@ const RegistroReservaPage = () => {
     setValue,
     watch,
   } = useForm({
-    /* resolver: yupResolver(schema), */
+    resolver: yupResolver(schema),
     defaultValues: {
       solicitante: 'CARLA SALAZAR SERRUDO',
     },
@@ -146,21 +141,13 @@ const RegistroReservaPage = () => {
                 ))}
               </select>
             </div>
+            {errors.listaGrupos && (
+              <span className="text-danger">Seleccione al menos una materia</span>
+            )}
 
             <div className="my-3">
               <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
-              <select
-                className="form-select"
-                placeholder="Seleccionar materias y grupos"
-                {...register('listaGrupos')}
-              >
-                <option value="">Seleccionar materias y grupos</option>
-                {grupos.map((grupo, index) => (
-                  <option key={index} value={grupo.id}>
-                    {grupo.nombre} - {grupo.descripcion}
-                  </option>
-                ))}
-              </select>
+              <AlertContainer />
             </div>
 
             <div className="my-3 row row-cols6">
@@ -172,7 +159,8 @@ const RegistroReservaPage = () => {
                 <label className="form-label fw-bold">
                   Fecha de reserva <span className="text-danger ms-1">*</span>
                 </label>
-                <input type="date" className="form-control" />
+                <input type="date" className="form-control" {...register('fecha')} />
+                {errors.fecha && <span className="text-danger">Seleccione una fecha</span>}
               </div>
             </div>
 
@@ -260,12 +248,13 @@ const RegistroReservaPage = () => {
                   </div>
                 </div>
               </div>
+              {errors.periodos && <span className="text-danger">{errors.periodos.message}</span>}
 
-              <div>
+              {/* <div>
                 {errors.dia && (
                   <span className="text-danger">Seleccione al menos un periodo para un día</span>
                 )}
-              </div>
+              </div> */}
             </div>
 
             <div className="d-flex justify-content-center">
