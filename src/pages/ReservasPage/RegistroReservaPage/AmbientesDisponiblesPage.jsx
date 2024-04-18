@@ -1,96 +1,86 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+// import './ListadoAmbientesPage.scss';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import Table from '../../../components/Table/Table';
+import Pagination from '../../../components/Pagination/Pagination';
+import { Icon } from '@iconify/react/dist/iconify.js';
 
 const AmbientesDisponibles = () => {
   // estados
+  const database = 'https://backendtis-production.up.railway.app/api';
   const location = useLocation();
   const formData = location.state;
-  console.log(formData);
-  const [ambientes, setAmbientes] = useState([]);
+  const navigate = useNavigate();
 
-  // logica | api
-  const loadAmbientes = () => {
-    // Realizar la solicitud a la API
+  const confirmSelect = (id_disponible) => {
+    // show modal confirm
+
+    // click acept modal confirm
+    // register new reserva
+    const body = {
+      ...formData,
+      listaGrupos: formData.listaGrupos.map(group => parseInt(group, 10)),
+      id_disponible: id_disponible
+    };
+    console.log(body);
     axios
-      .get('http://localhost:4000/api/ambientes')
+      .post(`${database}/reservas/crear/`, body)
       .then((response) => {
-        // Establecer los datos en el estado
-        setAmbientes(response.data);
+        // success
+        console.log(response.data);
+        // redirect
+        navigate('/reservas/listaReservas');
       })
       .catch((error) => {
-        console.error('Error al obtener los ambientes:', error);
+        console.error('Error al obtener las materias y grupos:', error);
       });
   };
 
-  // rederización inicial
-  useEffect(() => {
-    loadAmbientes();
-  }, []);
+  const [pageNumber, setPageNumber] = useState(1);
+  const ambientes = formData.ambienteDisp.map((amb) => {
+    return {
+      ID: amb.ambiente_id,
+      Aula: amb.nombre_ambiente,
+      Capacidad: amb.capacidad_ambiente,
+      Estado: amb.estado,
+      Tipo: amb.tipo_ambiente,
+      Periodo: `${amb.hora_inicio?.slice(0, 5)} - ${amb.hora_fin?.slice(0, 5)}`,
+      Accion: (
+        <button
+          type="button"
+          className="btn btn-success boton-style w-auto text-center me-md-3 rounded"
+          onClick={() => { confirmSelect(amb.id_disponible) }}>
+          Seleccionar
+        </button>
+      ),
+    };
+  });
 
   return (
     <div className="container-fluid listado-ambientes p-md-5">
-      <h2 className="text-start">Lista de ambientes</h2>
-      <div className="table-responsive">
-        <table className="table table-striped border border-1">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">ID</th>
-              <th scope="col">Aula</th>
-              <th scope="col">Capacidad</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Tipo</th>
-              <th scope="col">Proyector</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ambientes.map((ambiente, index) => {
-              return (
-                <tr key={index}>
-                  <th scope="row">{index + 1}</th>
-                  <td>{ambiente.id_ambiente}</td>
-                  <td>{ambiente.nombre_ambiente}</td>
-                  <td>{ambiente.capacidad}</td>
-                  <td>{ambiente.disponible ? 'Si' : 'No'}</td>
-                  <td>{ambiente.tipo}</td>
-                  <td>{ambiente.proyector ? 'Si' : 'No'}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <h2 className="text-start">Lista de ambientes disponible</h2>
+      <Table rows={ambientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
+
+
+      <div className="my-3 row row-cols6">
+        <div className="col-md-6">
+          <button
+            type="button"
+            className="btn btn-primary boton-style w-auto text-center me-md-3 rounded"
+            onClick={() => { navigate('/reservas/reservarAmbiente'); }}>
+            Volver al formulario
+          </button>
+        </div>
+        <div className="col-md-6">
+          <Pagination
+            pageNumber={pageNumber}
+            setPageNumber={setPageNumber}
+            lastPage={Math.floor(ambientes.length / 10) + 1}
+          />
+        </div>
       </div>
-      {/* Botones de paginación */}
-      <nav aria-label="Page navigation example">
-        <ul className="pagination justify-content-end">
-          <li className="page-item">
-            <a className="page-link" href="#">
-              Anterior
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link active" href="#">
-              1
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">
-              2
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">
-              3
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">
-              Siguiente
-            </a>
-          </li>
-        </ul>
-      </nav>
     </div>
   );
 };

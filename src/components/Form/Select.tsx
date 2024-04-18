@@ -16,7 +16,7 @@ interface SelectProps {
   required?: boolean;
   defaultValue?: string;
   placeholder?: string;
-  value?: string | undefined;
+  value?: number | string | undefined;
 }
 
 const Select: React.FC<SelectProps> = ({
