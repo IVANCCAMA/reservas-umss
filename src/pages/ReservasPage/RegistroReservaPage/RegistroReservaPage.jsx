@@ -112,7 +112,7 @@ const RegistroReservaPage = () => {
           <h2 className="text-md-center">Formulario de reserva</h2>
 
           <form className="needs-validation" onSubmit={handleSubmit(onSubmit)}>
-            {/* Select para seleccionar el docente */}
+            {/* Nombre solicitante */}
             <div className="my-3">
               <label className="form-label fw-bold">Nombre del solicitante</label>
               <input
@@ -122,7 +122,11 @@ const RegistroReservaPage = () => {
                 value={busqueda}
                 onChange={handleBusquedaChange}
               />
-              <select className="form-select" {...register('solicitante')}>
+              <select
+                className="form-select"
+                {...register('solicitante')}
+                onChange={(e) => setBusqueda(e.target.selectedOptions[0].text)}
+              >
                 {opcionesFiltradas.map((docente) => (
                   <option key={docente.id_usuario} value={docente.id_usuario}>
                     {docente.nombre_usuario}
