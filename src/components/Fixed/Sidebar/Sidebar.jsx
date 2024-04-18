@@ -17,10 +17,7 @@ const Sidebar = () => {
     {
       name: 'Materias',
       icon: 'ph:book',
-      subs: [
-        { to: '/materias/subirMaterias', name: 'Subir materias' },
-        { to: '/materias/listaMaterias', name: 'Lista de materias' },
-      ],
+      subs: [{ to: '/materias/listaMaterias', name: 'Lista de materias' }],
     },
     {
       name: 'Reservas',
