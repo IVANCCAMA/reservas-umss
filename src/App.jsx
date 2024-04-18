@@ -40,10 +40,12 @@ function App() {
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
 
               <Route path="/reservas/reservarAmbiente" element={<RegistroReservaPage />} />
+
               <Route
                 path="/reservas/reservarAmbiente/ambientesDisponibles"
                 element={<AmbientesDisponiblesPage />}
               />
+
               <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
             </Routes>
           </div>
