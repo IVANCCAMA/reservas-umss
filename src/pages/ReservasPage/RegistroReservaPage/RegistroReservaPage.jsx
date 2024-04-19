@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import horariosJSON from './horarios';
-import AlertContainer from '../../../components/Bootstrap/AlertContainer';
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
 
