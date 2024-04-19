@@ -178,7 +178,7 @@ const RegistroReservaPage = () => {
   return (
     <div className="container">
       <div className="row py-md-3 justify-content-center">
-        <div className="col-md-6">
+        <div className="col-md-8">
           <h2 className="text-md-center">Formulario de reserva</h2>
 
           <form className="needs-validation" onSubmit={handleSubmit(onSubmit)}>
