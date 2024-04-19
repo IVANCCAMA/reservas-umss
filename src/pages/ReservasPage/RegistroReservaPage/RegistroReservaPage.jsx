@@ -59,12 +59,13 @@ const RegistroReservaPage = () => {
   // estados
   const [users, setUsers] = useState([]);
   const [grupos, setGrupos] = useState([]);
+  const [selectedGroups, setSelectedGroups] = useState([]);
 
   // yup validación, atributos de formulario
   const schema = yup.object({
     solicitante: yup.string().required(),
     tipoAmbiente: yup.string().required(),
-    listaGrupos: yup.string().required(),
+    listaGrupos: yup.array(),
     estudiantes: yup.number(),
     fecha: yup.string().required(),
     motivo: yup.string(),
@@ -92,6 +93,7 @@ const RegistroReservaPage = () => {
       solicitante: user.nombre_usuario,
       id_user: user.id_usuario,
       periodos: [],
+      listaGrupos: [],
     },
   });
 
@@ -132,6 +134,28 @@ const RegistroReservaPage = () => {
       }); */
   };
 
+  const handleGroupSelection = (event) => {
+    const selectedGroupId = event.target.value;
+    console.log('>> Id de grupo', selectedGroupId);
+
+    if (selectedGroupId) {
+      const selectedGroup = user.materia_grupo.find(
+        (group) => group.id_aux_grupo === parseInt(selectedGroupId),
+      );
+
+      if (selectedGroup) {
+        // Agregar el grupo seleccionado al estado selectedGroups
+        setSelectedGroups((prevSelectedGroups) => {
+          const updatedSelectedGroups = [...prevSelectedGroups, selectedGroup];
+          // Extraer los IDs de los grupos seleccionados y actualizar listaGrupos
+          const selectedGroupIds = updatedSelectedGroups.map((group) => group.id_aux_grupo);
+          setValue('listaGrupos', selectedGroupIds);
+          return updatedSelectedGroups;
+        });
+      }
+    }
+  };
+
   return (
     <div className="container">
       <div className="row py-md-3 justify-content-center">
@@ -169,7 +193,7 @@ const RegistroReservaPage = () => {
               {errors.tipoAmbiente && <span className="text-danger">Seleccione una categoria</span>}
             </div>
 
-            {/* Materias y grupos */}
+            {/* Seleccion de Materias y grupos */}
             <div className="my-3">
               <label className="form-label fw-bold">
                 Materias y grupos <span className="text-danger ms-1">*</span>
@@ -177,35 +201,50 @@ const RegistroReservaPage = () => {
               <select
                 className="form-select"
                 placeholder="Seleccionar materias y grupos"
-                {...register('listaGrupos')}
+                onChange={handleGroupSelection}
               >
                 <option value="">Seleccionar materias y grupos</option>
-                {user.materia_grupo.map((grupo, index) => (
-                  <option key={index} value={grupo.id_grupo}>
-                    {grupo.nombre_materia} - {grupo.nombre_grupo}
-                  </option>
-                ))}
+                {user.materia_grupo.map((grupo, index) => {
+                  // Verificar si el grupo ya está seleccionado
+                  const isSelected = selectedGroups.some(
+                    (selectedGroup) => selectedGroup.id_aux_grupo === grupo.id_aux_grupo,
+                  );
+                  // Mostrar solo las opciones no seleccionadas
+                  if (!isSelected) {
+                    return (
+                      <option key={index} value={grupo.id_aux_grupo}>
+                        {grupo.nombre_materia} - {grupo.nombre_grupo}
+                      </option>
+                    );
+                  }
+                  return null; // Omitir la opción si ya está seleccionada
+                })}
               </select>
+            </div>
+            <div className="my-3">
+              <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
+              {selectedGroups.map((group, index) => (
+                <div
+                  key={index}
+                  className="mb-1 px-3 py-1 alert alert-primary alert-dismissible fade show"
+                >
+                  {group.nombre_materia} - {group.nombre_grupo}
+                  <button
+                    type="button"
+                    className="btn-close pe-1 py-2"
+                    onClick={() =>
+                      setSelectedGroups((prevSelectedGroups) =>
+                        prevSelectedGroups.filter((gr) => gr.id_aux_grupo !== group.id_aux_grupo),
+                      )
+                    }
+                    aria-label="Close"
+                  ></button>
+                </div>
+              ))}
             </div>
             {errors.listaGrupos && (
               <span className="text-danger">Seleccione al menos una materia</span>
             )}
-
-            <div className="my-3">
-              <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
-              <div
-                className="mb-1 px-3 py-1 alert alert-primary alert-dismissible fade show"
-                role="alert"
-              >
-                CIRCUITOS ELECTRONICOS - G4
-                <button
-                  type="button"
-                  className="btn-close pe-1 py-2"
-                  data-bs-dismiss="alert"
-                  aria-label="Close"
-                ></button>
-              </div>
-            </div>
 
             <div className="my-3 row row-cols6">
               <div className="col-md-6">
