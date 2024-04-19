@@ -64,10 +64,10 @@ const RegistroReservaPage = () => {
   // yup validación, atributos de formulario
   const schema = yup.object({
     solicitante: yup.string().required(),
-    tipoAmbiente: yup.string().required(),
+    tipo_ambiente: yup.string().required(),
     listaGrupos: yup.array().min(1, 'Seleccione al menos una materia'),
-    estudiantes: yup.number(),
-    fecha: yup.string().required(),
+    cantidad_est: yup.number(),
+    fecha_reserva: yup.string().required(),
     motivo: yup.string(),
     periodos: yup
       .array()
@@ -87,17 +87,18 @@ const RegistroReservaPage = () => {
     setValue,
     watch,
   } = useForm({
-    resolver: yupResolver(schema),
+    /* resolver: yupResolver(schema), */
     defaultValues: {
       solicitante: user.nombre_usuario,
       id_user: user.id_usuario,
       periodos: [],
       listaGrupos: [],
+      cantidad_est: 0,
     },
   });
 
   // Función para obtener la lista de users
-  useEffect(() => {
+  /* useEffect(() => {
     axios
       .get(`${database}/usuarios`)
       .then((response) => {
@@ -106,17 +107,12 @@ const RegistroReservaPage = () => {
       .catch((error) => {
         console.error('Error al obtener los usuarios:', error);
       });
-  }, []);
+  }, []); */
 
   const onSubmit = (data) => {
     console.log('Datos entrada', data);
     /* axios
-      .post(`${database}/reservas`, {
-        tipo_ambiente: formData.tipoAmbiente,
-        cantidad_est: formData.estudiantes,
-        fecha_reserva: formData.fecha,
-        periodos: formData.periodos.filter((periodo) => periodo.checked),
-      })
+      .post(`${database}/reservas`, { data })
       .then((response) => {
         navigate('./ambientesDisponibles', {
           state: {
@@ -135,7 +131,6 @@ const RegistroReservaPage = () => {
 
   const handleGroupSelection = (event) => {
     const selectedGroupId = event.target.value;
-    console.log('>> Id de grupo', selectedGroupId);
 
     if (selectedGroupId) {
       const selectedGroup = user.materia_grupo.find(
@@ -147,6 +142,14 @@ const RegistroReservaPage = () => {
           const updatedSelectedGroups = [...prevSelectedGroups, selectedGroup];
           const selectedGroupIds = updatedSelectedGroups.map((group) => group.id_aux_grupo);
           setValue('listaGrupos', selectedGroupIds);
+
+          // Calcular la cantidad total de estudiantes
+          const totalEstudiantes = updatedSelectedGroups.reduce(
+            (total, group) => total + group.cantidad_est,
+            0,
+          );
+          setValue('cantidad_est', totalEstudiantes);
+
           return updatedSelectedGroups;
         });
       }
@@ -191,14 +194,16 @@ const RegistroReservaPage = () => {
               <select
                 className="form-select"
                 placeholder="Seleccione el tipo de ambiente"
-                {...register('tipoAmbiente')}
+                {...register('tipo_ambiente')}
               >
                 <option value="">Seleccione el tipo de ambiente</option>
                 <option value={'aula comun'}>Aula común</option>
                 <option value={'auditorio'}>Auditorio</option>
                 <option value={'laboratorio'}>Laboratorio</option>
               </select>
-              {errors.tipoAmbiente && <span className="text-danger">Seleccione una categoria</span>}
+              {errors.tipo_ambiente && (
+                <span className="text-danger">Seleccione una categoria</span>
+              )}
             </div>
 
             {/* Seleccion de Materias y grupos */}
@@ -247,18 +252,24 @@ const RegistroReservaPage = () => {
             {errors.listaGrupos && (
               <span className="text-danger">Seleccione al menos una materia</span>
             )}
-
+            {/* Cantidad est */}
             <div className="my-3 row row-cols6">
               <div className="col-md-6">
                 <label className="form-label fw-bold">Número de Estudiantes</label>
-                <input disabled type="text" className="form-control" />
+                <input
+                  disabled
+                  type="text"
+                  className="form-control"
+                  {...register('cantidad_est')}
+                />
               </div>
+              {/* Fecha */}
               <div className="col-md-6">
                 <label className="form-label fw-bold">
                   Fecha de reserva <span className="text-danger ms-1">*</span>
                 </label>
-                <input type="date" className="form-control" {...register('fecha')} />
-                {errors.fecha && <span className="text-danger">Seleccione una fecha</span>}
+                <input type="date" className="form-control" {...register('fecha_reserva')} />
+                {errors.fecha_reserva && <span className="text-danger">Seleccione una fecha</span>}
               </div>
             </div>
 
