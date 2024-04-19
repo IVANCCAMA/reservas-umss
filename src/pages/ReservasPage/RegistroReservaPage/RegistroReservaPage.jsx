@@ -111,10 +111,18 @@ const RegistroReservaPage = () => {
 
   const onSubmit = (data) => {
     console.log('Datos entrada', data);
-    /* axios
-      .post(`${database}/reservas`, { data })
+    const periodosFiltrados = data.periodos.filter((periodo) => periodo.id_periodo);
+    const filteredData = {
+      ...data,
+      periodos: periodosFiltrados,
+    };
+
+    console.log('Filtrado de datos', filteredData);
+    axios
+      .post(`${database}/reservas`, filteredData)
       .then((response) => {
-        navigate('./ambientesDisponibles', {
+        console.log(response.data);
+        /* navigate('./ambientesDisponibles', {
           state: {
             fecha_reserva: formData.fecha,
             motivo: formData.motivo,
@@ -122,11 +130,11 @@ const RegistroReservaPage = () => {
             id_apertura: 2,
             ambienteDisp: response.data,
           },
-        });
+        }); */
       })
       .catch((error) => {
         console.error('Error al obtener las materias y grupos:', error);
-      }); */
+      });
   };
 
   const handleGroupSelection = (event) => {
