@@ -65,16 +65,15 @@ const RegistroReservaPage = () => {
   const schema = yup.object({
     solicitante: yup.string().required(),
     tipoAmbiente: yup.string().required(),
-    listaGrupos: yup.array(),
+    listaGrupos: yup.array().min(1, 'Seleccione al menos una materia'),
     estudiantes: yup.number(),
     fecha: yup.string().required(),
     motivo: yup.string(),
-    // Validación de los periodos seleccionados
     periodos: yup
       .array()
       .min(1, 'Seleccione al menos un horario')
       .test('at-least-one-period-selected', 'Seleccione al menos un horario', function (value) {
-        if (!value) return false; // Si no hay ningún periodo seleccionado, falla la validación
+        if (!value) return false;
         return value.some((periodo) => periodo.id_periodo !== false);
       }),
   });
@@ -88,7 +87,7 @@ const RegistroReservaPage = () => {
     setValue,
     watch,
   } = useForm({
-    /* resolver: yupResolver(schema), */
+    resolver: yupResolver(schema),
     defaultValues: {
       solicitante: user.nombre_usuario,
       id_user: user.id_usuario,
@@ -144,10 +143,8 @@ const RegistroReservaPage = () => {
       );
 
       if (selectedGroup) {
-        // Agregar el grupo seleccionado al estado selectedGroups
         setSelectedGroups((prevSelectedGroups) => {
           const updatedSelectedGroups = [...prevSelectedGroups, selectedGroup];
-          // Extraer los IDs de los grupos seleccionados y actualizar listaGrupos
           const selectedGroupIds = updatedSelectedGroups.map((group) => group.id_aux_grupo);
           setValue('listaGrupos', selectedGroupIds);
           return updatedSelectedGroups;
@@ -216,11 +213,9 @@ const RegistroReservaPage = () => {
               >
                 <option value="">Seleccionar materias y grupos</option>
                 {user.materia_grupo.map((grupo, index) => {
-                  // Verificar si el grupo ya está seleccionado
                   const isSelected = selectedGroups.some(
                     (selectedGroup) => selectedGroup.id_aux_grupo === grupo.id_aux_grupo,
                   );
-                  // Mostrar solo las opciones no seleccionadas
                   if (!isSelected) {
                     return (
                       <option key={index} value={grupo.id_aux_grupo}>
@@ -228,7 +223,7 @@ const RegistroReservaPage = () => {
                       </option>
                     );
                   }
-                  return null; // Omitir la opción si ya está seleccionada
+                  return null;
                 })}
               </select>
             </div>
