@@ -1,12 +1,13 @@
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import horariosJSON from './horarios';
+import { useNavigate } from 'react-router-dom';
+
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
-
+  const navigate = useNavigate();
   // json horarios
   const horarios = horariosJSON;
   const user = {
@@ -57,8 +58,6 @@ const RegistroReservaPage = () => {
   };
 
   // estados
-  const [users, setUsers] = useState([]);
-  const [grupos, setGrupos] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
 
   // yup validación, atributos de formulario
@@ -87,7 +86,7 @@ const RegistroReservaPage = () => {
     setValue,
     watch,
   } = useForm({
-    /* resolver: yupResolver(schema), */
+    resolver: yupResolver(schema),
     defaultValues: {
       solicitante: user.nombre_usuario,
       id_user: user.id_usuario,
@@ -122,15 +121,15 @@ const RegistroReservaPage = () => {
       .post(`${database}/reservas`, filteredData)
       .then((response) => {
         console.log(response.data);
-        /* navigate('./ambientesDisponibles', {
+        navigate('./ambientesDisponibles', {
           state: {
-            fecha_reserva: formData.fecha,
-            motivo: formData.motivo,
-            listaGrupos: formData.listaGrupos,
+            fecha_reserva: filteredData.fecha,
+            motivo: filteredData.motivo,
+            listaGrupos: filteredData.listaGrupos,
             id_apertura: 2,
             ambienteDisp: response.data,
           },
-        }); */
+        });
       })
       .catch((error) => {
         console.error('Error al obtener las materias y grupos:', error);
