@@ -156,6 +156,17 @@ const RegistroReservaPage = () => {
     }
   };
 
+  const handleGroupRemoval = (groupId) => {
+    setSelectedGroups((prevSelectedGroups) => {
+      const updatedGroups = prevSelectedGroups.filter(
+        (group) => group.id_aux_grupo !== parseInt(groupId),
+      );
+      const updatedGroupIds = updatedGroups.map((group) => group.id_aux_grupo);
+      setValue('listaGrupos', updatedGroupIds);
+      return updatedGroups;
+    });
+  };
+
   return (
     <div className="container">
       <div className="row py-md-3 justify-content-center">
@@ -232,11 +243,7 @@ const RegistroReservaPage = () => {
                   <button
                     type="button"
                     className="btn-close pe-1 py-2"
-                    onClick={() =>
-                      setSelectedGroups((prevSelectedGroups) =>
-                        prevSelectedGroups.filter((gr) => gr.id_aux_grupo !== group.id_aux_grupo),
-                      )
-                    }
+                    onClick={() => handleGroupRemoval(group.id_aux_grupo)}
                     aria-label="Close"
                   ></button>
                 </div>
