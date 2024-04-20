@@ -12,7 +12,6 @@ const RegistroReservaPage = () => {
   const navigate = useNavigate();
   // json horarios
   const horarios = horariosJSON;
-
   const users = usersJSON;
 
   const initvalues = {
@@ -32,13 +31,16 @@ const RegistroReservaPage = () => {
   const [minDate, setMinDate] = useState('');
   const [maxDate, setMaxDate] = useState('');
   const [filteredHorarios, setFilteredHorarios] = useState([]);
+  const [selectedAlerts, setSelectedAlerts] = useState({});
+
+  const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
 
   // yup validación, atributos de formulario
   const schema = yup.object({
     solicitante: yup.string().required(),
     tipo_ambiente: yup.string().required(),
     listaGrupos: yup.array().min(1, 'Seleccione al menos una materia'),
-    cantidad_est: yup.number().required(),
+    cantidad_est: yup.number(),
     fecha_reserva: yup.string().required(),
     motivo: yup.string(),
     periodos: yup
@@ -97,33 +99,32 @@ const RegistroReservaPage = () => {
     axios
       .post(`${database}/reservas`, filteredData)
       .then((response) => {
-        console.log(response.data);
-        navigate('./ambientesDisponibles', {
-          state: {
-            fecha_reserva: filteredData.fecha,
-            motivo: filteredData.motivo,
-            listaGrupos: filteredData.listaGrupos,
-            id_apertura: 2,
-            ambienteDisp: response.data,
-          },
-        });
+        if (Array.isArray(response.data) && response.data.length === 0) {
+          /* Remplazar por modal */
+          alert('No hay ambientes disponibles para la reserva en la fecha seleccionada.');
+        } else {
+          navigate('./ambientesDisponibles', {
+            state: {
+              fecha_reserva: filteredData.fecha,
+              motivo: filteredData.motivo,
+              listaGrupos: filteredData.listaGrupos,
+              id_apertura: 2,
+              ambienteDisp: response.data,
+            },
+          });
+        }
       })
       .catch((error) => {
         console.error('Error al obtener las materias y grupos:', error);
       });
   };
 
-  const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
-  const [selectedAlerts, setSelectedAlerts] = useState({});
-
   const handleGroupSelection = (event) => {
     const selectedGroupId = event.target.value;
-
     if (selectedGroupId) {
       const selectedGroup = selectedUser.materia_grupo.find(
         (group) => group.id_aux_grupo === parseInt(selectedGroupId),
       );
-
       if (selectedGroup) {
         setSelectedGroups((prevSelectedGroups) => {
           const updatedSelectedGroups = [...prevSelectedGroups, selectedGroup];
