@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import horariosJSON from './horarios';
 import iconoError from '../../../assets/Images/iconoError.png';
 import iconoExito from '../../../assets/Images/iconoExito.png';
+import iconoUbicacion from '../../../assets/Images/iconoUbicacion.png';
 import { useState } from 'react';
 import ModalForm from '../../../components/Modal/ModalForm';
 
@@ -58,7 +59,7 @@ const RegistroAmbientePage = () => {
     setValue,
     watch,
   } = useForm({
-    /* resolver: yupResolver(schema), */
+    resolver: yupResolver(schema),
     defaultValues: {
       disponible: true,
       proyector: false,
@@ -161,6 +162,7 @@ const RegistroAmbientePage = () => {
               </label>
               <input
                 type="text"
+                maxLength={25}
                 className="form-control"
                 placeholder="Escriba el nombre del ambiente"
                 {...register('nombre_ambiente')}
@@ -186,9 +188,21 @@ const RegistroAmbientePage = () => {
               {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
             <div className="my-3">
-              <label className="form-label fw-bold">Ubicación</label>
+              <label className="form-label fw-bold">
+                Ubicación
+                <span>
+                  {' '}
+                  <img
+                    src={iconoUbicacion}
+                    alt="icono ubicacion"
+                    className="pb-2"
+                    style={{ width: 'auto', height: '30px' }}
+                  />
+                </span>
+              </label>
               <textarea
                 rows={2}
+                maxLength={350}
                 type="text"
                 className="form-control"
                 placeholder="Escriba la ubicación del ambiente"
@@ -202,6 +216,8 @@ const RegistroAmbientePage = () => {
                 </label>
                 <input
                   type="number"
+                  min={0}
+                  max={500}
                   className="form-control"
                   placeholder="Escriba la capacidad de estudiantes"
                   {...register('capacidad')}
@@ -213,13 +229,15 @@ const RegistroAmbientePage = () => {
                   Min (%)<span className="text-danger ms-1">*</span>
                 </label>
                 <input
+                  min={0}
+                  max={watch('porcentaje_max')}
                   defaultValue={85}
                   type="number"
                   className="form-control"
                   placeholder="Cap. maxima"
-                  {...register('porcentaje_max')}
+                  {...register('porcentaje_min')}
                 />
-                {errors.porcentaje_max && (
+                {errors.porcentaje_min && (
                   <span className="text-danger">El campo es obligatorio</span>
                 )}
               </div>
@@ -228,13 +246,15 @@ const RegistroAmbientePage = () => {
                   Max (%)<span className="text-danger ms-1">*</span>
                 </label>
                 <input
+                  min={0}
+                  max={150}
                   defaultValue={115}
                   type="number"
                   className="form-control"
                   placeholder="Cap. de minima"
-                  {...register('porcentaje_min')}
+                  {...register('porcentaje_max')}
                 />
-                {errors.porcentaje_min && (
+                {errors.porcentaje_max && (
                   <span className="text-danger">El campo es obligatorio</span>
                 )}
               </div>
@@ -247,6 +267,8 @@ const RegistroAmbientePage = () => {
                 </label>
                 <input
                   type="number"
+                  min={0}
+                  max={250}
                   className="form-control"
                   placeholder="Escriba el número de computadoras"
                   {...register('computadora')}
