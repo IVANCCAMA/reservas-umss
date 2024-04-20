@@ -297,7 +297,6 @@ const RegistroReservaPage = () => {
               <select
                 className="form-select"
                 placeholder="Seleccionar materias y grupos"
-                disabled={!selectedUser}
                 onChange={handleGroupSelection}
               >
                 <option value="">Seleccionar materias y grupos</option>
