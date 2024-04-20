@@ -8,7 +8,6 @@ import FichaInformacionAmbientePage from './pages/AmbientesPage/FichaInformacion
 import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/RegistroAmbientePage';
 import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/RegistroReservaPage';
 import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
-import InformacionFormatoModal from './pages/MateriasPage/SubirMatariasPage/InformacionFormatoModal/InformacionFormatoModal';
 import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
 
 function App() {
@@ -31,10 +30,6 @@ function App() {
                 element={<FichaInformacionAmbientePage />}
               />
 
-              <Route
-                path="/materias/subirMaterias/infoFormato"
-                element={<InformacionFormatoModal />}
-              />
               <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
 
               <Route path="/reservas/reservarAmbiente" element={<RegistroReservaPage />} />

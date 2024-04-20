@@ -80,3 +80,21 @@ h1 {
     }
   }
 }
+
+// Tu otro estilo personalizado si lo tienes
+
+.btn-success {
+  background: #0fa958;
+  --bs-btn-hover-bg: #0b984d;
+  --bs-btn-border-color: #0fa958;
+}
+
+.btn-danger {
+  background: #FF0000;
+  --bs-btn-hover-bg: #df1717;
+  --bs-btn-border-color: #FF0000;
+}
+
+.iconAlert {
+  width: 20px;
+}
