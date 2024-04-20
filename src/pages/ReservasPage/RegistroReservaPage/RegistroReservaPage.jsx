@@ -339,6 +339,7 @@ const RegistroReservaPage = () => {
                   type="number"
                   className="form-control"
                   min={0}
+                  max={500}
                   {...register('cantidad_est')}
                 />
               </div>
