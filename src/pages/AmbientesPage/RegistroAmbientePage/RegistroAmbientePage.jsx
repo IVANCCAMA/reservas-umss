@@ -6,14 +6,18 @@ import horariosJSON from './horarios';
 import { useModal } from '../../../components/Bootstrap/ModalContext';
 import iconoError from '../../../assets/Images/iconoError.png';
 import iconoExito from '../../../assets/Images/iconoExito.png';
+import iconoUbicacion from '../../../assets/Images/iconoUbicacion.png';
 
 const RegistroAmbientePage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
   const { confirmationModal, errorModal, successModal } = useModal();
-  const errorModalContent = (<>
-    <div><img src={iconoError} /></div>
-    <div className="pt-md-3">Error al registrar ambiente intente de nuevo</div>
-  </>
+  const errorModalContent = (
+    <>
+      <div>
+        <img src={iconoError} />
+      </div>
+      <div className="pt-md-3">Error al registrar ambiente intente de nuevo</div>
+    </>
   );
 
   // yup validación, atributos de formulario
@@ -101,10 +105,14 @@ const RegistroAmbientePage = () => {
         // Establecer los datos en el estado
         if (response.status === 201) {
           successModal({
-            content: <>
-              <div><img src={iconoExito} /></div>
-              <div className="pt-md-3">Ambiente registrado con éxito</div>
-            </>
+            content: (
+              <>
+                <div>
+                  <img src={iconoExito} />
+                </div>
+                <div className="pt-md-3">Ambiente registrado con éxito</div>
+              </>
+            ),
           });
 
           // restablecer formulario
@@ -153,6 +161,7 @@ const RegistroAmbientePage = () => {
               </label>
               <input
                 type="text"
+                maxLength={25}
                 className="form-control"
                 placeholder="Escriba el nombre del ambiente"
                 {...register('nombre_ambiente')}
@@ -178,9 +187,21 @@ const RegistroAmbientePage = () => {
               {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
             <div className="my-3">
-              <label className="form-label fw-bold">Ubicación</label>
+              <label className="form-label fw-bold">
+                Ubicación
+                <span>
+                  {' '}
+                  <img
+                    src={iconoUbicacion}
+                    alt="icono ubicacion"
+                    className="pb-2"
+                    style={{ width: 'auto', height: '30px' }}
+                  />
+                </span>
+              </label>
               <textarea
                 rows={2}
+                maxLength={350}
                 type="text"
                 className="form-control"
                 placeholder="Escriba la ubicación del ambiente"
@@ -194,6 +215,8 @@ const RegistroAmbientePage = () => {
                 </label>
                 <input
                   type="number"
+                  min={0}
+                  max={500}
                   className="form-control"
                   placeholder="Escriba la capacidad de estudiantes"
                   {...register('capacidad')}
@@ -205,13 +228,15 @@ const RegistroAmbientePage = () => {
                   Min (%)<span className="text-danger ms-1">*</span>
                 </label>
                 <input
+                  min={0}
+                  max={watch('porcentaje_max')}
                   defaultValue={85}
                   type="number"
                   className="form-control"
                   placeholder="Cap. maxima"
-                  {...register('porcentaje_max')}
+                  {...register('porcentaje_min')}
                 />
-                {errors.porcentaje_max && (
+                {errors.porcentaje_min && (
                   <span className="text-danger">El campo es obligatorio</span>
                 )}
               </div>
@@ -220,25 +245,29 @@ const RegistroAmbientePage = () => {
                   Max (%)<span className="text-danger ms-1">*</span>
                 </label>
                 <input
+                  min={0}
+                  max={150}
                   defaultValue={115}
                   type="number"
                   className="form-control"
                   placeholder="Cap. de minima"
-                  {...register('porcentaje_min')}
+                  {...register('porcentaje_max')}
                 />
-                {errors.porcentaje_min && (
+                {errors.porcentaje_max && (
                   <span className="text-danger">El campo es obligatorio</span>
                 )}
               </div>
             </div>
 
-            {(tipoAmbiente === 'Laboratorio') && (
+            {tipoAmbiente === 'Laboratorio' && (
               <div className="my-3">
                 <label className="form-label fw-bold">
                   Nº Computadoras <span className="text-danger ms-1">*</span>
                 </label>
                 <input
                   type="number"
+                  min={0}
+                  max={250}
                   className="form-control"
                   placeholder="Escriba el número de computadoras"
                   {...register('computadora')}
@@ -366,11 +395,17 @@ const RegistroAmbientePage = () => {
                 type="button"
                 onClick={() => {
                   confirmationModal({
-                    content: <>
-                      <div><img src={iconoError} /></div>
-                      <div className="pt-md-3">¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?</div>
-                    </>,
-                    onClickYesTo: '/'
+                    content: (
+                      <>
+                        <div>
+                          <img src={iconoError} />
+                        </div>
+                        <div className="pt-md-3">
+                          ¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?
+                        </div>
+                      </>
+                    ),
+                    onClickYesTo: '/',
                   });
                 }}
               >
