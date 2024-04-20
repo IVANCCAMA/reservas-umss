@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { TextInput, TextTarea, Select, Accordion, CheckboxInput } from '../../../components/Form';
 import AlertContainer from '../../../components/Bootstrap/AlertContainer';
 import axios from 'axios';
+import { useModal } from '../../../components/Bootstrap/ModalContext';
 
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
@@ -22,6 +23,7 @@ const RegistroReservaPage = () => {
   const navigate = useNavigate();
   const alertRef = useRef(null);
   const gruposRef = useRef(grupos);
+  const { confirmationModal, errorModal, successModal } = useModal();
   // formData
   const [formData, setFormData] = useState({
     solicitante: 'CARLA SALAZAR SERRUDO',
@@ -177,17 +179,27 @@ const RegistroReservaPage = () => {
         periodos: formData.periodos.filter((periodo) => periodo.checked),
       })
       .then((response) => {
-        navigate('./ambientesDisponibles', {
-          state: {
-            fecha_reserva: formData.fecha,
-            motivo: formData.motivo,
-            listaGrupos: formData.listaGrupos,
-            id_apertura: 2,
-            ambienteDisp: response.data,
-          },
+        if (response.status != 200) {
+          errorModal({ content: 'Error al obtener ambientes disponibles intente de nuevo' });
+        }
+        successModal({
+          content: "Message of Success Modal :v",
+          onClick: () => {
+            navigate('./ambientesDisponibles', {
+              state: {
+                fecha_reserva: formData.fecha,
+                motivo: formData.motivo,
+                listaGrupos: formData.listaGrupos,
+                id_apertura: 2,
+                ambienteDisp: response.data,
+              },
+            });
+            console.log('into success');
+          }
         });
       })
       .catch((error) => {
+        errorModal({ content: 'Error al registrar la reserva intente de nuevo' });
         console.error('Error al obtener las materias y grupos:', error);
       });
   };
@@ -312,10 +324,19 @@ const RegistroReservaPage = () => {
             </div>
 
             <div className="d-flex justify-content-center">
-              <button type="submit" className="btn btn-primary me-md-5">
+              <button type="submit" className="btn btn-success me-5">
                 Registrar
               </button>
-              <button type="submit" className="btn btn-primary">
+              <button
+                className="btn btn-danger"
+                type="button"
+                onClick={() => { 
+                  confirmationModal({
+                    content:<>¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?</>,
+                    onClickYesTo: '/'
+                  }); 
+                }}
+              >
                 Cancelar
               </button>
             </div>

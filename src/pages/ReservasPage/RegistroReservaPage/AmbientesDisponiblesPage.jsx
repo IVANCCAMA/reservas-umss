@@ -63,7 +63,6 @@ const AmbientesDisponibles = () => {
       <h2 className="text-start">Lista de ambientes disponible</h2>
       <Table rows={ambientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
 
-
       <div className="my-3 row row-cols6">
         <div className="col-md-6">
           <button
