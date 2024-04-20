@@ -13,6 +13,7 @@ const RegistroReservaPage = () => {
   // json horarios
   const horarios = horariosJSON;
   const users = usersJSON;
+  const currentDate = new Date().toISOString().split('T')[0];
 
   const initvalues = {
     id_usuario: '',
@@ -28,7 +29,6 @@ const RegistroReservaPage = () => {
   // estados
   const [selectedUser, setSelectedUser] = useState(initvalues);
   const [selectedGroups, setSelectedGroups] = useState([]);
-  const [minDate, setMinDate] = useState('');
   const [maxDate, setMaxDate] = useState('');
   const [filteredHorarios, setFilteredHorarios] = useState([]);
   const [selectedAlerts, setSelectedAlerts] = useState({});
@@ -56,8 +56,6 @@ const RegistroReservaPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
-    clearErrors,
     setValue,
     watch,
   } = useForm({
@@ -80,7 +78,6 @@ const RegistroReservaPage = () => {
       .get(`${database}/aperturas/2`)
       .then((response) => {
         setMaxDate(response.data.apertura_fin);
-        setMinDate(response.data.apertura_inicio);
       })
       .catch((error) => {
         console.error('Error al obtener la apertura 2:', error);
@@ -100,9 +97,10 @@ const RegistroReservaPage = () => {
       .post(`${database}/reservas`, filteredData)
       .then((response) => {
         if (Array.isArray(response.data) && response.data.length === 0) {
-          /* Remplazar por modal */
-          alert('No hay ambientes disponibles para la reserva en la fecha seleccionada.');
+          /* Remplazar por mensaje alerta */
+          alert('No hay ambientes disponibles que se adecuen a la solicitud.');
         } else {
+          console.log(response.data);
           navigate('./ambientesDisponibles', {
             state: {
               fecha_reserva: filteredData.fecha,
@@ -313,7 +311,7 @@ const RegistroReservaPage = () => {
                 <input
                   type="date"
                   className="form-control"
-                  min={minDate}
+                  min={currentDate}
                   max={maxDate}
                   onChange={handleDateChange}
                 />
