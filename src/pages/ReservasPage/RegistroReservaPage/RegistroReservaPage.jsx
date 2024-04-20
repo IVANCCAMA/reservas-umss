@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import horariosJSON from './horarios';
@@ -60,6 +60,8 @@ const RegistroReservaPage = () => {
 
   // estados
   const [selectedGroups, setSelectedGroups] = useState([]);
+  const [minDate, setMinDate] = useState('');
+  const [maxDate, setMaxDate] = useState('');
 
   // yup validación, atributos de formulario
   const schema = yup.object({
@@ -97,17 +99,19 @@ const RegistroReservaPage = () => {
     },
   });
 
-  // Función para obtener la lista de users
-  /* useEffect(() => {
+  // Función para obtener fecha apertura
+  useEffect(() => {
+    // recuperar fechas max min
     axios
-      .get(`${database}/usuarios`)
+      .get(`${database}/aperturas/2`)
       .then((response) => {
-        setUsers(response.data);
+        setMaxDate(response.data.apertura_fin);
+        setMinDate(response.data.apertura_inicio);
       })
       .catch((error) => {
-        console.error('Error al obtener los usuarios:', error);
+        console.error('Error al obtener la apertura 2:', error);
       });
-  }, []); */
+  }, []);
 
   const onSubmit = (data) => {
     console.log('Datos entrada', data);
@@ -276,7 +280,13 @@ const RegistroReservaPage = () => {
                 <label className="form-label fw-bold">
                   Fecha de reserva <span className="text-danger ms-1">*</span>
                 </label>
-                <input type="date" className="form-control" {...register('fecha_reserva')} />
+                <input
+                  type="date"
+                  className="form-control"
+                  min={minDate}
+                  max={maxDate}
+                  {...register('fecha_reserva')}
+                />
                 {errors.fecha_reserva && <span className="text-danger">Seleccione una fecha</span>}
               </div>
             </div>
@@ -374,7 +384,9 @@ const RegistroReservaPage = () => {
               <button type="submit" className="btn btn-success me-md-5">
                 Enviar
               </button>
-              <button type="submit" className="btn btn-danger">
+
+              {/* Btn cancelar */}
+              <button type="button" className="btn btn-danger">
                 Cancelar
               </button>
             </div>
