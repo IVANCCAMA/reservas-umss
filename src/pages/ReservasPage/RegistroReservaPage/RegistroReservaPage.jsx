@@ -104,7 +104,7 @@ const RegistroReservaPage = () => {
           console.log(response.data);
           navigate('./ambientesDisponibles', {
             state: {
-              fecha_reserva: filteredData.fecha,
+              fecha_reserva: filteredData.fecha_reserva,
               motivo: filteredData.motivo,
               listaGrupos: filteredData.listaGrupos,
               id_apertura: 2,
