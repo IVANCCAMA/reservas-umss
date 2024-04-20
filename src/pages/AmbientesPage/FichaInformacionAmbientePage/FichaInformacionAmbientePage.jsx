@@ -53,6 +53,18 @@ const FichaInformacionAmbientePage = () => {
             <p className="col-6 text-secondary">{ambiente.capacidad}</p>
           </div>
           <div className="row">
+            <p className="col">Capacidad maxima</p>
+            <p className="col-6 text-secondary">
+              {(ambiente.porcentaje_max / 100) * ambiente.capacidad}
+            </p>
+          </div>
+          <div className="row">
+            <p className="col">Capacidad minima </p>
+            <p className="col-6 text-secondary">
+              {(ambiente.porcentaje_min / 100) * ambiente.capacidad}
+            </p>
+          </div>
+          <div className="row">
             <p className="col">Ubicación</p>
             <p className="col-6 text-secondary">{ambiente.ubicacion}</p>
           </div>
@@ -73,11 +85,11 @@ const FichaInformacionAmbientePage = () => {
               <p className="col-6 text-secondary">{ambiente.disponible ? 'Sí' : 'No'}</p>
             </div>
             <div className="row">
-              <p className="col">Porcentaje mínimo</p>
+              <p className="col">Porcentaje mínimo (%)</p>
               <p className="col-6 text-secondary">{ambiente.porcentaje_min}</p>
             </div>
             <div className="row">
-              <p className="col">Porcentaje máximo</p>
+              <p className="col">Porcentaje máximo (%)</p>
               <p className="col-6 text-secondary">{ambiente.porcentaje_max}</p>
             </div>
           </div>
