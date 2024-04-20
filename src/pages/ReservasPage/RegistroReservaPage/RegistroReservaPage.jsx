@@ -418,6 +418,7 @@ const RegistroReservaPage = () => {
                             type="checkbox"
                             id={`selectAll`}
                             {...register(`selectAll`)}
+                            disabled={!watch('fecha_reserva')}
                             onChange={(e) => {
                               const checked = e.target.checked;
                               filteredHorarios.forEach((_, subIndex) => {
