@@ -122,7 +122,7 @@ const RegistroReservaPage = () => {
     };
 
     console.log('Filtrado de datos', filteredData);
-    /* axios
+    axios
       .post(`${database}/reservas`, filteredData)
       .then((response) => {
         console.log(response.data);
@@ -138,7 +138,7 @@ const RegistroReservaPage = () => {
       })
       .catch((error) => {
         console.error('Error al obtener las materias y grupos:', error);
-      }); */
+      });
   };
 
   const handleGroupSelection = (event) => {
@@ -173,8 +173,16 @@ const RegistroReservaPage = () => {
       const updatedGroups = prevSelectedGroups.filter(
         (group) => group.id_aux_grupo !== parseInt(groupId),
       );
+
       const updatedGroupIds = updatedGroups.map((group) => group.id_aux_grupo);
       setValue('listaGrupos', updatedGroupIds);
+
+      const totalEstudiantes = updatedGroups.reduce(
+        (total, group) => total + group.cantidad_est,
+        0,
+      );
+      setValue('cantidad_est', totalEstudiantes > 0 ? totalEstudiantes : 0);
+
       return updatedGroups;
     });
   };
@@ -255,6 +263,9 @@ const RegistroReservaPage = () => {
                 })}
               </select>
             </div>
+            {errors.listaGrupos && (
+              <span className="text-danger">Seleccione al menos una materia</span>
+            )}
             <div className="my-3">
               <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
               {selectedGroups.map((group, index) => (
@@ -272,9 +283,6 @@ const RegistroReservaPage = () => {
                 </div>
               ))}
             </div>
-            {errors.listaGrupos && (
-              <span className="text-danger">Seleccione al menos una materia</span>
-            )}
             {/* Cantidad est */}
             <div className="my-3 row row-cols6">
               <div className="col-md-6">
