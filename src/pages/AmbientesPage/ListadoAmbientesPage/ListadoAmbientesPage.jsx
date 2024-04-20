@@ -20,12 +20,11 @@ const ListadoAmbientesPage = () => {
         setAmbientes(
           response.data.map((amb) => {
             return {
-              ID: amb.id_ambiente_tabla,
               Aula: amb.nombre_ambiente,
               Capacidad: amb.capacidad,
-              Estado: amb.disponible ? 'Habilitado' : 'Deshabilitado',
-              Tipo: amb.tipo,
-              Proyector: amb.proyector ? 'Si' : 'No',
+              Estado: amb.disponible ? 'HABILITADO' : 'DESHABILITADO',
+              Tipo: amb.tipo.toUpperCase(),
+              Proyector: amb.proyector ? 'SI' : 'NO',
               'Ver más': (
                 <div className="boton-style w-auto text-center me-md-3 rounded">
                   <Link
