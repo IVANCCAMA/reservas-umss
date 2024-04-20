@@ -95,6 +95,7 @@ const RegistroReservaPage = () => {
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [minDate, setMinDate] = useState('');
   const [maxDate, setMaxDate] = useState('');
+  const [filteredHorarios, setFilteredHorarios] = useState([]);
 
   // yup validación, atributos de formulario
   const schema = yup.object({
@@ -228,7 +229,15 @@ const RegistroReservaPage = () => {
 
     if (selectedDay === 6) {
       setValue('fecha_reserva', '');
+      setFilteredHorarios([])
     } else {
+      if (selectedDay === 5) {
+        // Si el día seleccionado es sábado
+        const filteredHorarios = horarios.periodos.filter((periodo) => periodo.id <= 6);
+        setFilteredHorarios(filteredHorarios);
+      } else {
+        setFilteredHorarios(horarios.periodos);
+      }
       setValue('fecha_reserva', event.target.value);
     }
   };
@@ -340,7 +349,7 @@ const RegistroReservaPage = () => {
               <div className="col-md-6">
                 <label className="form-label fw-bold">Número de Estudiantes</label>
                 <input
-                  type="text"
+                  type="number"
                   className="form-control"
                   {...register('cantidad_est', {
                     disabled: selectedUser.tipo_usuario !== 'ADMINISTRADOR',
@@ -410,11 +419,11 @@ const RegistroReservaPage = () => {
                             {...register(`selectAll`)}
                             onChange={(e) => {
                               const checked = e.target.checked;
-                              horarios.periodos.forEach((_, subIndex) => {
+                              filteredHorarios.forEach((_, subIndex) => {
                                 const fieldName = `periodos[${subIndex}].id_periodo`;
                                 setValue(
                                   fieldName,
-                                  checked ? horarios.periodos[subIndex].id : false,
+                                  checked ? filteredHorarios[subIndex].id : false,
                                 );
                               });
                             }}
@@ -423,7 +432,7 @@ const RegistroReservaPage = () => {
                       </div>
                     </div>
                     <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
-                      {horarios.periodos.map((periodo, subIndex) => {
+                      {filteredHorarios.map((periodo, subIndex) => {
                         const fieldName = `periodos[${subIndex}].id_periodo`;
                         return (
                           <div className="col d-flex justify-content-around" key={subIndex}>
