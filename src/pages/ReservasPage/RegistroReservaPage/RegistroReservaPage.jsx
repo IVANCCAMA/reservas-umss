@@ -208,6 +208,26 @@ const RegistroReservaPage = () => {
     if (user) {
       setSelectedUser(user);
       setValue('solicitante', user.nombre_usuario);
+
+      // Verificar si el usuario es administrador
+      if (user.tipo_usuario === 'ADMINISTRADOR') {
+        // Si el usuario es administrador, permitir la edición del número de estudiantes
+        setValue(
+          'cantidad_est',
+          selectedGroups.reduce((total, group) => total + group.cantidad_est, 0),
+        );
+      } else {
+        // Si no es administrador, deshabilitar la edición del número de estudiantes
+        setValue(
+          'cantidad_est',
+          selectedGroups.reduce((total, group) => total + group.cantidad_est, 0),
+          { shouldValidate: true },
+        );
+        const cantidadEstInput = document.getElementById('cantidad_est');
+        if (cantidadEstInput) {
+          cantidadEstInput.readOnly = true;
+        }
+      }
     } else {
       setSelectedUser(initvalues);
       setSelectedGroups([]);
@@ -321,10 +341,6 @@ const RegistroReservaPage = () => {
                   className="form-control"
                   min={0}
                   {...register('cantidad_est')}
-                  value={
-                    selectedUser.tipo_usuario === 'ADMINISTRADOR' ? '' : selectedUser.cantidad_est
-                  }
-                  readOnly={selectedUser.tipo_usuario !== 'ADMINISTRADOR'}
                 />
               </div>
               {/* Fecha */}
