@@ -1,41 +1,67 @@
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 // import './ListadoAmbientesPage.scss';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { useModal } from '../../../components/Bootstrap/ModalContext';
+import { Icon } from '@iconify/react';
+import iconoError from '../../../assets/Images/iconoError.png';
+import iconoExito from '../../../assets/Images/iconoExito.png';
 
 const AmbientesDisponibles = () => {
   // estados
   const database = 'https://backendtis-production.up.railway.app/api';
   const location = useLocation();
   const formData = location.state;
-  const navigate = useNavigate();
+  const { confirmationModal, errorModal, successModal } = useModal();
 
-  const confirmSelect = (id_disponible) => {
+  const confirmSelect = (amb) => {
     // show modal confirm
-
-    // click acept modal confirm
-    // register new reserva
-    const body = {
-      ...formData,
-      listaGrupos: formData.listaGrupos.map(group => parseInt(group, 10)),
-      id_disponible: id_disponible
-    };
-    console.log(body);
-    axios
-      .post(`${database}/reservas/crear/`, body)
-      .then((response) => {
-        // success
-        console.log(response.data);
-        // redirect
-        navigate('/reservas/listaReservas');
-      })
-      .catch((error) => {
-        console.error('Error al obtener las materias y grupos:', error);
-      });
+    confirmationModal({
+      content: <>
+        <div className='position-absolute'><Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} /></div>
+        <div>
+          Confirmar reserva <br />
+          Aula: {amb.nombre_ambiente} <br />
+          Capacidad: {amb.capacidad_ambiente} <br />
+          Tipo: {amb.tipo_ambiente} <br />
+          Fecha: {amb.fecha} <br />
+          Hora: {amb.hora_inicio?.slice(0, 5)} - {amb.hora_fin?.slice(0, 5)} <br />
+        </div>
+      </>,
+      // click acept modal confirm
+      onClickYes: () => {
+        // register new reserva
+        axios
+          .post(`${database}/reservas/crear/`, {
+            ...formData,
+            listaGrupos: formData.listaGrupos.map(group => parseInt(group, 10)),
+            id_disponible: amb.id_disponible
+          })
+          .then((response) => {
+            // success
+            console.log(response.data);
+            successModal({
+              content: <>
+                <div><img src={iconoExito} /></div>
+                <div className="pt-md-3">Registro de reserva<br />exitoso</div>
+              </>,
+              // redirect
+              onClickTo: '/reservas/listaReservas'
+            });
+          })
+          .catch((error) => {
+            console.error('Error al obtener las materias y grupos:', error);
+            errorModal({
+              content: <>
+                <div><img src={iconoError} /></div>
+                <div className="pt-md-3">Error al registrar<br />Intente de nnuevo</div>
+              </>
+            });
+          });
+      }
+    });
   };
 
   const [pageNumber, setPageNumber] = useState(1);
@@ -51,7 +77,7 @@ const AmbientesDisponibles = () => {
         <button
           type="button"
           className="btn btn-success boton-style w-auto text-center me-md-3 rounded"
-          onClick={() => { confirmSelect(amb.id_disponible) }}>
+          onClick={() => { confirmSelect(amb) }}>
           Seleccionar
         </button>
       ),

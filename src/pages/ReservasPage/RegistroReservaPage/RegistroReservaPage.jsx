@@ -2,9 +2,6 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
-import { useModal } from '../../../components/Bootstrap/ModalContext';
-
 import { yupResolver } from '@hookform/resolvers/yup';
 import horariosJSON from './horarios';
 import usersJSON from './users';
@@ -12,10 +9,12 @@ import { useNavigate } from 'react-router-dom';
 import iconInfo from '../../../assets/Images/alert-information.png';
 import iconoError from '../../../assets/Images/iconoError.png';
 import iconoExito from '../../../assets/Images/iconoExito.png';
+import { useModal } from '../../../components/Bootstrap/ModalContext';
 
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
   const navigate = useNavigate();
+  const { confirmationModal, errorModal, successModal } = useModal();
   // json horarios
   const horarios = horariosJSON;
   const users = usersJSON;
@@ -239,41 +238,6 @@ const RegistroReservaPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios
-      .post(`${database}/reservas`, {
-        tipo_ambiente: formData.tipoAmbiente,
-        cantidad_est: formData.estudiantes,
-        fecha_reserva: formData.fecha,
-        periodos: formData.periodos.filter((periodo) => periodo.checked),
-      })
-      .then((response) => {
-        if (response.status != 200) {
-          errorModal({ content: 'Error al obtener ambientes disponibles intente de nuevo' });
-        }
-        successModal({
-          content: "Message of Success Modal :v",
-          onClick: () => {
-            navigate('./ambientesDisponibles', {
-              state: {
-                fecha_reserva: formData.fecha,
-                motivo: formData.motivo,
-                listaGrupos: formData.listaGrupos,
-                id_apertura: 2,
-                ambienteDisp: response.data,
-              },
-            });
-            console.log('into success');
-          }
-        });
-      })
-      .catch((error) => {
-        errorModal({ content: 'Error al registrar la reserva intente de nuevo' });
-        console.error('Error al obtener las materias y grupos:', error);
-      });
-  };
-
   return (
     <div className="container">
       <div className="row py-md-3 justify-content-center">
@@ -351,9 +315,8 @@ const RegistroReservaPage = () => {
               {selectedGroups.map((group, index) => (
                 <div
                   key={index}
-                  className={`mb-1 px-3 py-1 alert alert-${
-                    selectedAlerts[group.id_aux_grupo]
-                  } alert-dismissible fade show`}
+                  className={`mb-1 px-3 py-1 alert alert-${selectedAlerts[group.id_aux_grupo]
+                    } alert-dismissible fade show`}
                 >
                   {group.nombre_materia} - {group.nombre_grupo}
                   <button
@@ -384,6 +347,7 @@ const RegistroReservaPage = () => {
                 <input
                   type="date"
                   className="form-control"
+                  // bug futuro :v
                   min={currentDate}
                   max={maxDate}
                   onChange={handleDateChange}
@@ -492,11 +456,14 @@ const RegistroReservaPage = () => {
               <button
                 className="btn btn-danger"
                 type="button"
-                onClick={() => { 
+                onClick={() => {
                   confirmationModal({
-                    content:<>¿Estás seguro que desea <br /> cancelar el registro de <br /> reserva?</>,
+                    content: <>
+                      <div><img src={iconoError} /></div>
+                      <div className="pt-md-3">¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?</div>
+                    </>,
                     onClickYesTo: '/'
-                  }); 
+                  });
                 }}
               >
                 Cancelar
