@@ -122,7 +122,7 @@ const RegistroReservaPage = () => {
     };
 
     console.log('Filtrado de datos', filteredData);
-    axios
+    /* axios
       .post(`${database}/reservas`, filteredData)
       .then((response) => {
         console.log(response.data);
@@ -138,7 +138,7 @@ const RegistroReservaPage = () => {
       })
       .catch((error) => {
         console.error('Error al obtener las materias y grupos:', error);
-      });
+      }); */
   };
 
   const handleGroupSelection = (event) => {
@@ -177,6 +177,17 @@ const RegistroReservaPage = () => {
       setValue('listaGrupos', updatedGroupIds);
       return updatedGroups;
     });
+  };
+
+  const handleDateChange = (event) => {
+    const selectedDate = new Date(event.target.value);
+    const selectedDay = selectedDate.getDay();
+
+    if (selectedDay === 6) {
+      setValue('fecha_reserva', '');
+    } else {
+      setValue('fecha_reserva', event.target.value);
+    }
   };
 
   return (
@@ -285,9 +296,11 @@ const RegistroReservaPage = () => {
                   className="form-control"
                   min={minDate}
                   max={maxDate}
-                  {...register('fecha_reserva')}
+                  onChange={handleDateChange}
                 />
-                {errors.fecha_reserva && <span className="text-danger">Seleccione una fecha</span>}
+                {errors.fecha_reserva && (
+                  <span className="text-danger">Seleccione una fecha valida</span>
+                )}
               </div>
             </div>
 
