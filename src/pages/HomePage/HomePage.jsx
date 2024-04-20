@@ -1,7 +1,12 @@
 import { Link } from 'react-router-dom';
 import patito from '../../assets/Images/patito.png';
+// import Modal from '../../components/Bootstrap/Modal';
+import React from 'react';
+import { useModal } from '../../components/Bootstrap/ModalContext';
 
 export default function HomePage() {
+  const { confirmationModal, errorModal, successModal } = useModal();
+
   return (
     <div className="container-md">
       <div className="row justify-content-center">
@@ -29,6 +34,17 @@ export default function HomePage() {
               Reservar ahora
             </Link>
           </div>
+
+          {/* Modal test */}
+          <button
+            type='button'
+            className='btn btn-success'
+            onClick={
+              () => { successModal('¿Estás seguro que desea cancelar el registro de ambiente?') }
+            }
+          >
+            Show Modal
+          </button>
         </div>
       </div>
     </div>

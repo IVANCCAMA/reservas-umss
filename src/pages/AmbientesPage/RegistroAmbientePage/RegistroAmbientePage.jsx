@@ -2,19 +2,12 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import horariosJSON from './horarios';
-import iconoError from '../../../assets/Images/iconoError.png';
-import iconoExito from '../../../assets/Images/iconoExito.png';
-import { useState } from 'react';
-import ModalForm from '../../../components/Modal/ModalForm';
+import { useModal } from '../../../components/Bootstrap/ModalContext';
 
 const RegistroAmbientePage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
-  const navigate = useNavigate();
-
-  // estados modales
-  const [showModal, setShowModal] = useState(false);
+  const { confirmationModal, errorModal, successModal } = useModal();
 
   // yup validación, atributos de formulario
   const schema = yup.object({
@@ -100,8 +93,7 @@ const RegistroAmbientePage = () => {
         console.log(response);
         // Establecer los datos en el estado
         if (response.status === 201) {
-          const myModalExito = new bootstrap.Modal(document.getElementById('modalExito'));
-          myModalExito.show();
+          successModal({content: "Ambiente registrado con éxito"});
 
           // restablecer formulario
           reset({
@@ -126,27 +118,15 @@ const RegistroAmbientePage = () => {
             });
           });
         } else {
-          /* Modal error */
-          const myModalError = new bootstrap.Modal(document.getElementById('modalError'));
-          myModalError.show();
+          errorModal({ content: 'Error al registrar ambiente intente de nuevo' });
         }
       })
       .catch((error) => {
-        console.error('Error al crear ambiente:', error);
-        /* Modal error */
-        const myModalError = new bootstrap.Modal(document.getElementById('modalError'));
-        myModalError.show();
+        errorModal({ content: 'Error al registrar ambiente intente de nuevo' });
       });
   };
 
   const tipoAmbiente = watch('tipo');
-
-  // visibilidad de la sección de computadoras
-  const mostrarComputadoras = tipoAmbiente === 'Laboratorio';
-
-  const handleClickYes = () => {
-    navigate('/');
-  };
 
   return (
     <div className="container registro-ambientes">
@@ -240,7 +220,7 @@ const RegistroAmbientePage = () => {
               </div>
             </div>
 
-            {mostrarComputadoras && (
+            {(tipoAmbiente === 'Laboratorio') && (
               <div className="my-3">
                 <label className="form-label fw-bold">
                   Nº Computadoras <span className="text-danger ms-1">*</span>
@@ -372,71 +352,15 @@ const RegistroAmbientePage = () => {
               <button
                 className="btn btn-danger"
                 type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop"
+                onClick={() => { 
+                  confirmationModal({
+                    content:<>¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?</>,
+                    onClickYesTo: '/'
+                  }); 
+                }}
               >
                 Cancelar
               </button>
-
-              {/* Modal boton Cancelar*/}
-              <div
-                className="modal fade"
-                id="staticBackdrop"
-                data-bs-backdrop="static"
-                data-bs-keyboard="false"
-                tabIndex="-1"
-                aria-labelledby="staticBackdropLabel"
-                aria-hidden="true"
-              >
-                <div className="modal-dialog modal-dialog-centered ">
-                  <div className="modal-content pt-md-3">
-                    <div className="modal-body text-center">
-                      <div>
-                        <img src={iconoError} alt="icono de error" />
-                      </div>
-                      <div className="py-md-3">
-                        ¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <button
-                          type="button"
-                          className="btn btn-success"
-                          data-bs-dismiss="modal"
-                          onClick={handleClickYes}
-                        >
-                          <p className="mx-4 my-auto">Si</p>
-                        </button>
-                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
-                          <p className="mx-4 my-auto">No</p>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Modal exito */}
-              <ModalForm
-                id="modalExito"
-                imgIcon={iconoExito}
-                content="Ambiente registrado con éxito"
-                btnColor="success"
-                handleConfirm={() => {
-                  setShowModal(false);
-                  // Restablecer formulario y otros cambios necesarios...
-                }}
-              />
-
-              <ModalForm
-                id="modalError"
-                imgIcon={iconoError}
-                content="Error al registrar ambiente intente de nuevo"
-                btnColor="danger"
-                handleConfirm={() => {
-                  setShowModal(false);
-                  // Restablecer formulario y otros cambios necesarios...
-                }}
-              />
             </div>
           </form>
         </div>

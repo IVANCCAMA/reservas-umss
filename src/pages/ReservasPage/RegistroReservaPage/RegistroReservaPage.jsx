@@ -2,6 +2,9 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+
+import { useModal } from '../../../components/Bootstrap/ModalContext';
+
 import { yupResolver } from '@hookform/resolvers/yup';
 import horariosJSON from './horarios';
 import usersJSON from './users';
@@ -236,9 +239,39 @@ const RegistroReservaPage = () => {
     }
   };
 
-  const handleHome = () => {
-    /* Modal de cancelar */
-    navigate('/');
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post(`${database}/reservas`, {
+        tipo_ambiente: formData.tipoAmbiente,
+        cantidad_est: formData.estudiantes,
+        fecha_reserva: formData.fecha,
+        periodos: formData.periodos.filter((periodo) => periodo.checked),
+      })
+      .then((response) => {
+        if (response.status != 200) {
+          errorModal({ content: 'Error al obtener ambientes disponibles intente de nuevo' });
+        }
+        successModal({
+          content: "Message of Success Modal :v",
+          onClick: () => {
+            navigate('./ambientesDisponibles', {
+              state: {
+                fecha_reserva: formData.fecha,
+                motivo: formData.motivo,
+                listaGrupos: formData.listaGrupos,
+                id_apertura: 2,
+                ambienteDisp: response.data,
+              },
+            });
+            console.log('into success');
+          }
+        });
+      })
+      .catch((error) => {
+        errorModal({ content: 'Error al registrar la reserva intente de nuevo' });
+        console.error('Error al obtener las materias y grupos:', error);
+      });
   };
 
   return (
@@ -456,9 +489,16 @@ const RegistroReservaPage = () => {
               <button type="submit" className="btn btn-success me-md-5">
                 Enviar
               </button>
-
-              {/* Btn cancelar */}
-              <button type="button" className="btn btn-danger" onClick={handleHome}>
+              <button
+                className="btn btn-danger"
+                type="button"
+                onClick={() => { 
+                  confirmationModal({
+                    content:<>¿Estás seguro que desea <br /> cancelar el registro de <br /> reserva?</>,
+                    onClickYesTo: '/'
+                  }); 
+                }}
+              >
                 Cancelar
               </button>
             </div>
