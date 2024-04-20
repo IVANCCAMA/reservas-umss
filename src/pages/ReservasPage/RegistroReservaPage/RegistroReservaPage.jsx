@@ -101,6 +101,8 @@ const RegistroReservaPage = () => {
       periodos: periodosFiltrados,
     };
 
+    console.log(filteredData);
+
     setSending(true);
     setTimeout(() => {
       axios
@@ -206,6 +208,8 @@ const RegistroReservaPage = () => {
     }
   };
 
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const handleSolicitanteChange = (event) => {
     const nombreSolicitante = event.target.value;
     const user = users.find((user) => user.nombre_usuario === nombreSolicitante);
@@ -214,6 +218,8 @@ const RegistroReservaPage = () => {
       setValue('solicitante', user.nombre_usuario);
 
       // Verificar si el usuario es administrador
+      setIsAdmin(user.tipo_usuario === 'ADMINISTRADOR');
+
       if (user.tipo_usuario === 'ADMINISTRADOR') {
         // Si el usuario es administrador, permitir la edición del número de estudiantes
         setValue(
@@ -222,15 +228,7 @@ const RegistroReservaPage = () => {
         );
       } else {
         // Si no es administrador, deshabilitar la edición del número de estudiantes
-        setValue(
-          'cantidad_est',
-          selectedGroups.reduce((total, group) => total + group.cantidad_est, 0),
-          { shouldValidate: true },
-        );
-        const cantidadEstInput = document.getElementById('cantidad_est');
-        if (cantidadEstInput) {
-          cantidadEstInput.readOnly = true;
-        }
+        setValue('cantidad_est', 0); // Reinicia el valor del campo
       }
     } else {
       setSelectedUser(initvalues);
@@ -340,6 +338,7 @@ const RegistroReservaPage = () => {
                   className="form-control"
                   min={0}
                   max={500}
+                  disabled={!isAdmin}
                   {...register('cantidad_est')}
                 />
               </div>
