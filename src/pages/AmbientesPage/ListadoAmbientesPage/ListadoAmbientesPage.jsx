@@ -26,7 +26,7 @@ const ListadoAmbientesPage = () => {
               Tipo: amb.tipo.toUpperCase(),
               Proyector: amb.proyector ? 'SI' : 'NO',
               'Ver más': (
-                <div className="boton-style w-auto text-center me-md-3 rounded">
+                <div className="boton-style  text-center me-md-3 rounded">
                   <Link
                     to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
                     className="btn border border-0"
