@@ -119,6 +119,7 @@ const RegistroReservaPage = () => {
                   motivo: filteredData.motivo,
                   listaGrupos: filteredData.listaGrupos,
                   id_apertura: 2,
+                  cantidad_total: filteredData.cantidad_est,
                   ambienteDisp: response.data,
                 },
               });

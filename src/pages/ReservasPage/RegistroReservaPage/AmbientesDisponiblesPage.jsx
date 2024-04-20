@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // import './ListadoAmbientesPage.scss';
 import axios from 'axios';
 import Table from '../../../components/Table/Table';
@@ -10,6 +10,7 @@ import iconoError from '../../../assets/Images/iconoError.png';
 import iconoExito from '../../../assets/Images/iconoExito.png';
 
 const AmbientesDisponibles = () => {
+  const navigate = useNavigate();
   // estados
   const database = 'https://backendtis-production.up.railway.app/api';
   const location = useLocation();
@@ -19,48 +20,69 @@ const AmbientesDisponibles = () => {
   const confirmSelect = (amb) => {
     // show modal confirm
     confirmationModal({
-      content: <>
-        <div className='position-absolute'><Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} /></div>
-        <div>
-          Confirmar reserva <br />
-          Aula: {amb.nombre_ambiente} <br />
-          Capacidad: {amb.capacidad_ambiente} <br />
-          Tipo: {amb.tipo_ambiente} <br />
-          Fecha: {amb.fecha} <br />
-          Hora: {amb.hora_inicio?.slice(0, 5)} - {amb.hora_fin?.slice(0, 5)} <br />
-        </div>
-      </>,
+      content: (
+        <>
+          <div className="position-absolute">
+            <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+          </div>
+          <div>
+            Confirmar reserva <br />
+            Aula: {amb.nombre_ambiente} <br />
+            Capacidad: {amb.capacidad_ambiente} <br />
+            Tipo: {amb.tipo_ambiente} <br />
+            Fecha: {amb.fecha} <br />
+            Hora: {amb.hora_inicio?.slice(0, 5)} - {amb.hora_fin?.slice(0, 5)} <br />
+          </div>
+        </>
+      ),
       // click acept modal confirm
       onClickYes: () => {
         // register new reserva
         axios
           .post(`${database}/reservas/crear/`, {
             ...formData,
-            listaGrupos: formData.listaGrupos.map(group => parseInt(group, 10)),
-            id_disponible: amb.id_disponible
+            listaGrupos: formData.listaGrupos.map((group) => parseInt(group, 10)),
+            id_disponible: amb.id_disponible,
           })
           .then((response) => {
+            console.log('enviado', formData);
             // success
             console.log(response.data);
             successModal({
-              content: <>
-                <div><img src={iconoExito} /></div>
-                <div className="pt-md-3">Registro de reserva<br />exitoso</div>
-              </>,
+              content: (
+                <>
+                  <div>
+                    <img src={iconoExito} />
+                  </div>
+                  <div className="pt-md-3">
+                    Registro de reserva
+                    <br />
+                    exitoso
+                  </div>
+                </>
+              ),
               // redirect
-              onClickTo: '/reservas/listaReservas'
+              onClickTo: '/reservas/listaReservas',
             });
           })
           .catch((error) => {
             console.error('Error al obtener las materias y grupos:', error);
             errorModal({
-              content: <>
-                <div><img src={iconoError} /></div>
-                <div className="pt-md-3">Error al registrar<br />Intente de nnuevo</div>
-              </>
+              content: (
+                <>
+                  <div>
+                    <img src={iconoError} />
+                  </div>
+                  <div className="pt-md-3">
+                    Error al registrar
+                    <br />
+                    Intente de nnuevo
+                  </div>
+                </>
+              ),
             });
           });
-      }
+      },
     });
   };
 
@@ -77,7 +99,10 @@ const AmbientesDisponibles = () => {
         <button
           type="button"
           className="btn btn-success boton-style w-auto text-center me-md-3 rounded"
-          onClick={() => { confirmSelect(amb) }}>
+          onClick={() => {
+            confirmSelect(amb);
+          }}
+        >
           Seleccionar
         </button>
       ),
@@ -94,7 +119,10 @@ const AmbientesDisponibles = () => {
           <button
             type="button"
             className="btn btn-primary boton-style w-auto text-center me-md-3 rounded"
-            onClick={() => { navigate('/reservas/reservarAmbiente'); }}>
+            onClick={() => {
+              navigate('/reservas/reservarAmbiente');
+            }}
+          >
             Volver al formulario
           </button>
         </div>
