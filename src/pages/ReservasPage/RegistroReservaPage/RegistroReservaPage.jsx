@@ -15,6 +15,8 @@ import iconoExito from '../../../assets/Images/iconoExito.png';
 
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
+  const { confirmationModal } = useModal();
+
   const navigate = useNavigate();
   // json horarios
   const horarios = horariosJSON;
@@ -239,7 +241,7 @@ const RegistroReservaPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  /*  const handleSubmit = (e) => {
     e.preventDefault();
     axios
       .post(`${database}/reservas`, {
@@ -272,7 +274,7 @@ const RegistroReservaPage = () => {
         errorModal({ content: 'Error al registrar la reserva intente de nuevo' });
         console.error('Error al obtener las materias y grupos:', error);
       });
-  };
+  }; */
 
   return (
     <div className="container">
@@ -492,11 +494,15 @@ const RegistroReservaPage = () => {
               <button
                 className="btn btn-danger"
                 type="button"
-                onClick={() => { 
+                onClick={() => {
                   confirmationModal({
-                    content:<>¿Estás seguro que desea <br /> cancelar el registro de <br /> reserva?</>,
-                    onClickYesTo: '/'
-                  }); 
+                    content: (
+                      <>
+                        ¿Estás seguro que desea <br /> cancelar el registro de <br /> reserva?
+                      </>
+                    ),
+                    onClickYesTo: '/',
+                  });
                 }}
               >
                 Cancelar
