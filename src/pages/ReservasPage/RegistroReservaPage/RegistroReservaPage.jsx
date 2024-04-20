@@ -11,54 +11,87 @@ const RegistroReservaPage = () => {
   const navigate = useNavigate();
   // json horarios
   const horarios = horariosJSON;
-  const user = {
-    id_usuario: 2,
-    nombre_usuario: 'CARLA SALAZAR SERRUDO',
-    contrasenia_usuario: '12345678',
-    email_usuario: 'carlaserrudo@gmail.com',
-    tipo_usuario: 'DOCENTE',
-    codsiss: 202400001,
+
+  const users = [
+    {
+      id_usuario: 2,
+      nombre_usuario: 'CARLA SALAZAR SERRUDO',
+      contrasenia_usuario: '12345678',
+      email_usuario: 'carlaserrudo@gmail.com',
+      tipo_usuario: 'DOCENTE',
+      codsiss: 202400001,
+      disponible: true,
+      materia_grupo: [
+        {
+          id_aux_grupo: 8,
+          id_grupo: 1,
+          nombre_grupo: 'G1',
+          nombre_materia: 'METODOS TECNICAS Y TALLER DE PROGRAMACION',
+          cantidad_est: 83,
+        },
+        {
+          id_aux_grupo: 4,
+          id_grupo: 2,
+          nombre_grupo: 'G4',
+          nombre_materia: 'CIRCUITOS ELECTRONICOS',
+          cantidad_est: 113,
+        },
+        {
+          id_aux_grupo: 6,
+          id_grupo: 3,
+          nombre_grupo: 'G4',
+          nombre_materia: 'BASE DE DATOS I',
+          cantidad_est: 62,
+        },
+        {
+          id_aux_grupo: 10,
+          id_grupo: 5,
+          nombre_grupo: 'G3',
+          nombre_materia: 'FISICA GENERAL',
+          cantidad_est: 64,
+        },
+        {
+          id_aux_grupo: 1,
+          id_grupo: 7,
+          nombre_grupo: 'G4',
+          nombre_materia: 'MATEMATICA DISCRETA',
+          cantidad_est: 54,
+        },
+      ],
+    },
+    {
+      id_usuario: 1,
+      nombre_usuario: 'ADMINISTRADOR',
+      contrasenia_usuario: 'abc12345',
+      email_usuario: 'admin@gmail.com',
+      tipo_usuario: 'ADMINISTRADOR',
+      codsiss: 202400000,
+      disponible: true,
+      materia_grupo: [
+        {
+          id_aux_grupo: 11,
+          id_grupo: 11,
+          nombre_grupo: 'OTROS',
+          nombre_materia: 'OTROS',
+          cantidad_est: 100,
+        },
+      ],
+    },
+  ];
+
+  const initvalues = {
+    id_usuario: '',
+    nombre_usuario: '',
+    contrasenia_usuario: '',
+    email_usuario: '',
+    tipo_usuario: '',
+    codsiss: '',
     disponible: true,
-    materia_grupo: [
-      {
-        id_aux_grupo: 8,
-        id_grupo: 1,
-        nombre_grupo: 'G1',
-        nombre_materia: 'METODOS TECNICAS Y TALLER DE PROGRAMACION',
-        cantidad_est: 83,
-      },
-      {
-        id_aux_grupo: 4,
-        id_grupo: 2,
-        nombre_grupo: 'G4',
-        nombre_materia: 'CIRCUITOS ELECTRONICOS',
-        cantidad_est: 113,
-      },
-      {
-        id_aux_grupo: 6,
-        id_grupo: 3,
-        nombre_grupo: 'G4',
-        nombre_materia: 'BASE DE DATOS I',
-        cantidad_est: 62,
-      },
-      {
-        id_aux_grupo: 10,
-        id_grupo: 5,
-        nombre_grupo: 'G3',
-        nombre_materia: 'FISICA GENERAL',
-        cantidad_est: 64,
-      },
-      {
-        id_aux_grupo: 1,
-        id_grupo: 7,
-        nombre_grupo: 'G4',
-        nombre_materia: 'MATEMATICA DISCRETA',
-        cantidad_est: 54,
-      },
-    ],
+    materia_grupo: [],
   };
 
   // estados
+  const [selectedUser, setSelectedUser] = useState(initvalues);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [minDate, setMinDate] = useState('');
   const [maxDate, setMaxDate] = useState('');
@@ -91,11 +124,13 @@ const RegistroReservaPage = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      solicitante: user.nombre_usuario,
-      id_user: user.id_usuario,
-      periodos: [],
+      solicitante: '',
+      tipo_ambiente: '',
       listaGrupos: [],
       cantidad_est: 0,
+      fecha_reserva: '',
+      motivo: '',
+      periodos: [],
     },
   });
 
@@ -145,7 +180,7 @@ const RegistroReservaPage = () => {
     const selectedGroupId = event.target.value;
 
     if (selectedGroupId) {
-      const selectedGroup = user.materia_grupo.find(
+      const selectedGroup = selectedUser.materia_grupo.find(
         (group) => group.id_aux_grupo === parseInt(selectedGroupId),
       );
 
@@ -198,6 +233,20 @@ const RegistroReservaPage = () => {
     }
   };
 
+  const handleSolicitanteChange = (event) => {
+    const nombreSolicitante = event.target.value;
+    const user = users.find((user) => user.nombre_usuario === nombreSolicitante);
+    if (user) {
+      setSelectedUser(user);
+      setValue('solicitante', user.nombre_usuario);
+    } else {
+      setSelectedUser(initvalues);
+      setSelectedGroups([]);
+      setValue('listaGrupos', []);
+      setValue('cantidad_est', 0);
+    }
+  };
+
   return (
     <div className="container">
       <div className="row py-md-3 justify-content-center">
@@ -213,8 +262,11 @@ const RegistroReservaPage = () => {
                 className="form-control"
                 placeholder="Ingrese el nombre del solicitante"
                 {...register('solicitante')}
+                onChange={handleSolicitanteChange}
               />
-              {errors.solicitante && <span className="text-danger">El campo es obligatorio</span>}
+              {errors.solicitante && (
+                <span className="text-danger">Ingrese un nombre de un usuario</span>
+              )}
             </div>
 
             {/* Tipo ambiente */}
@@ -245,10 +297,11 @@ const RegistroReservaPage = () => {
               <select
                 className="form-select"
                 placeholder="Seleccionar materias y grupos"
+                disabled={!selectedUser}
                 onChange={handleGroupSelection}
               >
                 <option value="">Seleccionar materias y grupos</option>
-                {user.materia_grupo.map((grupo, index) => {
+                {selectedUser.materia_grupo.map((grupo, index) => {
                   const isSelected = selectedGroups.some(
                     (selectedGroup) => selectedGroup.id_aux_grupo === grupo.id_aux_grupo,
                   );
