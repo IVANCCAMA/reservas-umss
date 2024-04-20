@@ -218,6 +218,7 @@ const RegistroReservaPage = () => {
               <label className="form-label fw-bold">Nombre del solicitante</label>
               <input
                 type="text"
+                maxLength={25}
                 className="form-control"
                 placeholder="Ingrese el nombre del solicitante"
                 {...register('solicitante')}
@@ -334,6 +335,7 @@ const RegistroReservaPage = () => {
               <textarea
                 rows={2}
                 type="text"
+                maxLength={200}
                 className="form-control"
                 placeholder="Escriba el motivo de la reserva"
                 {...register('motivo')}
