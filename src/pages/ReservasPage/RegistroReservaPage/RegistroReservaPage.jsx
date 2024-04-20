@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import horariosJSON from './horarios';
+import usersJSON from './users';
 import { useNavigate } from 'react-router-dom';
 
 const RegistroReservaPage = () => {
@@ -12,72 +13,7 @@ const RegistroReservaPage = () => {
   // json horarios
   const horarios = horariosJSON;
 
-  const users = [
-    {
-      id_usuario: 2,
-      nombre_usuario: 'CARLA SALAZAR SERRUDO',
-      contrasenia_usuario: '12345678',
-      email_usuario: 'carlaserrudo@gmail.com',
-      tipo_usuario: 'DOCENTE',
-      codsiss: 202400001,
-      disponible: true,
-      materia_grupo: [
-        {
-          id_aux_grupo: 8,
-          id_grupo: 1,
-          nombre_grupo: 'G1',
-          nombre_materia: 'METODOS TECNICAS Y TALLER DE PROGRAMACION',
-          cantidad_est: 83,
-        },
-        {
-          id_aux_grupo: 4,
-          id_grupo: 2,
-          nombre_grupo: 'G4',
-          nombre_materia: 'CIRCUITOS ELECTRONICOS',
-          cantidad_est: 113,
-        },
-        {
-          id_aux_grupo: 6,
-          id_grupo: 3,
-          nombre_grupo: 'G4',
-          nombre_materia: 'BASE DE DATOS I',
-          cantidad_est: 62,
-        },
-        {
-          id_aux_grupo: 10,
-          id_grupo: 5,
-          nombre_grupo: 'G3',
-          nombre_materia: 'FISICA GENERAL',
-          cantidad_est: 64,
-        },
-        {
-          id_aux_grupo: 1,
-          id_grupo: 7,
-          nombre_grupo: 'G4',
-          nombre_materia: 'MATEMATICA DISCRETA',
-          cantidad_est: 54,
-        },
-      ],
-    },
-    {
-      id_usuario: 1,
-      nombre_usuario: 'ADMINISTRADOR',
-      contrasenia_usuario: 'abc12345',
-      email_usuario: 'admin@gmail.com',
-      tipo_usuario: 'ADMINISTRADOR',
-      codsiss: 202400000,
-      disponible: true,
-      materia_grupo: [
-        {
-          id_aux_grupo: 11,
-          id_grupo: 11,
-          nombre_grupo: 'OTROS',
-          nombre_materia: 'OTROS',
-          cantidad_est: 100,
-        },
-      ],
-    },
-  ];
+  const users = usersJSON;
 
   const initvalues = {
     id_usuario: '',
@@ -177,6 +113,9 @@ const RegistroReservaPage = () => {
       });
   };
 
+  const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
+  const [selectedAlerts, setSelectedAlerts] = useState({});
+
   const handleGroupSelection = (event) => {
     const selectedGroupId = event.target.value;
 
@@ -197,6 +136,12 @@ const RegistroReservaPage = () => {
             0,
           );
           setValue('cantidad_est', totalEstudiantes);
+
+          // Asignar un color de alerta a la materia seleccionada
+          setSelectedAlerts((prevSelectedAlerts) => ({
+            ...prevSelectedAlerts,
+            [selectedGroup.id_aux_grupo]: alerts[Math.floor(Math.random() * alerts.length)],
+          }));
 
           return updatedSelectedGroups;
         });
@@ -332,7 +277,9 @@ const RegistroReservaPage = () => {
               {selectedGroups.map((group, index) => (
                 <div
                   key={index}
-                  className="mb-1 px-3 py-1 alert alert-primary alert-dismissible fade show"
+                  className={`mb-1 px-3 py-1 alert alert-${
+                    selectedAlerts[group.id_aux_grupo]
+                  } alert-dismissible fade show`}
                 >
                   {group.nombre_materia} - {group.nombre_grupo}
                   <button
