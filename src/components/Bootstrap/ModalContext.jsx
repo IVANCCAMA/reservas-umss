@@ -42,16 +42,9 @@ export const ModalProvider = ({ children }) => {
     });
   };
 
-  const createModal = (content, button1, onClickButton1To = '', icon = true, button2 = undefined, onClickButton2To = '') => {
+  const createModal = (content, button1, onClickButton1To = '', button2 = undefined, onClickButton2To = '') => {
     return {
-      content: <>
-        <div>
-          <img src={icon ? iconoExito : iconoError} />
-        </div>
-        <div className="pt-md-3">
-          {content}
-        </div>
-      </>,
+      content: content,
       button1: {
         ...button1,
         onClick: () => {
@@ -96,7 +89,7 @@ export const ModalProvider = ({ children }) => {
       content: <p className="mx-4 my-auto">No</p>,
       onClick: onClickNo
     };
-    showModal(createModal(content, button1, onClickYesTo, false, button2, onClickNoTo));
+    showModal(createModal(content, button1, onClickYesTo, button2, onClickNoTo));
   };
 
   /**
@@ -113,7 +106,7 @@ export const ModalProvider = ({ children }) => {
       content: <p className="mx-4 my-auto">Aceptar</p>,
       onClick: onClick
     };
-    showModal(createModal(content, button1, onClickTo, false));
+    showModal(createModal(content, button1, onClickTo));
   };
 
   /**
@@ -134,7 +127,7 @@ export const ModalProvider = ({ children }) => {
   };
 
   return (
-    <ModalContext.Provider value={{ showModal, confirmationModal, errorModal, successModal }}>
+    <ModalContext.Provider value={{ showModal, createModal, confirmationModal, errorModal, successModal }}>
       {children}
       {modal && <Modal {...modal} />}
     </ModalContext.Provider>

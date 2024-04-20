@@ -1,10 +1,6 @@
 import { Icon } from '@iconify/react';
 import { Link } from 'react-router-dom';
-/* import { useState } from 'react';
- */
 const Sidebar = () => {
-  /*  const [showAmbientes, setShowAmbientes] = useState(true); */
-
   const btns = [
     {
       name: 'Ambientes',

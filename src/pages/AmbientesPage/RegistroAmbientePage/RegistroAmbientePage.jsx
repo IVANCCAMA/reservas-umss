@@ -4,10 +4,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import horariosJSON from './horarios';
 import { useModal } from '../../../components/Bootstrap/ModalContext';
+import iconoError from '../../../assets/Images/iconoError.png';
+import iconoExito from '../../../assets/Images/iconoExito.png';
 
 const RegistroAmbientePage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
   const { confirmationModal, errorModal, successModal } = useModal();
+  const errorModalContent = (<>
+    <div><img src={iconoError} /></div>
+    <div className="pt-md-3">Error al registrar ambiente intente de nuevo</div>
+  </>
+  );
 
   // yup validación, atributos de formulario
   const schema = yup.object({
@@ -93,7 +100,12 @@ const RegistroAmbientePage = () => {
         console.log(response);
         // Establecer los datos en el estado
         if (response.status === 201) {
-          successModal({content: "Ambiente registrado con éxito"});
+          successModal({
+            content: <>
+              <div><img src={iconoExito} /></div>
+              <div className="pt-md-3">Ambiente registrado con éxito</div>
+            </>
+          });
 
           // restablecer formulario
           reset({
@@ -118,11 +130,11 @@ const RegistroAmbientePage = () => {
             });
           });
         } else {
-          errorModal({ content: 'Error al registrar ambiente intente de nuevo' });
+          errorModal({ content: errorModalContent });
         }
       })
       .catch((error) => {
-        errorModal({ content: 'Error al registrar ambiente intente de nuevo' });
+        errorModal({ content: errorModalContent });
       });
   };
 
@@ -352,11 +364,14 @@ const RegistroAmbientePage = () => {
               <button
                 className="btn btn-danger"
                 type="button"
-                onClick={() => { 
+                onClick={() => {
                   confirmationModal({
-                    content:<>¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?</>,
+                    content: <>
+                      <div><img src={iconoError} /></div>
+                      <div className="pt-md-3">¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?</div>
+                    </>,
                     onClickYesTo: '/'
-                  }); 
+                  });
                 }}
               >
                 Cancelar
