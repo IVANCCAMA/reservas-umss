@@ -340,10 +340,11 @@ const RegistroReservaPage = () => {
               <div className="col-md-6">
                 <label className="form-label fw-bold">Número de Estudiantes</label>
                 <input
-                  disabled
                   type="text"
                   className="form-control"
-                  {...register('cantidad_est')}
+                  {...register('cantidad_est', {
+                    disabled: selectedUser.tipo_usuario !== 'ADMINISTRADOR',
+                  })}
                 />
               </div>
               {/* Fecha */}
