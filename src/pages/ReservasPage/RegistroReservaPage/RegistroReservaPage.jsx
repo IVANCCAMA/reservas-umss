@@ -6,6 +6,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import horariosJSON from './horarios';
 import usersJSON from './users';
 import { useNavigate } from 'react-router-dom';
+import iconInfo from '../../../assets/Images/alert-information.png';
+import iconoError from '../../../assets/Images/iconoError.png';
+import iconoExito from '../../../assets/Images/iconoExito.png';
 
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
@@ -32,6 +35,10 @@ const RegistroReservaPage = () => {
   const [maxDate, setMaxDate] = useState('');
   const [filteredHorarios, setFilteredHorarios] = useState([]);
   const [selectedAlerts, setSelectedAlerts] = useState({});
+
+  const [sending, setSending] = useState(false); // Estado para la alerta de envío
+  const [error, setError] = useState(false); // Estado para la alerta de error
+  const [success, setSuccess] = useState(false);
 
   const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
 
@@ -85,37 +92,45 @@ const RegistroReservaPage = () => {
   }, []);
 
   const onSubmit = (data) => {
-    console.log('Datos entrada', data);
     const periodosFiltrados = data.periodos.filter((periodo) => periodo.id_periodo);
     const filteredData = {
       ...data,
       periodos: periodosFiltrados,
     };
 
-    console.log('Filtrado de datos', filteredData);
-    axios
-      .post(`${database}/reservas`, filteredData)
-      .then((response) => {
-        if (Array.isArray(response.data) && response.data.length === 0) {
-          /* Remplazar por mensaje alerta */
-          console.log(response.data);
-          alert('No hay ambientes disponibles que se adecuen a la solicitud.');
-        } else {
-          console.log(response.data);
-          navigate('./ambientesDisponibles', {
-            state: {
-              fecha_reserva: filteredData.fecha_reserva,
-              motivo: filteredData.motivo,
-              listaGrupos: filteredData.listaGrupos,
-              id_apertura: 2,
-              ambienteDisp: response.data,
-            },
-          });
-        }
-      })
-      .catch((error) => {
-        console.error('Error al obtener las materias y grupos:', error);
-      });
+    setSending(true);
+    setTimeout(() => {
+      axios
+        .post(`${database}/reservas`, filteredData)
+        .then((response) => {
+          if (Array.isArray(response.data) && response.data.length === 0) {
+            setError(true);
+            setTimeout(() => setError(false), 2000);
+          } else {
+            setSuccess(true);
+            setTimeout(() => {
+              setSuccess(false);
+              navigate('./ambientesDisponibles', {
+                state: {
+                  fecha_reserva: filteredData.fecha_reserva,
+                  motivo: filteredData.motivo,
+                  listaGrupos: filteredData.listaGrupos,
+                  id_apertura: 2,
+                  ambienteDisp: response.data,
+                },
+              });
+            }, 2000);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          setError(true);
+          setTimeout(() => setError(false), 2000);
+        })
+        .finally(() => {
+          setSending(false);
+        });
+    }, 2000);
   };
 
   const handleGroupSelection = (event) => {
@@ -433,6 +448,37 @@ const RegistroReservaPage = () => {
             </div>
           </form>
         </div>
+
+        {/* Enviando... */}
+        {sending && (
+          <div className="d-flex justify-content-md-end ">
+            <div className="alert alert-primary py-1 d-flex align-items-center" role="alert">
+              <img src={iconInfo} alt="info" className="iconAlert" />
+              <div className="ps-3">Enviando formulario</div>
+              <div className="spinner-border spinner-border-sm ms-4" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Error al enviar */}
+        {error && (
+          <div className="d-flex justify-content-md-end ">
+            <div className="alert alert-danger py-1 d-flex align-items-center" role="alert">
+              <img src={iconoError} alt="info" className="iconAlert" />
+              <div className="ps-3">Error al enviar, intente de nuevo</div>
+            </div>
+          </div>
+        )}
+        {/* Enviado correctamente */}
+        {success && (
+          <div className="d-flex justify-content-md-end ">
+            <div className="alert alert-success py-1 d-flex align-items-center" role="alert">
+              <img src={iconoExito} alt="info" className="iconAlert" />
+              <div className="ps-3">Enviado correctamente</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
