@@ -102,7 +102,7 @@ const RegistroReservaPage = () => {
     solicitante: yup.string().required(),
     tipo_ambiente: yup.string().required(),
     listaGrupos: yup.array().min(1, 'Seleccione al menos una materia'),
-    cantidad_est: yup.number(),
+    cantidad_est: yup.number().required(),
     fecha_reserva: yup.string().required(),
     motivo: yup.string(),
     periodos: yup
@@ -229,7 +229,7 @@ const RegistroReservaPage = () => {
 
     if (selectedDay === 6) {
       setValue('fecha_reserva', '');
-      setFilteredHorarios([])
+      setFilteredHorarios([]);
     } else {
       if (selectedDay === 5) {
         // Si el día seleccionado es sábado
@@ -351,6 +351,7 @@ const RegistroReservaPage = () => {
                 <input
                   type="number"
                   className="form-control"
+                  min={0}
                   {...register('cantidad_est', {
                     disabled: selectedUser.tipo_usuario !== 'ADMINISTRADOR',
                   })}
