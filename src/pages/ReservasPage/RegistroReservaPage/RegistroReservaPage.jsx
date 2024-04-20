@@ -98,6 +98,7 @@ const RegistroReservaPage = () => {
       .then((response) => {
         if (Array.isArray(response.data) && response.data.length === 0) {
           /* Remplazar por mensaje alerta */
+          console.log(response.data);
           alert('No hay ambientes disponibles que se adecuen a la solicitud.');
         } else {
           console.log(response.data);
@@ -200,6 +201,11 @@ const RegistroReservaPage = () => {
     }
   };
 
+  const handleHome = () => {
+    /* Modal de cancelar */
+    navigate('/');
+  };
+
   return (
     <div className="container">
       <div className="row py-md-3 justify-content-center">
@@ -298,9 +304,11 @@ const RegistroReservaPage = () => {
                   type="number"
                   className="form-control"
                   min={0}
-                  {...register('cantidad_est', {
-                    disabled: selectedUser.tipo_usuario !== 'ADMINISTRADOR',
-                  })}
+                  {...register('cantidad_est')}
+                  value={
+                    selectedUser.tipo_usuario === 'ADMINISTRADOR' ? '' : selectedUser.cantidad_est
+                  }
+                  readOnly={selectedUser.tipo_usuario !== 'ADMINISTRADOR'}
                 />
               </div>
               {/* Fecha */}
@@ -417,7 +425,7 @@ const RegistroReservaPage = () => {
               </button>
 
               {/* Btn cancelar */}
-              <button type="button" className="btn btn-danger">
+              <button type="button" className="btn btn-danger" onClick={handleHome}>
                 Cancelar
               </button>
             </div>
