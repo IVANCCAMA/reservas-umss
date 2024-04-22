@@ -230,7 +230,7 @@ const RegistroAmbientePage = () => {
                 </label>
                 <input
                   min={0}
-                  max={watch('porcentaje_max')}
+                  max={100}
                   defaultValue={85}
                   type="number"
                   className="form-control"
