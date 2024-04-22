@@ -19,6 +19,15 @@ const FichaInformacionAmbientePage = () => {
     diponibilidadPorDia: [],
   };
 
+  const diasSemana = {
+    lunes: 'Lunes',
+    martes: 'Martes',
+    miercoles: 'Miércoles',
+    jueves: 'Jueves',
+    viernes: 'Viernes',
+    sabado: 'Sábado',
+  };
+
   let { id_ambiente } = useParams();
   const [ambiente, setAmbiente] = useState(ambienteInitialState);
   const [disponibilidadPorDia, setDisponibilidadPorDia] = useState([]);
@@ -38,6 +47,12 @@ const FichaInformacionAmbientePage = () => {
   useEffect(() => {
     loadAmbiente(id_ambiente);
   }, [id_ambiente]);
+
+  const obtenerNombreDia = (nombreDia) => {
+    const nombreDiaMinusculas = nombreDia.toLowerCase();
+    const nombreDiaEnEspanol = diasSemana[nombreDiaMinusculas];
+    return nombreDiaEnEspanol || nombreDia;
+  };
 
   return (
     <div className="container ficha-ambientes">
@@ -105,7 +120,7 @@ const FichaInformacionAmbientePage = () => {
                       aria-expanded="false"
                       aria-controls={`collapseTwo${index}`}
                     >
-                      {diaDisponible.dia}
+                      {obtenerNombreDia(diaDisponible.dia)}
                     </button>
                   </h2>
                   <div
