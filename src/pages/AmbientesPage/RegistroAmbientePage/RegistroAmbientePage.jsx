@@ -142,6 +142,7 @@ const RegistroAmbientePage = () => {
         }
       })
       .catch((error) => {
+        console.log(error);
         errorModal({ content: errorModalContent });
       });
   };

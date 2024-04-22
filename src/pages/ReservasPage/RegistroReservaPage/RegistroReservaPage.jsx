@@ -15,7 +15,7 @@ const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
 
   const navigate = useNavigate();
-  const { confirmationModal, errorModal, successModal } = useModal();
+  const { confirmationModal } = useModal();
   // json horarios
   const horarios = horariosJSON;
   const users = usersJSON;
