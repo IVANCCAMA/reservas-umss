@@ -43,26 +43,22 @@ const FichaInformacionAmbientePage = () => {
     <div className="container ficha-ambientes">
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-9">
-          <h2 className="text-center pb-3">Ambiente {ambiente.nombre_ambiente}</h2>
+          <h2 className="text-center pb-3">AMBIENTE {ambiente.nombre_ambiente}</h2>
           <div className="row">
             <p className="col">Tipo de ambiente</p>
-            <p className="col-6 text-secondary">{ambiente.tipo}</p>
+            <p className="col-6 text-secondary">{ambiente.tipo.toUpperCase()}</p>
           </div>
           <div className="row">
             <p className="col">Capacidad de estudiantes</p>
             <p className="col-6 text-secondary">{ambiente.capacidad}</p>
           </div>
           <div className="row">
-            <p className="col">Capacidad maxima</p>
-            <p className="col-6 text-secondary">
-              {(ambiente.porcentaje_max / 100) * ambiente.capacidad}
-            </p>
+            <p className="col">Capacidad máxima</p>
+            <p className="col-6 text-secondary">{ambiente.capacidad_max}</p>
           </div>
           <div className="row">
-            <p className="col">Capacidad minima </p>
-            <p className="col-6 text-secondary">
-              {(ambiente.porcentaje_min / 100) * ambiente.capacidad}
-            </p>
+            <p className="col">Capacidad mínima </p>
+            <p className="col-6 text-secondary">{ambiente.capacidad_min}</p>
           </div>
           <div className="row">
             <p className="col">Ubicación</p>
