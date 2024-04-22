@@ -108,6 +108,12 @@ const FichaInformacionAmbientePage = () => {
           <h4 className="py-3">Días y horarios disponibles</h4>
 
           {disponibilidadPorDia.map((diaDisponible, index) => {
+            const hayPeriodosDisponibles =
+              diaDisponible.periodos && diaDisponible.periodos.length > 0;
+
+            if (!hayPeriodosDisponibles) {
+              return null;
+            }
             return (
               <div className="accordion" key={index}>
                 <div className="accordion-item">
@@ -130,7 +136,7 @@ const FichaInformacionAmbientePage = () => {
                     data-bs-parent="#accordionExample"
                   >
                     <div className="accordion-body">
-                      {diaDisponible.periodos.map((periodoDia, index) => {
+                      {diaDisponible.periodos?.map((periodoDia, index) => {
                         return (
                           <div key={index} className="row d-inline-flex px-xxl-4 px-sm-2">
                             <p className="col ms-xxl-3 ms-sm-2">
