@@ -90,7 +90,7 @@ const RegistroAmbientePage = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
     clearErrors,
     setValue,
@@ -111,74 +111,72 @@ const RegistroAmbientePage = () => {
   };
 
   // logic api
-  const onSubmit = (data) => {
-    console.log('Datos inicial', data);
-    const filteredDia = Object.fromEntries(
-      // eslint-disable-next-line no-unused-vars
-      Object.entries(data.dia).filter(([key, value]) =>
-        value.periodos.some((periodo) => periodo.id_periodo !== false),
-      ),
-    );
+  const onSubmit = async (data) => {
+    try {
+      console.log('Datos inicial', data);
+      const filteredDia = Object.fromEntries(
+        Object.entries(data.dia).filter(([key, value]) =>
+          value.periodos.some((periodo) => periodo.id_periodo !== false),
+        ),
+      );
 
-    const filteredData = {
-      ...data,
-      tipo: removeAccents(data.tipo.toLowerCase()),
-      computadora: data.computadora === '' ? 0 : data.computadora,
-      dia: Object.fromEntries(
-        Object.entries(filteredDia).map(([key, value]) => [
-          removeAccents(key.toLowerCase()),
-          { periodos: value.periodos.filter((periodo) => periodo.id_periodo !== false) },
-        ]),
-      ),
-    };
-    console.log('Datos enviados', filteredData);
-    axios
-      .post(`${baseURL}/ambientes/completo`, filteredData)
-      .then((response) => {
-        console.log(response);
-        // Establecer los datos en el estado
-        if (response.status === 201) {
-          successModal({
-            content: (
-              <>
-                <div>
-                  <img src={iconoExito} />
-                </div>
-                <div className="pt-md-3">Ambiente registrado con éxito</div>
-              </>
-            ),
-          });
+      const filteredData = {
+        ...data,
+        tipo: removeAccents(data.tipo.toLowerCase()),
+        computadora: data.computadora === '' ? 0 : data.computadora,
+        dia: Object.fromEntries(
+          Object.entries(filteredDia).map(([key, value]) => [
+            removeAccents(key.toLowerCase()),
+            { periodos: value.periodos.filter((periodo) => periodo.id_periodo !== false) },
+          ]),
+        ),
+      };
 
-          // restablecer formulario
-          reset({
-            nombre_ambiente: '',
-            tipo: '',
-            capacidad: '',
-            computadora: yup.number().when('tipo', {
-              is: 'Laboratorio',
-              then: yup.number().required('El campo es obligatorio'),
-            }),
-            ubicacion: '',
-            dia: '',
-            proyector: false,
+      console.log('Datos enviados', filteredData);
+
+      const response = await axios.post(`${baseURL}/ambientes/completo`, filteredData);
+
+      console.log(response);
+
+      if (response.status === 201) {
+        successModal({
+          content: (
+            <>
+              <div>
+                <img src={iconoExito} />
+              </div>
+              <div className="pt-md-3">Ambiente registrado con éxito</div>
+            </>
+          ),
+        });
+
+        reset({
+          nombre_ambiente: '',
+          tipo: '',
+          capacidad: '',
+          computadora: '',
+          ubicacion: '',
+          dia: '',
+          proyector: false,
+        });
+
+        setValue('disponible', true);
+        clearErrors();
+
+        // eslint-disable-next-line no-unused-vars
+        horarios.forEach((horario, index) => {
+          horario.periodos.forEach((_, subIndex) => {
+            const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
+            setValue(fieldName, false);
           });
-          setValue('disponible', true);
-          clearErrors();
-          // eslint-disable-next-line no-unused-vars
-          horarios.forEach((horario, index) => {
-            horario.periodos.forEach((_, subIndex) => {
-              const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
-              setValue(fieldName, false);
-            });
-          });
-        } else {
-          errorModal({ content: errorModalContent });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
+        });
+      } else {
         errorModal({ content: errorModalContent });
-      });
+      }
+    } catch (error) {
+      console.log(error);
+      errorModal({ content: errorModalContent });
+    }
   };
 
   const tipoAmbiente = watch('tipo');
@@ -421,8 +419,8 @@ const RegistroAmbientePage = () => {
             </div>
 
             <div className="d-flex justify-content-center">
-              <button type="submit" className="btn btn-success me-5">
-                Registrar
+              <button type="submit" className="btn btn-success me-5" disabled={isSubmitting}>
+                {isSubmitting ? 'Enviando...' : 'Registrar'}
               </button>
 
               <button
@@ -443,6 +441,7 @@ const RegistroAmbientePage = () => {
                     onClickYesTo: '/',
                   });
                 }}
+                disabled={isSubmitting}
               >
                 Cancelar
               </button>
