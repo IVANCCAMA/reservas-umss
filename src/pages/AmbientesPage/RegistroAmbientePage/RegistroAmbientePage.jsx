@@ -7,10 +7,28 @@ import { useModal } from '../../../components/Bootstrap/ModalContext';
 import iconoError from '../../../assets/Images/iconoError.png';
 import iconoExito from '../../../assets/Images/iconoExito.png';
 import iconoUbicacion from '../../../assets/Images/iconoUbicacion.png';
+import { useEffect, useState } from 'react';
 
 const RegistroAmbientePage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
   const { confirmationModal, errorModal, successModal } = useModal();
+  const [ambientes, setAmbientes] = useState([]);
+
+  const loadAmbientes = () => {
+    axios
+      .get(`${baseURL}/ambientes`)
+      .then((response) => {
+        setAmbientes(response.data);
+        console.log(response.data); // Cambiado a response.data
+      })
+      .catch((error) => {
+        console.error('Error al obtener los ambientes:', error);
+      });
+  };
+  useEffect(() => {
+    loadAmbientes();
+  }, []);
+
   const errorModalContent = (
     <>
       <div>
@@ -22,7 +40,13 @@ const RegistroAmbientePage = () => {
 
   // yup validación, atributos de formulario
   const schema = yup.object({
-    nombre_ambiente: yup.string().required(),
+    nombre_ambiente: yup
+      .string()
+      .required('El campo es obligatorio')
+      .test('is-unique', 'El nombre del ambiente ya está en uso', function (value) {
+        loadAmbientes();
+        return isUniqueName(value.toUpperCase());
+      }),
     tipo: yup.string().required(),
     capacidad: yup.number().required(),
     computadora: yup
@@ -51,6 +75,16 @@ const RegistroAmbientePage = () => {
         },
       ),
   });
+
+  const isUniqueName = (inputName) => {
+    let result = true;
+    ambientes.map((ambiente) => {
+      if (ambiente.nombre_ambiente === inputName) {
+        result = false;
+      }
+    });
+    return result;
+  };
 
   // react-hook-form
   const {
@@ -168,7 +202,7 @@ const RegistroAmbientePage = () => {
                 {...register('nombre_ambiente')}
               />
               {errors.nombre_ambiente && (
-                <span className="text-danger">El campo es obligatorio</span>
+                <span className="text-danger">{errors.nombre_ambiente.message}</span>
               )}
             </div>
             <div className="my-3">
