@@ -41,13 +41,18 @@ const RegistroAmbientePage = () => {
   const schema = yup.object({
     nombre_ambiente: yup
       .string()
-      .trim()
+      .trim() // Elimina los espacios en blanco al inicio y al final
+      .matches(
+        /^[a-zA-Z0-9]*([-_]{1})?[a-zA-Z0-9]*$/,
+        'Formato no válido. Solo se permite un guion bajo (_) o guion medio (-)',
+      )
       .required('El campo es obligatorio')
       .test('is-unique', 'El nombre del ambiente ya está en uso', function (value) {
         loadAmbientes();
         return isUniqueName(value.toUpperCase());
       })
       .test('is-valid-format', 'Formato no válido', function (value) {
+        // Verifica si hay más de un espacio consecutivo en el valor
         return !/\s{2,}/.test(value);
       }),
 
