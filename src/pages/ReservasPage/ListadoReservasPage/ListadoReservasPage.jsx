@@ -21,17 +21,17 @@ const ListadoMateriasPage = () => {
     axios
       .get(`${baseURL}/reservas/lista_reservas`)
       .then((response) => {
+        console.log(response);
         setReservas(
           response.data.map((reserv) => {
             return {
-              ID: reserv.id_reserva,
               Solicitante: reserv.nombre_usuario,
-              Usuario: reserv.tipo_usuario,
               Fecha: reserv.fecha_reserva.slice(0, 10),
               Horario: `${reserv.hora_inicio.slice(0, 5)} - ${reserv.hora_fin.slice(0, 5)}`,
-              Materia: reserv.nombre_materia,
-              Grupo: reserv.nombre_grupo,
+              "Materia - Grupo": reserv.nombre_materia,
+              Cantidad: reserv.cantidad_est, 
               Ambiente: reserv.nombre_ambiente,
+              "Min-Capacidad-Max": reserv.min_cap_max,
             };
           }),
         );
@@ -55,7 +55,7 @@ const ListadoMateriasPage = () => {
       <Pagination
         pageNumber={pageNumber}
         setPageNumber={setPageNumber}
-        lastPage={Math.floor(reservas.length / 10) + 1}
+        lastPage={Math.max(Math.floor((reservas.length - 1) / 10) + 1, 1)}
       />
     </div>
   );
