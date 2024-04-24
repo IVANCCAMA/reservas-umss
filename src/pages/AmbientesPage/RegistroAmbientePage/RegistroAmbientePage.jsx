@@ -19,7 +19,6 @@ const RegistroAmbientePage = () => {
       .get(`${baseURL}/ambientes`)
       .then((response) => {
         setAmbientes(response.data);
-        console.log(response.data); // Cambiado a response.data
       })
       .catch((error) => {
         console.error('Error al obtener los ambientes:', error);
@@ -42,11 +41,16 @@ const RegistroAmbientePage = () => {
   const schema = yup.object({
     nombre_ambiente: yup
       .string()
+      .trim()
       .required('El campo es obligatorio')
       .test('is-unique', 'El nombre del ambiente ya está en uso', function (value) {
         loadAmbientes();
         return isUniqueName(value.toUpperCase());
+      })
+      .test('is-valid-format', 'Formato no válido', function (value) {
+        return !/\s{2,}/.test(value);
       }),
+
     tipo: yup.string().required(),
     capacidad: yup.number().required(),
     computadora: yup
@@ -77,13 +81,9 @@ const RegistroAmbientePage = () => {
   });
 
   const isUniqueName = (inputName) => {
-    let result = true;
-    ambientes.map((ambiente) => {
-      if (ambiente.nombre_ambiente === inputName) {
-        result = false;
-      }
-    });
-    return result;
+    const trimmedInputName = inputName.trim();
+
+    return !ambientes.some((ambiente) => ambiente.nombre_ambiente.trim() === trimmedInputName);
   };
 
   // react-hook-form
@@ -115,6 +115,7 @@ const RegistroAmbientePage = () => {
     try {
       console.log('Datos inicial', data);
       const filteredDia = Object.fromEntries(
+        // eslint-disable-next-line no-unused-vars
         Object.entries(data.dia).filter(([key, value]) =>
           value.periodos.some((periodo) => periodo.id_periodo !== false),
         ),
