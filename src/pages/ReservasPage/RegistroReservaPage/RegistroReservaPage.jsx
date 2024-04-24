@@ -15,7 +15,7 @@ const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
 
   const navigate = useNavigate();
-  const { confirmationModal, errorModal, successModal } = useModal();
+  const { confirmationModal } = useModal();
   // json horarios
   const horarios = horariosJSON;
   const users = usersJSON;
@@ -101,6 +101,8 @@ const RegistroReservaPage = () => {
       periodos: periodosFiltrados,
     };
 
+    console.log(filteredData);
+
     setSending(true);
     setTimeout(() => {
       axios
@@ -119,6 +121,7 @@ const RegistroReservaPage = () => {
                   motivo: filteredData.motivo,
                   listaGrupos: filteredData.listaGrupos,
                   id_apertura: 2,
+                  cantidad_total: filteredData.cantidad_est,
                   ambienteDisp: response.data,
                 },
               });
@@ -205,6 +208,8 @@ const RegistroReservaPage = () => {
     }
   };
 
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const handleSolicitanteChange = (event) => {
     const nombreSolicitante = event.target.value;
     const user = users.find((user) => user.nombre_usuario === nombreSolicitante);
@@ -213,6 +218,8 @@ const RegistroReservaPage = () => {
       setValue('solicitante', user.nombre_usuario);
 
       // Verificar si el usuario es administrador
+      setIsAdmin(user.tipo_usuario === 'ADMINISTRADOR');
+
       if (user.tipo_usuario === 'ADMINISTRADOR') {
         // Si el usuario es administrador, permitir la edición del número de estudiantes
         setValue(
@@ -221,15 +228,7 @@ const RegistroReservaPage = () => {
         );
       } else {
         // Si no es administrador, deshabilitar la edición del número de estudiantes
-        setValue(
-          'cantidad_est',
-          selectedGroups.reduce((total, group) => total + group.cantidad_est, 0),
-          { shouldValidate: true },
-        );
-        const cantidadEstInput = document.getElementById('cantidad_est');
-        if (cantidadEstInput) {
-          cantidadEstInput.readOnly = true;
-        }
+        setValue('cantidad_est', 0); // Reinicia el valor del campo
       }
     } else {
       setSelectedUser(initvalues);
@@ -316,9 +315,8 @@ const RegistroReservaPage = () => {
               {selectedGroups.map((group, index) => (
                 <div
                   key={index}
-                  className={`mb-1 px-3 py-1 alert alert-${
-                    selectedAlerts[group.id_aux_grupo]
-                  } alert-dismissible fade show`}
+                  className={`mb-1 px-3 py-1 alert alert-${selectedAlerts[group.id_aux_grupo]
+                    } alert-dismissible fade show`}
                 >
                   {group.nombre_materia} - {group.nombre_grupo}
                   <button
@@ -338,6 +336,8 @@ const RegistroReservaPage = () => {
                   type="number"
                   className="form-control"
                   min={0}
+                  max={500}
+                  disabled={!isAdmin}
                   {...register('cantidad_est')}
                 />
               </div>
@@ -452,7 +452,7 @@ const RegistroReservaPage = () => {
             </div>
 
             <div className="d-flex justify-content-center">
-              <button type="submit" className="btn btn-success me-md-5">
+              <button type="submit" className="btn btn-success me-md-5" style={{ width: "86px" }}>
                 Enviar
               </button>
               <button
@@ -482,31 +482,37 @@ const RegistroReservaPage = () => {
 
         {/* Enviando... */}
         {sending && (
-          <div className="d-flex justify-content-md-end ">
-            <div className="alert alert-primary py-1 d-flex align-items-center" role="alert">
-              <img src={iconInfo} alt="info" className="iconAlert" />
-              <div className="ps-3">Enviando formulario</div>
-              <div className="spinner-border spinner-border-sm ms-4" role="status">
-                <span className="visually-hidden">Loading...</span>
+          <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
+            <div className="d-flex justify-content-md-end pb-4 pe-3">
+              <div className="alert alert-primary py-1 d-flex align-items-center" role="alert">
+                <img src={iconInfo} alt="info" className="iconAlert" />
+                <div className="ps-3">Enviando formulario</div>
+                <div className="spinner-border spinner-border-sm ms-4" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
               </div>
             </div>
           </div>
         )}
         {/* Error al enviar */}
         {error && (
-          <div className="d-flex justify-content-md-end ">
-            <div className="alert alert-danger py-1 d-flex align-items-center" role="alert">
-              <img src={iconoError} alt="info" className="iconAlert" />
-              <div className="ps-3">Error al enviar, intente de nuevo</div>
+          <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
+            <div className="d-flex justify-content-md-end pb-4 pe-3">
+              <div className="alert alert-danger py-1 d-flex align-items-center" role="alert">
+                <img src={iconoError} alt="info" className="iconAlert" />
+                <div className="ps-3">Error al enviar, intente de nuevo</div>
+              </div>
             </div>
           </div>
         )}
         {/* Enviado correctamente */}
         {success && (
-          <div className="d-flex justify-content-md-end ">
-            <div className="alert alert-success py-1 d-flex align-items-center" role="alert">
-              <img src={iconoExito} alt="info" className="iconAlert" />
-              <div className="ps-3">Enviado correctamente</div>
+          <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
+            <div className="d-flex justify-content-md-end pb-4 pe-3">
+              <div className="alert alert-success py-1 d-flex align-items-center" role="alert">
+                <img src={iconoExito} alt="info" className="iconAlert" />
+                <div className="ps-3">Enviado correctamente</div>
+              </div>
             </div>
           </div>
         )}

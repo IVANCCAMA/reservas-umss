@@ -51,7 +51,7 @@ const ListadoMateriasPage = () => {
       <Pagination
         pageNumber={pageNumber}
         setPageNumber={setPageNumber}
-        lastPage={Math.floor(materias.length / 10) + 1}
+        lastPage={Math.max(Math.floor((materias.length - 1) / 10) + 1, 1)}
       />
     </div>
   );

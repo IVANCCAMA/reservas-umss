@@ -19,6 +19,15 @@ const FichaInformacionAmbientePage = () => {
     diponibilidadPorDia: [],
   };
 
+  const diasSemana = {
+    lunes: 'Lunes',
+    martes: 'Martes',
+    miercoles: 'Miércoles',
+    jueves: 'Jueves',
+    viernes: 'Viernes',
+    sabado: 'Sábado',
+  };
+
   let { id_ambiente } = useParams();
   const [ambiente, setAmbiente] = useState(ambienteInitialState);
   const [disponibilidadPorDia, setDisponibilidadPorDia] = useState([]);
@@ -39,30 +48,32 @@ const FichaInformacionAmbientePage = () => {
     loadAmbiente(id_ambiente);
   }, [id_ambiente]);
 
+  const obtenerNombreDia = (nombreDia) => {
+    const nombreDiaMinusculas = nombreDia.toLowerCase();
+    const nombreDiaEnEspanol = diasSemana[nombreDiaMinusculas];
+    return nombreDiaEnEspanol || nombreDia;
+  };
+
   return (
     <div className="container ficha-ambientes">
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-9">
-          <h2 className="text-center pb-3">Ambiente {ambiente.nombre_ambiente}</h2>
+          <h2 className="text-center pb-3">AMBIENTE {ambiente.nombre_ambiente}</h2>
           <div className="row">
             <p className="col">Tipo de ambiente</p>
-            <p className="col-6 text-secondary">{ambiente.tipo}</p>
+            <p className="col-6 text-secondary">{ambiente.tipo.toUpperCase()}</p>
           </div>
           <div className="row">
             <p className="col">Capacidad de estudiantes</p>
             <p className="col-6 text-secondary">{ambiente.capacidad}</p>
           </div>
           <div className="row">
-            <p className="col">Capacidad maxima</p>
-            <p className="col-6 text-secondary">
-              {(ambiente.porcentaje_max / 100) * ambiente.capacidad}
-            </p>
+            <p className="col">Capacidad máxima</p>
+            <p className="col-6 text-secondary">{ambiente.capacidad_max}</p>
           </div>
           <div className="row">
-            <p className="col">Capacidad minima </p>
-            <p className="col-6 text-secondary">
-              {(ambiente.porcentaje_min / 100) * ambiente.capacidad}
-            </p>
+            <p className="col">Capacidad mínima </p>
+            <p className="col-6 text-secondary">{ambiente.capacidad_min}</p>
           </div>
           <div className="row">
             <p className="col">Ubicación</p>
@@ -97,6 +108,12 @@ const FichaInformacionAmbientePage = () => {
           <h4 className="py-3">Días y horarios disponibles</h4>
 
           {disponibilidadPorDia.map((diaDisponible, index) => {
+            const hayPeriodosDisponibles =
+              diaDisponible.periodos && diaDisponible.periodos.length > 0;
+
+            if (!hayPeriodosDisponibles) {
+              return null;
+            }
             return (
               <div className="accordion" key={index}>
                 <div className="accordion-item">
@@ -109,7 +126,7 @@ const FichaInformacionAmbientePage = () => {
                       aria-expanded="false"
                       aria-controls={`collapseTwo${index}`}
                     >
-                      {diaDisponible.dia}
+                      {obtenerNombreDia(diaDisponible.dia)}
                     </button>
                   </h2>
                   <div
@@ -119,7 +136,7 @@ const FichaInformacionAmbientePage = () => {
                     data-bs-parent="#accordionExample"
                   >
                     <div className="accordion-body">
-                      {diaDisponible.periodos.map((periodoDia, index) => {
+                      {diaDisponible.periodos?.map((periodoDia, index) => {
                         return (
                           <div key={index} className="row d-inline-flex px-xxl-4 px-sm-2">
                             <p className="col ms-xxl-3 ms-sm-2">

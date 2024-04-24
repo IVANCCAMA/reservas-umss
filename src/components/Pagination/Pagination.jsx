@@ -47,11 +47,10 @@ export default function Pagination({ pageNumber, setPageNumber, lastPage }) {
                 key={`page-item-${index}`}
                 className={`page-item${pageNumber == page.num && ' active'}`}
               >
-                <Link
+                <button
                   className="page-link"
                   onClick={() => setPageNumber(page.num)}
-                  to={`#${page.num}`}
-                >{`${page.text}`}</Link>
+                >{`${page.text}`}</button>
               </li>
             ),
         )}
