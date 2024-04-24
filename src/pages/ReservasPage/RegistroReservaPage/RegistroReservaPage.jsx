@@ -315,9 +315,8 @@ const RegistroReservaPage = () => {
               {selectedGroups.map((group, index) => (
                 <div
                   key={index}
-                  className={`mb-1 px-3 py-1 alert alert-${
-                    selectedAlerts[group.id_aux_grupo]
-                  } alert-dismissible fade show`}
+                  className={`mb-1 px-3 py-1 alert alert-${selectedAlerts[group.id_aux_grupo]
+                    } alert-dismissible fade show`}
                 >
                   {group.nombre_materia} - {group.nombre_grupo}
                   <button
@@ -453,7 +452,7 @@ const RegistroReservaPage = () => {
             </div>
 
             <div className="d-flex justify-content-center">
-              <button type="submit" className="btn btn-success me-md-5">
+              <button type="submit" className="btn btn-success me-md-5" style={{ width: "86px" }}>
                 Enviar
               </button>
               <button
@@ -483,31 +482,37 @@ const RegistroReservaPage = () => {
 
         {/* Enviando... */}
         {sending && (
-          <div className="d-flex justify-content-md-end ">
-            <div className="alert alert-primary py-1 d-flex align-items-center" role="alert">
-              <img src={iconInfo} alt="info" className="iconAlert" />
-              <div className="ps-3">Enviando formulario</div>
-              <div className="spinner-border spinner-border-sm ms-4" role="status">
-                <span className="visually-hidden">Loading...</span>
+          <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
+            <div className="d-flex justify-content-md-end pb-4 pe-3">
+              <div className="alert alert-primary py-1 d-flex align-items-center" role="alert">
+                <img src={iconInfo} alt="info" className="iconAlert" />
+                <div className="ps-3">Enviando formulario</div>
+                <div className="spinner-border spinner-border-sm ms-4" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
               </div>
             </div>
           </div>
         )}
         {/* Error al enviar */}
         {error && (
-          <div className="d-flex justify-content-md-end ">
-            <div className="alert alert-danger py-1 d-flex align-items-center" role="alert">
-              <img src={iconoError} alt="info" className="iconAlert" />
-              <div className="ps-3">Error al enviar, intente de nuevo</div>
+          <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
+            <div className="d-flex justify-content-md-end pb-4 pe-3">
+              <div className="alert alert-danger py-1 d-flex align-items-center" role="alert">
+                <img src={iconoError} alt="info" className="iconAlert" />
+                <div className="ps-3">Error al enviar, intente de nuevo</div>
+              </div>
             </div>
           </div>
         )}
         {/* Enviado correctamente */}
         {success && (
-          <div className="d-flex justify-content-md-end ">
-            <div className="alert alert-success py-1 d-flex align-items-center" role="alert">
-              <img src={iconoExito} alt="info" className="iconAlert" />
-              <div className="ps-3">Enviado correctamente</div>
+          <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
+            <div className="d-flex justify-content-md-end pb-4 pe-3">
+              <div className="alert alert-success py-1 d-flex align-items-center" role="alert">
+                <img src={iconoExito} alt="info" className="iconAlert" />
+                <div className="ps-3">Enviado correctamente</div>
+              </div>
             </div>
           </div>
         )}
