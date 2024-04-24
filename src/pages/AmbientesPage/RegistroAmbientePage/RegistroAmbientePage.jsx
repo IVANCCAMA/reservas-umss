@@ -127,6 +127,7 @@ const RegistroAmbientePage = () => {
     defaultValues: {
       disponible: true,
       proyector: false,
+      computadora: 0,
     },
   });
 
