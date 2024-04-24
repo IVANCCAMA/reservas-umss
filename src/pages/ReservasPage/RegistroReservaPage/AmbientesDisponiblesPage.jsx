@@ -130,7 +130,7 @@ const AmbientesDisponibles = () => {
           <Pagination
             pageNumber={pageNumber}
             setPageNumber={setPageNumber}
-            lastPage={Math.floor(ambientes.length / 10) + 1}
+            lastPage={Math.max(Math.floor((ambientes.length - 1) / 10) + 1, 1)}
           />
         </div>
       </div>
