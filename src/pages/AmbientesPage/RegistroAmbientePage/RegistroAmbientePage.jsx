@@ -42,11 +42,11 @@ const RegistroAmbientePage = () => {
     nombre_ambiente: yup
       .string()
       .trim() // Elimina los espacios en blanco al inicio y al final
+      .required('El campo es obligatorio')
       .matches(
         /^[\w]+(?:-[\w]+)*(?: [\w]+(?:-[\w]+)*)*$/,
-        'Formato no válido. Solo se permite letras, números y un guion medio (-), y se pueden ingresar espacios después de cada palabra.',
+        'Formato no válido. Solo se permite letras y no se acepta acentos.',
       )
-      .required('El campo es obligatorio')
       .test('is-unique', 'El nombre del ambiente ya está en uso', function (value) {
         loadAmbientes();
         return isUniqueName(value.toUpperCase());
