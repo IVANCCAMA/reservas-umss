@@ -59,12 +59,17 @@ const RegistroAmbientePage = () => {
     capacidad: yup
       .number()
       .integer('La capacidad debe ser un número entero')
-      .typeError('El campo es obligatorio, la capacidad debe ser un número')
+      .typeError('El campo es obligatorio, la capacidad debe ser un número entero')
       .required('El campo es obligatorio')
       .min(0, 'La capacidad mínima es 0')
       .max(500, 'La capacidad máxima es 500'),
     computadora: yup
       .number()
+      .integer('El número debe ser un número entero')
+      .typeError('El campo es obligatorio, El número debe ser un número entero')
+      .required('El campo es obligatorio')
+      .min(0, 'El número mínimo es 0')
+      .max(250, 'El número máximo es 250')
       .test('is-required', 'El campo es obligatorio para laboratorios', function (value) {
         const tipoAmbiente = this.parent.tipo;
         if (tipoAmbiente === 'Laboratorio') {
@@ -310,13 +315,11 @@ const RegistroAmbientePage = () => {
                 </label>
                 <input
                   type="number"
-                  min={0}
-                  max={250}
                   className="form-control"
                   placeholder="Escriba el número de computadoras"
                   {...register('computadora')}
                 />
-                {errors.computadora && <span className="text-danger">El campo es obligatorio</span>}
+                {errors.computadora && <span className="text-danger">{errors.computadora.message}</span>}
               </div>
             )}
 
