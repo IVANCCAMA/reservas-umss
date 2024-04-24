@@ -55,9 +55,14 @@ const RegistroAmbientePage = () => {
         // Verifica si hay más de un espacio consecutivo en el valor
         return !/\s{2,}/.test(value);
       }),
-
     tipo: yup.string().required(),
-    capacidad: yup.number().required(),
+    capacidad: yup
+      .number()
+      .integer('La capacidad debe ser un número entero')
+      .typeError('El campo es obligatorio, la capacidad debe ser un número')
+      .required('El campo es obligatorio')
+      .min(0, 'La capacidad mínima es 0')
+      .max(500, 'La capacidad máxima es 500'),
     computadora: yup
       .number()
       .test('is-required', 'El campo es obligatorio para laboratorios', function (value) {
@@ -254,13 +259,13 @@ const RegistroAmbientePage = () => {
                 </label>
                 <input
                   type="number"
-                  min={0}
-                  max={500}
                   className="form-control"
                   placeholder="Escriba la capacidad de estudiantes"
                   {...register('capacidad')}
                 />
-                {errors.capacidad && <span className="text-danger">El campo es obligatorio</span>}
+                {errors.capacidad && (
+                  <span className="text-danger">{errors.capacidad.message}</span>
+                )}
               </div>
               <div className="my-3 col-md-3">
                 <label className="form-label fw-bold">
