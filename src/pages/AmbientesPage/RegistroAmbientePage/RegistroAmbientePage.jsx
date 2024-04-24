@@ -66,7 +66,7 @@ const RegistroAmbientePage = () => {
     computadora: yup
       .number()
       .integer('El número debe ser un número entero')
-      .typeError('El campo es obligatorio, El número debe ser un número entero')
+      .typeError('El campo es obligatorio, el número debe ser un número entero')
       .required('El campo es obligatorio')
       .min(0, 'El número mínimo es 0')
       .max(250, 'El número máximo es 250')
@@ -78,8 +78,20 @@ const RegistroAmbientePage = () => {
         return true;
       }),
     ubicacion: yup.string(),
-    porcentaje_min: yup.number().required(),
-    porcentaje_max: yup.number().required(),
+    porcentaje_min: yup
+      .number()
+      .integer('El número debe ser un número entero')
+      .typeError('El campo es obligatorio, el número debe ser un número entero')
+      .required('El campo es obligatorio')
+      .min(45, 'El número mínimo es 45')
+      .max(100, 'El número máximo es 100'),
+    porcentaje_max: yup
+      .number()
+      .integer('El número debe ser un número entero')
+      .typeError('El campo es obligatorio, el número debe ser un número entero')
+      .required('El campo es obligatorio')
+      .min(0, 'El número mínimo es 0')
+      .max(150, 'El número máximo es 150'),
     disponible: yup.bool(),
     proyector: yup.bool(),
     dia: yup
@@ -277,8 +289,6 @@ const RegistroAmbientePage = () => {
                   Min (%)<span className="text-danger ms-1">*</span>
                 </label>
                 <input
-                  min={0}
-                  max={100}
                   defaultValue={85}
                   type="number"
                   className="form-control"
@@ -286,7 +296,7 @@ const RegistroAmbientePage = () => {
                   {...register('porcentaje_min')}
                 />
                 {errors.porcentaje_min && (
-                  <span className="text-danger">El campo es obligatorio</span>
+                  <span className="text-danger">{errors.porcentaje_min.message}</span>
                 )}
               </div>
               <div className="my-3 col-md-3">
@@ -294,8 +304,6 @@ const RegistroAmbientePage = () => {
                   Max (%)<span className="text-danger ms-1">*</span>
                 </label>
                 <input
-                  min={0}
-                  max={150}
                   defaultValue={115}
                   type="number"
                   className="form-control"
@@ -303,7 +311,7 @@ const RegistroAmbientePage = () => {
                   {...register('porcentaje_max')}
                 />
                 {errors.porcentaje_max && (
-                  <span className="text-danger">El campo es obligatorio</span>
+                  <span className="text-danger">{errors.porcentaje_max.message}</span>
                 )}
               </div>
             </div>
@@ -319,7 +327,9 @@ const RegistroAmbientePage = () => {
                   placeholder="Escriba el número de computadoras"
                   {...register('computadora')}
                 />
-                {errors.computadora && <span className="text-danger">{errors.computadora.message}</span>}
+                {errors.computadora && (
+                  <span className="text-danger">{errors.computadora.message}</span>
+                )}
               </div>
             )}
 
