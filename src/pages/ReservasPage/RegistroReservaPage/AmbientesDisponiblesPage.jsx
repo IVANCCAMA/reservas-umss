@@ -89,7 +89,6 @@ const AmbientesDisponibles = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const ambientes = formData.ambienteDisp.map((amb) => {
     return {
-      ID: amb.ambiente_id,
       Aula: amb.nombre_ambiente,
       Capacidad: amb.capacidad_ambiente,
       Estado: amb.estado,
