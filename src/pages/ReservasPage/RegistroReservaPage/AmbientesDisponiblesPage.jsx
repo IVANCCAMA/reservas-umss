@@ -92,7 +92,7 @@ const AmbientesDisponibles = () => {
       Aula: amb.nombre_ambiente,
       Capacidad: amb.capacidad_ambiente,
       Estado: amb.estado,
-      Tipo: amb.tipo_ambiente,
+      Tipo: amb.tipo_ambiente.toUpperCase(),
       Periodo: `${amb.hora_inicio?.slice(0, 5)} - ${amb.hora_fin?.slice(0, 5)}`,
       Accion: (
         <button
