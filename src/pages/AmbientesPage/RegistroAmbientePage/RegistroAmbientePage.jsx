@@ -90,7 +90,7 @@ const RegistroAmbientePage = () => {
       .integer('El número debe ser un número entero')
       .typeError('El campo es obligatorio, el número debe ser un número entero')
       .required('El campo es obligatorio')
-      .min(0, 'El número mínimo es 0')
+      .min(100, 'El número mínimo es 100')
       .max(150, 'El número máximo es 150'),
     disponible: yup.bool(),
     proyector: yup.bool(),
