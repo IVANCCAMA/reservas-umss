@@ -43,8 +43,8 @@ const RegistroAmbientePage = () => {
       .string()
       .trim() // Elimina los espacios en blanco al inicio y al final
       .matches(
-        /^[a-zA-Z0-9]*([-_]{1})?[a-zA-Z0-9]*$/,
-        'Formato no válido. Solo se permite un guion bajo (_) o guion medio (-)',
+        /^[\w]+(?:-[\w]+)*(?: [\w]+(?:-[\w]+)*)*$/,
+        'Formato no válido. Solo se permite letras, números y un guion medio (-), y se pueden ingresar espacios después de cada palabra.',
       )
       .required('El campo es obligatorio')
       .test('is-unique', 'El nombre del ambiente ya está en uso', function (value) {
