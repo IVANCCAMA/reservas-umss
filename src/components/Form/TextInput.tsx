@@ -1,61 +1,85 @@
 import React from 'react';
+import { UseFormRegister } from 'react-hook-form';
 
 interface TextInputProps {
   name: string;
-  label: string;
-  value: string;
-  onChange?: (newValue: string) => void;
-  onFocus?: (newValue: string) => void;
-  onBlur?: (newValue: string) => void;
+  label: React.ReactNode;
+  handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
+  handleFocus?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
+  handleBlur?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   required?: boolean;
   minLength?: number;
   maxLength?: number;
   placeholder?: string;
   autoComplete?: string;
   datalist?: string[];
+  error?: string;
 }
 
-const TextInput: React.FC<TextInputProps> = ({
+const TextInput = React.forwardRef<
+  HTMLInputElement,
+  TextInputProps & ReturnType<UseFormRegister<any>>
+>(({
   name,
   label,
-  value,
   onChange = () => { },
-  onFocus = () => { },
   onBlur = () => { },
+  handleChange = () => { },
+  handleFocus = () => { },
+  handleBlur = () => { },
   required = false,
   minLength = 0,
   maxLength = 40,
-  placeholder = '',
-  autoComplete = '',
-  datalist = []
-}) => {
-  return (
-    <div className='my-3'>
-      <label htmlFor={name} className='form-label'>{label}</label>
+  placeholder = undefined,
+  autoComplete = undefined,
+  datalist = undefined,
+  error = undefined
+}, ref) => (
+  <div className='my-3'>
+    <label htmlFor={name} className='form-label fw-bold'>{label}</label>
 
-      <input
-        required={required}
-        autoComplete={autoComplete || undefined}
-        id={name}
-        name={name}
-        list={`datalist-${name}`}
-        className='form-control'
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={(e) => onFocus(e.target.value)}
-        onBlur={(e) => onBlur(e.target.value)}
-        minLength={minLength || undefined}
-        maxLength={maxLength || undefined}
-        placeholder={placeholder || undefined}
-      />
+    <input
+      ref={ref}
+      required={required}
+      autoComplete={autoComplete || undefined}
+      id={name}
+      name={name}
+      list={`datalist-${name}`}
+      className='form-control'
+      onChange={(e) => {
+        const newValue = handleChange(e.target.value);
+        if (newValue) {
+          e.target.value = newValue;
+        }
+        onChange(e);
+      }}
+      onFocus={(e) => {
+        const newValue = handleFocus(e.target.value);
+        if (newValue) {
+          e.target.value = newValue;
+        }
+      }}
+      onBlur={(e) => {
+        const newValue = handleBlur(e.target.value);
+        if (newValue) {
+          e.target.value = newValue;
+        }
+        onBlur(e);
+      }}
+      minLength={minLength || undefined}
+      maxLength={maxLength || undefined}
+      placeholder={placeholder || undefined}
+    />
+    {error && (<span className="text-danger">{error}</span>)}
 
+    {datalist && (
       <datalist id={`datalist-${name}`}>
         {datalist.map((value, index) => (
-          <option key={`datalist-${name}-item-${index}`} value={value}/>
+          <option key={`datalist-${name}-item-${index}`} value={value} />
         ))}
       </datalist>
-    </div>
-  );
-};
+    )}
+  </div>
+))
 
 export default TextInput;

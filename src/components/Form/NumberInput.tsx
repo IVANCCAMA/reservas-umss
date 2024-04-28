@@ -1,55 +1,53 @@
 import React from 'react';
 import { UseFormRegister } from 'react-hook-form';
 
-interface option {
-  value: string | readonly string[] | number | undefined;
-  title: string;
-  hidden?: boolean;
-}
-
-interface SelectProps {
-  // name: string;
+interface NumberInputProps {
+  name: string;
   label: React.ReactNode;
-  options: option[] | string[];
   handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleFocus?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleBlur?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   required?: boolean;
-  multiple?: boolean;
-  defaultValue?: string;
+  minNumber?: number;
+  maxNumber?: number;
   placeholder?: string;
+  autoComplete?: string;
+  step?: string;
   error?: string;
+  disabled?: boolean;
 }
 
-const Select = React.forwardRef<
-  HTMLSelectElement,
-  SelectProps & ReturnType<UseFormRegister<any>>
+const NumberInput = React.forwardRef<
+  HTMLInputElement,
+  NumberInputProps & ReturnType<UseFormRegister<any>>
 >(({
   name,
   label,
-  options,
   onChange = () => { },
   onBlur = () => { },
   handleChange = () => { },
   handleFocus = () => { },
   handleBlur = () => { },
   required = false,
-  multiple = false,
-  defaultValue = undefined,
+  minNumber = 0,
+  maxNumber = 500,
   placeholder = undefined,
-  error = undefined
+  autoComplete = undefined,
+  step = 'any',
+  error = undefined,
+  disabled = undefined
 }, ref) => (
   <div className='my-3'>
     <label htmlFor={name} className='form-label fw-bold'>{label}</label>
 
-    <select
+    <input
       ref={ref}
       required={required}
-      multiple={multiple}
+      autoComplete={autoComplete || undefined}
       id={name}
       name={name}
-      className='form-select'
-      defaultValue={defaultValue}
+      type='number'
+      className='form-control'
       onChange={(e) => {
         const newValue = handleChange(e.target.value);
         if (newValue) {
@@ -70,24 +68,14 @@ const Select = React.forwardRef<
         }
         onBlur(e);
       }}
-    >
-      {placeholder && (
-        <option value=''>{placeholder}</option>
-      )}
-
-      console.log(options)
-      {options.map((option: string | option, index: number) => (
-        <option
-          key={`${name}-${index}`}
-          value={typeof option === 'string' ? option : option.value}
-          hidden={typeof option === 'string' ? undefined : option.hidden}
-        >
-          {typeof option === 'string' ? option : option.title}
-        </option>
-      ))}
-    </select>
+      min={minNumber || undefined}
+      max={maxNumber || undefined}
+      placeholder={placeholder || undefined}
+      step={step}
+      disabled={disabled}
+    />
     {error && (<span className="text-danger">{error}</span>)}
   </div>
 ))
 
-export default Select;
+export default NumberInput;

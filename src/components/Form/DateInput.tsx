@@ -1,55 +1,44 @@
 import React from 'react';
 import { UseFormRegister } from 'react-hook-form';
 
-interface option {
-  value: string | readonly string[] | number | undefined;
-  title: string;
-  hidden?: boolean;
-}
-
-interface SelectProps {
-  // name: string;
+interface DateInputProps {
+  name: string;
   label: React.ReactNode;
-  options: option[] | string[];
   handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleFocus?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleBlur?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   required?: boolean;
-  multiple?: boolean;
-  defaultValue?: string;
-  placeholder?: string;
+  minDate?: string;
+  maxDate?: string;
   error?: string;
 }
 
-const Select = React.forwardRef<
-  HTMLSelectElement,
-  SelectProps & ReturnType<UseFormRegister<any>>
+const DateInput = React.forwardRef<
+  HTMLInputElement,
+  DateInputProps & ReturnType<UseFormRegister<any>>
 >(({
   name,
   label,
-  options,
   onChange = () => { },
   onBlur = () => { },
   handleChange = () => { },
   handleFocus = () => { },
   handleBlur = () => { },
   required = false,
-  multiple = false,
-  defaultValue = undefined,
-  placeholder = undefined,
+  minDate= '2024-01-01',
+  maxDate= '2024-12-31',
   error = undefined
 }, ref) => (
   <div className='my-3'>
     <label htmlFor={name} className='form-label fw-bold'>{label}</label>
 
-    <select
+    <input
       ref={ref}
       required={required}
-      multiple={multiple}
       id={name}
       name={name}
-      className='form-select'
-      defaultValue={defaultValue}
+      type='date'
+      className='form-control'
       onChange={(e) => {
         const newValue = handleChange(e.target.value);
         if (newValue) {
@@ -70,24 +59,11 @@ const Select = React.forwardRef<
         }
         onBlur(e);
       }}
-    >
-      {placeholder && (
-        <option value=''>{placeholder}</option>
-      )}
-
-      console.log(options)
-      {options.map((option: string | option, index: number) => (
-        <option
-          key={`${name}-${index}`}
-          value={typeof option === 'string' ? option : option.value}
-          hidden={typeof option === 'string' ? undefined : option.hidden}
-        >
-          {typeof option === 'string' ? option : option.title}
-        </option>
-      ))}
-    </select>
+      min={minDate || undefined}
+      max={maxDate || undefined}
+    />
     {error && (<span className="text-danger">{error}</span>)}
   </div>
 ))
 
-export default Select;
+export default DateInput;

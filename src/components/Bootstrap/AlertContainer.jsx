@@ -27,7 +27,7 @@ const AlertContainer = React.forwardRef((props, ref) => {
   }));
 
   return (
-    <div>
+    <>
       {alerts.map(alert => (
         <BootstrapAlert
           key={alert.key}
@@ -39,7 +39,7 @@ const AlertContainer = React.forwardRef((props, ref) => {
           }}
         />
       ))}
-    </div>
+    </>
   );
 });
 
