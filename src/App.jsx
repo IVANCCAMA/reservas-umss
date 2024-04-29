@@ -10,6 +10,7 @@ import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/Regist
 import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
 import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
 import ModalProvider from './components/Bootstrap/ModalContext';
+import EditarAmbientePage from './pages/AmbientesPage/EditarAmbientePage/EditarAmbientePage';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
                 />
 
                 <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
+                <Route path="/ambientes/listaAmbientes/editar" element={<EditarAmbientePage />}/>
               </Routes>
             </ModalProvider>
           </div>
