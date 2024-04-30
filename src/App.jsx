@@ -10,6 +10,7 @@ import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/Regist
 import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
 import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
 import BootstrapUI from './components/Bootstrap';
+import LoginPage from './pages/LoginPage/LoginPage';
 
 function App() {
   return (
@@ -23,8 +24,8 @@ function App() {
               <Sidebar />
             </div>
             <div className="col-md-10 pt-md-5 p-0 main-content">
-
               <Routes>
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/" index element={<HomePage />} />
 
                 <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
