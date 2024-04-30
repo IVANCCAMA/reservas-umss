@@ -20,7 +20,7 @@ const AmbientesDisponibles = () => {
   const confirmSelect = (amb) => {
     // show modal confirm
     confirmationModal({
-      content: (
+      body: (
         <>
           <div className="position-absolute">
             <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
@@ -49,10 +49,12 @@ const AmbientesDisponibles = () => {
             // success
             console.log(response.data);
             successModal({
-              content: (
+              body: (
                 <>
                   <div>
-                    <img src={iconoExito} />
+                    {/* <img src={iconoExito} /> */}
+                    <Icon icon="gg:check-o"  style={{color: '#0fa958'}} />
+                    <Icon icon="fa-regular:check-circle"  style={{color: '#0fa958'}} />
                   </div>
                   <div className="pt-md-3">
                     Registro de reserva
@@ -66,9 +68,14 @@ const AmbientesDisponibles = () => {
             });
           })
           .catch((error) => {
-            console.error('Error al obtener las materias y grupos:', error);
+            console.error('Error al registrar reserva:', error);
+            console.log({
+              ...formData,
+              listaGrupos: formData.listaGrupos.map((group) => parseInt(group, 10)),
+              id_disponible: amb.id_disponible,
+            });
             errorModal({
-              content: (
+              body: (
                 <>
                   <div>
                     <img src={iconoError} />

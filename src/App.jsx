@@ -9,21 +9,21 @@ import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/Reg
 import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/RegistroReservaPage';
 import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
 import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
-import ModalProvider from './components/Bootstrap/ModalContext';
+import BootstrapUI from './components/Bootstrap';
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="App container-fluid p-0">
-        {/* header */}
-        <div className="row m-0 justify-content-center">
-          <Navbar />
-          <div className="col-md-2 p-0 pt-5">
-            <Sidebar />
-          </div>
-          <div className="col-md-10 pt-md-5 p-0 main-content">
+      <BootstrapUI>
+        <div className="App container-fluid p-0">
+          {/* header */}
+          <div className="row m-0 justify-content-center">
+            <Navbar />
+            <div className="col-md-2 p-0 pt-5">
+              <Sidebar />
+            </div>
+            <div className="col-md-10 pt-md-5 p-0 main-content">
 
-            <ModalProvider>
               <Routes>
                 <Route path="/" index element={<HomePage />} />
 
@@ -45,10 +45,10 @@ function App() {
 
                 <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
               </Routes>
-            </ModalProvider>
+            </div>
           </div>
         </div>
-      </div>
+      </BootstrapUI>
     </BrowserRouter>
   );
 }

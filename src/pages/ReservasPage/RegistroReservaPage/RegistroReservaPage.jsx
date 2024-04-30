@@ -3,13 +3,13 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
-import horariosJSON from './horarios';
 import { useNavigate } from 'react-router-dom';
 import iconInfo from '../../../assets/Images/alert-information.png';
 import iconoError from '../../../assets/Images/iconoError.png';
 import iconoExito from '../../../assets/Images/iconoExito.png';
 import { useModal, AlertContainer } from '../../../components/Bootstrap';
 import { TextInput, Select, NumberInput, DateInput, TextTarea, Accordion, CheckboxInput } from '../../../components/Form';
+import { Icon } from '@iconify/react';
 
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
@@ -106,9 +106,7 @@ const RegistroReservaPage = () => {
     axios
       .get(`${database}/periodos`)
       .then((response) => {
-        setPeriodos(response.data.map(periodo => {
-          return { ...periodo, checked: false };
-        }));
+        setPeriodos(response.data);
       })
       .catch((error) => {
         console.error('Error al obtener los periodos:', error);
@@ -132,13 +130,13 @@ const RegistroReservaPage = () => {
           } else {
             setSuccess(true);
             setTimeout(() => {
-              setSuccess(false);
-              navigate('./ambientesDisponibles', {
-                state: {
-                  ...data,
-                  ambienteDisp: response.data,
-                },
-              });
+              // setSuccess(false);
+              // navigate('./ambientesDisponibles', {
+              //   state: {
+              //     ...data,
+              //     ambienteDisp: response.data,
+              //   },
+              // });
             }, 2000);
           }
         })
@@ -270,14 +268,14 @@ const RegistroReservaPage = () => {
                 error={errors.listaGrupos?.message}
               />
 
-              <div className="my-3">
+              <div className="input-component" style={{ display: watch('listaGrupos').length > 0 ? 'block' : 'none' }}>
                 <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
 
                 <AlertContainer ref={alertRef} />
               </div>
             </>)}
 
-            <div className="my-3 row row-cols6">
+            <div className="row row-cols6">
               <div className="col-md-6">
                 <NumberInput
                   label='Número de Estudiantes'
@@ -309,7 +307,7 @@ const RegistroReservaPage = () => {
               error={errors.motivo?.message}
             />
 
-            <div className='my-3'>
+            <div className='input-component'>
               <label className="form-label fw-bold">
                 Periodos y horarios <span className="text-danger ms-1">*</span>
               </label>
@@ -359,7 +357,7 @@ const RegistroReservaPage = () => {
                 type="button"
                 onClick={() => {
                   confirmationModal({
-                    content: (
+                    body: (
                       <>
                         <div>
                           <img src={iconoError} />
@@ -384,11 +382,9 @@ const RegistroReservaPage = () => {
           <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
             <div className="d-flex justify-content-md-end pb-4 pe-3">
               <div className="alert alert-primary py-1 d-flex align-items-center" role="alert">
-                <img src={iconInfo} alt="info" className="iconAlert" />
+                <Icon className="iconAlert" icon="zondicons:information-outline"  style={{color: '#0D6EFD'}} />
                 <div className="ps-3">Enviando formulario</div>
-                <div className="spinner-border spinner-border-sm ms-4" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+                <div className="spinner-border spinner-border-sm ms-4" role="status" />
               </div>
             </div>
           </div>
@@ -398,7 +394,7 @@ const RegistroReservaPage = () => {
           <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
             <div className="d-flex justify-content-md-end pb-4 pe-3">
               <div className="alert alert-danger py-1 d-flex align-items-center" role="alert">
-                <img src={iconoError} alt="info" className="iconAlert" />
+                <Icon className="iconAlert" icon="charm:circle-cross"  style={{color: '#FF3B20'}} />
                 <div className="ps-3">Error al enviar, intente de nuevo</div>
               </div>
             </div>
@@ -409,8 +405,8 @@ const RegistroReservaPage = () => {
           <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
             <div className="d-flex justify-content-md-end pb-4 pe-3">
               <div className="alert alert-success py-1 d-flex align-items-center" role="alert">
-                <img src={iconoExito} alt="info" className="iconAlert" />
-                <div className="ps-3">Enviado correctamente</div>
+                <Icon className="iconAlert" icon="fa-regular:check-circle"  style={{color: '#0FA958'}} />
+                <span className="fs-6 ps-3">Enviado correctamente</span>
               </div>
             </div>
           </div>

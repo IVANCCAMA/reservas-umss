@@ -35,7 +35,7 @@ const TextInput = React.forwardRef<
   datalist = undefined,
   error = undefined
 }, ref) => (
-  <div className='my-3'>
+  <div className='input-component'>
     <label htmlFor={name} className='form-label fw-bold'>{label}</label>
 
     <input

@@ -39,7 +39,7 @@ const Select = React.forwardRef<
   placeholder = undefined,
   error = undefined
 }, ref) => (
-  <div className='my-3'>
+  <div className='input-component'>
     <label htmlFor={name} className='form-label fw-bold'>{label}</label>
 
     <select

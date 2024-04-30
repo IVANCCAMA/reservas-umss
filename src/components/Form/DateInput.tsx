@@ -29,7 +29,7 @@ const DateInput = React.forwardRef<
   maxDate= '2024-12-31',
   error = undefined
 }, ref) => (
-  <div className='my-3'>
+  <div className='input-component'>
     <label htmlFor={name} className='form-label fw-bold'>{label}</label>
 
     <input
