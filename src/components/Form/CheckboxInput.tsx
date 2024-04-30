@@ -1,44 +1,72 @@
 import React from 'react';
+import { UseFormRegister } from 'react-hook-form';
 
 interface CheckboxInputProps {
   name: string;
-  label: string;
-  value: string;
-  onChange?: (newValue: boolean) => void;
-  onFocus?: (newValue: boolean) => void;
-  onBlur?: (newValue: boolean) => void;
+  label: React.ReactNode;
+  value: number | string | readonly string[] | undefined;
+  handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
+  handleFocus?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
+  handleBlur?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   required?: boolean;
   checked?: boolean;
+  disabled?: boolean;
+  error?: string;
 }
 
-const CheckboxInput: React.FC<CheckboxInputProps> = ({
+const CheckboxInput = React.forwardRef<
+  HTMLInputElement,
+  CheckboxInputProps & ReturnType<UseFormRegister<any>>
+>(({
   name,
   label,
   value,
   onChange = () => { },
-  onFocus = () => { },
   onBlur = () => { },
-  required = false,
-  checked = false
-}) => {
-  return (
-    <div className='form-check'>
-      <label htmlFor={name} className='form-check-label'>{label}</label>
+  handleChange = () => { },
+  handleFocus = () => { },
+  handleBlur = () => { },
+  required = undefined,
+  checked = undefined,
+  error = undefined,
+  disabled = undefined
+}, ref) => (
+  <div className='form-check'>
+    <label htmlFor={name} className='form-check-label px-2'>{label}</label>
 
-      <input
-        checked={checked}
-        required={required}
-        id={name}
-        name={name}
-        type='checkbox'
-        className='form-check-input'
-        value={value}
-        onChange={(e) => onChange(e.target.checked)}
-        onFocus={(e) => onFocus(e.target.checked)}
-        onBlur={(e) => onBlur(e.target.checked)}
-      />
-    </div>
-  );
-};
+    <input
+      ref={ref}
+      disabled={disabled}
+      checked={ref !== undefined ? checked : undefined}
+      required={required}
+      id={name}
+      name={name}
+      type='checkbox'
+      value={value}
+      className='form-check-input'
+      onChange={(e) => {
+        const newValue = handleChange(e.target.value);
+        if (newValue) {
+          e.target.value = newValue;
+        }
+        onChange(e);
+      }}
+      onFocus={(e) => {
+        const newValue = handleFocus(e.target.value);
+        if (newValue) {
+          e.target.value = newValue;
+        }
+      }}
+      onBlur={(e) => {
+        const newValue = handleBlur(e.target.value);
+        if (newValue) {
+          e.target.value = newValue;
+        }
+        onBlur(e);
+      }}
+    />
+    {error && (<span className="text-danger">{error}</span>)}
+  </div>
+))
 
 export default CheckboxInput;

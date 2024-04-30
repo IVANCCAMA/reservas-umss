@@ -1,14 +1,14 @@
 import React, { useImperativeHandle, useState } from 'react';
-import BootstrapAlert from './BootstrapAlert';
+import Alert from './Alert';
 
 const AlertContainer = React.forwardRef((props, ref) => {
   const [alerts, setAlerts] = useState([]);
 
-  const addAlert = (type, body, onClose) => {
+  const addAlert = (style, body, onClose) => {
     const key = new Date().getTime();
     setAlerts(currentAlerts => [
       ...currentAlerts,
-      { key, type, body, onClose }
+      { key, style, body, onClose }
     ]);
   };
 
@@ -27,11 +27,11 @@ const AlertContainer = React.forwardRef((props, ref) => {
   }));
 
   return (
-    <div>
+    <>
       {alerts.map(alert => (
-        <BootstrapAlert
+        <Alert
           key={alert.key}
-          type={alert.type}
+          style={alert.style}
           body={alert.body}
           onClose={() => {
             alert.onClose?.();
@@ -39,7 +39,7 @@ const AlertContainer = React.forwardRef((props, ref) => {
           }}
         />
       ))}
-    </div>
+    </>
   );
 });
 

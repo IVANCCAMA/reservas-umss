@@ -1,24 +1,21 @@
 import React from 'react';
 import { UseFormRegister } from 'react-hook-form';
 
-interface TextTareaProps {
+interface DateInputProps {
   name: string;
   label: React.ReactNode;
   handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleFocus?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleBlur?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-  placeholder?: string;
-  autoComplete?: string;
-  textarea?: number;
+  minDate?: string;
+  maxDate?: string;
   error?: string;
 }
 
-const TextTarea = React.forwardRef<
-  HTMLTextAreaElement,
-  TextTareaProps & ReturnType<UseFormRegister<any>>
+const DateInput = React.forwardRef<
+  HTMLInputElement,
+  DateInputProps & ReturnType<UseFormRegister<any>>
 >(({
   name,
   label,
@@ -28,23 +25,19 @@ const TextTarea = React.forwardRef<
   handleFocus = () => { },
   handleBlur = () => { },
   required = false,
-  minLength = 0,
-  maxLength = 100,
-  placeholder = '',
-  autoComplete = '',
-  textarea = 0,
+  minDate= '2024-01-01',
+  maxDate= '2024-12-31',
   error = undefined
 }, ref) => (
   <div className='input-component'>
     <label htmlFor={name} className='form-label fw-bold'>{label}</label>
 
-    <textarea
+    <input
       ref={ref}
       required={required}
-      autoComplete={autoComplete || undefined}
       id={name}
       name={name}
-      rows={textarea}
+      type='date'
       className='form-control'
       onChange={(e) => {
         const newValue = handleChange(e.target.value);
@@ -66,12 +59,11 @@ const TextTarea = React.forwardRef<
         }
         onBlur(e);
       }}
-      minLength={minLength || undefined}
-      maxLength={maxLength || undefined}
-      placeholder={placeholder || undefined}
+      min={minDate || undefined}
+      max={maxDate || undefined}
     />
     {error && (<span className="text-danger">{error}</span>)}
   </div>
 ))
 
-export default TextTarea;
+export default DateInput;
