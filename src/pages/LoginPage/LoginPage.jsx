@@ -9,6 +9,34 @@ const LoginPage = () => {
     contrasenia: yup.string().required('Este campo es obligatorio'),
   });
 
+  const users = [
+    {
+      nombre: 'ADMINISTRADOR',
+      codSis: '202020',
+      contrasenia: '123',
+      fotoPerfil:
+        'https://lh3.googleusercontent.com/a-/ALV-UjWqoEOqlq_byPOxkF6mJJ5H9tzuRpkszGe5kwnsLwarcXTFcJc=s200-p',
+    },
+    {
+      nombre: 'CARCA SALAZAR CERRUDO',
+      codSis: '101010',
+      contrasenia: '123',
+      fotoPerfil:
+        'https://lh3.googleusercontent.com/a-/ALV-UjWqoEOqlq_byPOxkF6mJJ5H9tzuRpkszGe5kwnsLwarcXTFcJc=s200-p',
+    },
+  ];
+  const user = {
+    idUser: 25,
+    nombre: 'ADMINISTRADOR',
+    codSis: '202020',
+    contrasenia: '123',
+    materias: [
+      { idMateria: 1, nombreMateria: 'INTRO PROGRA', grupo: 'G1', cantEst: 50 },
+      { idMateria: 1, nombreMateria: 'BASE DATOS', grupo: 'G1', cantEst: 50 },
+      { idMateria: 1, nombreMateria: 'INTRO PROGRA', grupo: 'G1', cantEst: 50 },
+    ],
+  };
+
   // react-hook-form
   const {
     register,
@@ -24,6 +52,11 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     console.log(data);
+    try {
+      // busqueda de usuario
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
