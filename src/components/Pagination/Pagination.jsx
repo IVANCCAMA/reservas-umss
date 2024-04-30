@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 export default function Pagination({ pageNumber, setPageNumber, lastPage }) {
@@ -15,21 +14,20 @@ export default function Pagination({ pageNumber, setPageNumber, lastPage }) {
       <ul className="pagination justify-content-md-end p-md-0 flex-wrap">
         {pageNumber == 1 ? null : (
           <li className="page-item">
-            <Link
+            <button
               className="page-link"
               onClick={() => setPageNumber(pageNumber - 1)}
-              to={`#${pageNumber - 1}`}
             >
               Anterior
-            </Link>
+            </button>
           </li>
         )}
 
         {pageNumber > 3 && (
           <li className="page-item">
-            <Link className="page-link" onClick={() => setPageNumber(1)} to={`#1`}>
+            <button className="page-link" onClick={() => setPageNumber(1)}>
               1
-            </Link>
+            </button>
           </li>
         )}
 
@@ -50,7 +48,9 @@ export default function Pagination({ pageNumber, setPageNumber, lastPage }) {
                 <button
                   className="page-link"
                   onClick={() => setPageNumber(page.num)}
-                >{`${page.text}`}</button>
+                >
+                  {`${page.text}`}
+                </button>
               </li>
             ),
         )}
@@ -63,23 +63,21 @@ export default function Pagination({ pageNumber, setPageNumber, lastPage }) {
 
         {pageNumber + 2 < lastPage && (
           <li className="page-item">
-            <Link
+            <button
               className="page-link"
               onClick={() => setPageNumber(lastPage)}
-              to={`#${lastPage}`}
-            >{`${lastPage}`}</Link>
+            >{`${lastPage}`}</button>
           </li>
         )}
 
         {pageNumber < lastPage && (
           <li className="page-item">
-            <Link
+            <button
               className="page-link"
               onClick={() => setPageNumber(pageNumber + 1)}
-              to={`#${pageNumber + 1}`}
             >
               Siguiente
-            </Link>
+            </button>
           </li>
         )}
       </ul>
