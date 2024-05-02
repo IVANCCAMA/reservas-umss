@@ -413,6 +413,8 @@ const EditarAmbientePage = () => {
                         <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
                           {horario.periodos.map((periodo, subIndex) => {
                             const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
+                            ambiente.disponibilidadPorDia.map((obj) => obj.periodos.map((per) => console.log(per)))
+                            
                             return (
                               <div className="col d-flex justify-content-around" key={subIndex}>
                                 <div>
@@ -428,6 +430,7 @@ const EditarAmbientePage = () => {
                                     id={`periodo_${index}_${subIndex}`}
                                     value={periodo.id}
                                     //defaultChecked={isChecked}
+                                    
                                     {...register(fieldName)}
                                   />
                                 </div>
