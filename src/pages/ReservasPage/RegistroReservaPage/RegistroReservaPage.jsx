@@ -44,7 +44,8 @@ const RegistroReservaPage = () => {
       .min(1, 'Seleccione al menos una materia'),
     cantidad_est: yup.number()
       .typeError('Ingrese el número de estudiantes')
-      .positive('El número de estudiantes debe ser un número positivo')
+      .max(500, 'el número de estudiantes debe ser menor a 500')
+      .min(20, 'El número de estudiantes debe ser mayor a 20')
       .integer('El número de estudiantes debe ser un número entero'),
     fecha_reserva: yup.date()
       .typeError('Seleccione una fecha valida'),

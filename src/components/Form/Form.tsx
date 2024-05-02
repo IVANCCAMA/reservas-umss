@@ -1,34 +1,27 @@
 import React, { ReactNode, useState } from 'react';
 
-interface FormProps extends React.HTMLProps<HTMLFormElement> {
-  children: ReactNode;
+interface FormProps {
+  children: any;
+  onSubmit: () => void;
   title?: string;
   onClickCancel?: () => void;
 }
 
 const Form: React.FC<FormProps> = ({
   children,
+  onSubmit,
   title = '',
   onClickCancel = () => { },
   ...rest
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOnSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setIsSubmitting(true);
-    rest?.onSubmit?.(e); // Llama al onSubmit pasado como parte de rest, si existe
+    onSubmit(); // Llama al onSubmit pasado como parte de rest, si existe
     setIsSubmitting(false);
   };
-
-  // const childrenModified = React.Children.map(children, (child) => {
-  //   if (React.isValidElement(child)) {
-  //     return React.cloneElement(child, {
-  //       className: `${child.props.className ?? ''} input-form`
-  //     });
-  //   }
-  //   return child;
-  // });
 
   return (
     <div className="container">

@@ -9,6 +9,8 @@ import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/Reg
 import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/RegistroReservaPage';
 import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
 import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
+import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPAge';
+import ListadoAperturaPage from './pages/AperturasPage/ListadoAperturaPage/ListadoAperturaPage';
 import BootstrapUI from './components/Bootstrap';
 
 function App() {
@@ -44,6 +46,9 @@ function App() {
                 />
 
                 <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
+
+                <Route path='/aperturas/registrarApertura' element={<RegistroAperturaPage />}/>
+                <Route path='/aperturas/listaAperturas' element={<ListadoAperturaPage />}/>
               </Routes>
             </div>
           </div>
