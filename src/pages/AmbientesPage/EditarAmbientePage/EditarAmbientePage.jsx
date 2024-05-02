@@ -31,7 +31,7 @@ const EditarAmbientePage = () => {
       .then((response) => {
         setAmbiente(response.data);
         //setDisponibilidadPorDia(response.data.disponibilidadPorDia);
-        console.log('Ambiente:', ambiente);
+        console.log('Ambiente:', response.data);
       })
       .catch((error) => {
         console.error('Error al obtener los datos del ambiente:', error);
@@ -138,6 +138,7 @@ const EditarAmbientePage = () => {
     //watch
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues:{}
   });
 
   const removeAccents = (str) => {
