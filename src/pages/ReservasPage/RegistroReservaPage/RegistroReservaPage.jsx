@@ -1,65 +1,58 @@
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
-import horariosJSON from './horarios';
-import usersJSON from './users';
 import { useNavigate } from 'react-router-dom';
 import iconInfo from '../../../assets/Images/alert-information.png';
 import iconoError from '../../../assets/Images/iconoError.png';
 import iconoExito from '../../../assets/Images/iconoExito.png';
-import { useModal } from '../../../components/Bootstrap/ModalContext';
+import { useModal, AlertContainer } from '../../../components/Bootstrap';
+import { TextInput, Select, NumberInput, DateInput, TextTarea, Accordion, CheckboxInput } from '../../../components/Form';
+import { Icon } from '@iconify/react';
 
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
+  const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
 
   const navigate = useNavigate();
   const { confirmationModal } = useModal();
-  // json horarios
-  const horarios = horariosJSON;
-  const users = usersJSON;
-  const currentDate = new Date().toISOString().split('T')[0];
-
-  const initvalues = {
-    id_usuario: '',
-    nombre_usuario: '',
-    contrasenia_usuario: '',
-    email_usuario: '',
-    tipo_usuario: '',
-    codsiss: '',
-    disponible: true,
-    materia_grupo: [],
-  };
-
-  // estados
-  const [selectedUser, setSelectedUser] = useState(initvalues);
-  const [selectedGroups, setSelectedGroups] = useState([]);
+  const alertRef = useRef(null);
+  // aux
+  const [users, setUsers] = useState([]);
+  const [datalistSolicitante, setDatalistSolicitante] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [tiposAmbiente, setTiposAmbiente] = useState([]);
+  const [grupos, setGrupos] = useState([]);
+  const [minDate, setMinDate] = useState('');
   const [maxDate, setMaxDate] = useState('');
-  const [filteredHorarios, setFilteredHorarios] = useState([]);
-  const [selectedAlerts, setSelectedAlerts] = useState({});
+  const [periodos, setPeriodos] = useState([{}]);
+  const [allCheckbox, setAllCheckBox] = useState(false);
 
   const [sending, setSending] = useState(false); // Estado para la alerta de envío
   const [error, setError] = useState(false); // Estado para la alerta de error
   const [success, setSuccess] = useState(false);
 
-  const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
-
-  // yup validación, atributos de formulario
-  const schema = yup.object({
-    solicitante: yup.string().required(),
-    tipo_ambiente: yup.string().required(),
-    listaGrupos: yup.array().min(1, 'Seleccione al menos una materia'),
-    cantidad_est: yup.number(),
-    fecha_reserva: yup.string().required(),
-    motivo: yup.string(),
-    periodos: yup
-      .array()
+  const schema = yup.object().shape({
+    solicitante: yup.string()
+      .required('Ingrese un nombre de un usuario')
+      .max(40, 'El nombre debe tener como máximo 40 caracteres'),
+    tipo_ambiente: yup.string()
+      .required('Seleccione una categoria'),
+    listaGrupos: yup.array()
+      .of(yup.number().positive().integer(), 'error type')
+      .min(1, 'Seleccione al menos una materia'),
+    cantidad_est: yup.number()
+      .typeError('Ingrese el número de estudiantes')
+      .positive('El número de estudiantes debe ser un número positivo')
+      .integer('El número de estudiantes debe ser un número entero'),
+    fecha_reserva: yup.date()
+      .typeError('Seleccione una fecha valida'),
+    motivo: yup.string()
+      .max(200, 'El motivo debe tener como máximo 200 caracteres'),
+    periodos: yup.array()
+      .of(yup.string())
       .min(1, 'Seleccione al menos un horario')
-      .test('at-least-one-period-selected', 'Seleccione al menos un horario', function (value) {
-        if (!value) return false;
-        return value.some((periodo) => periodo.id_periodo !== false);
-      }),
   });
 
   const {
@@ -81,32 +74,55 @@ const RegistroReservaPage = () => {
     },
   });
 
-  // Función para obtener fecha apertura
   useEffect(() => {
+    // recuperar users para el id del solicitante
+    axios
+      .get(`${database}/usuarios`)
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.error('Error al obtener los usuarios:', error);
+      });
+    // recuperar tipos de ambientes
+    setTiposAmbiente([
+      { title: 'Aula común', value: 'aula comun' },
+      { title: 'Laboratorio', value: 'laboratorio' },
+      { title: 'Auditorio', value: 'auditorio' }
+    ]);
     // recuperar fechas max min
     axios
       .get(`${database}/aperturas/2`)
-      .then((response) => {
-        setMaxDate(response.data.apertura_fin);
+      .then(({ data: { apertura_inicio, apertura_fin } }) => {
+        const aperturaIni = new Date(Math.max(new Date(), new Date(apertura_inicio))).toISOString().split('T')[0];
+        const aperturaFin = new Date(apertura_fin).toISOString().split('T')[0];
+        setMinDate(aperturaIni);
+        setMaxDate(aperturaFin);
       })
       .catch((error) => {
         console.error('Error al obtener la apertura 2:', error);
       });
+    // recuperar periodos
+    axios
+      .get(`${database}/periodos`)
+      .then((response) => {
+        setPeriodos(response.data);
+      })
+      .catch((error) => {
+        console.error('Error al obtener los periodos:', error);
+      });
   }, []);
 
   const onSubmit = (data) => {
-    const periodosFiltrados = data.periodos.filter((periodo) => periodo.id_periodo);
-    const filteredData = {
-      ...data,
-      periodos: periodosFiltrados,
-    };
-
-    console.log(filteredData);
-
     setSending(true);
     setTimeout(() => {
       axios
-        .post(`${database}/reservas`, filteredData)
+        .post(`${database}/reservas`, {
+          tipo_ambiente: data.tipo_ambiente,
+          cantidad_est: data.cantidad_est,
+          periodos: data.periodos.map(obj => ({ id_periodo: parseInt(obj) })),
+          fecha_reserva: data.fecha_reserva.toISOString().split('T')[0]
+        })
         .then((response) => {
           if (Array.isArray(response.data) && response.data.length === 0) {
             setError(true);
@@ -114,22 +130,18 @@ const RegistroReservaPage = () => {
           } else {
             setSuccess(true);
             setTimeout(() => {
-              setSuccess(false);
-              navigate('./ambientesDisponibles', {
-                state: {
-                  fecha_reserva: filteredData.fecha_reserva,
-                  motivo: filteredData.motivo,
-                  listaGrupos: filteredData.listaGrupos,
-                  id_apertura: 2,
-                  cantidad_total: filteredData.cantidad_est,
-                  ambienteDisp: response.data,
-                },
-              });
+              // setSuccess(false);
+              // navigate('./ambientesDisponibles', {
+              //   state: {
+              //     ...data,
+              //     ambienteDisp: response.data,
+              //   },
+              // });
             }, 2000);
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error('Error al obtener los ambiente disponibles: ',error);
           setError(true);
           setTimeout(() => setError(false), 2000);
         })
@@ -139,103 +151,85 @@ const RegistroReservaPage = () => {
     }, 2000);
   };
 
-  const handleGroupSelection = (event) => {
-    const selectedGroupId = event.target.value;
-    if (selectedGroupId) {
-      const selectedGroup = selectedUser.materia_grupo.find(
-        (group) => group.id_aux_grupo === parseInt(selectedGroupId),
-      );
-      if (selectedGroup) {
-        setSelectedGroups((prevSelectedGroups) => {
-          const updatedSelectedGroups = [...prevSelectedGroups, selectedGroup];
-          const selectedGroupIds = updatedSelectedGroups.map((group) => group.id_aux_grupo);
-          setValue('listaGrupos', selectedGroupIds);
-
-          // Calcular la cantidad total de estudiantes
-          const totalEstudiantes = updatedSelectedGroups.reduce(
-            (total, group) => total + group.cantidad_est,
-            0,
-          );
-          setValue('cantidad_est', totalEstudiantes);
-
-          // Asignar un color de alerta a la materia seleccionada
-          setSelectedAlerts((prevSelectedAlerts) => ({
-            ...prevSelectedAlerts,
-            [selectedGroup.id_aux_grupo]: alerts[Math.floor(Math.random() * alerts.length)],
+  const handleSolicitante = (newValue) => {
+    const value = newValue.replace(/[^a-zA-Z ]/g, '').toUpperCase();
+    const filteredValues = users
+      .filter(obj => obj.nombre_usuario.includes(value))
+      .map(filteredObj => filteredObj.nombre_usuario);
+    if (filteredValues.length < 10 && filteredValues.length > 0) {
+      setDatalistSolicitante(filteredValues);
+    } else {
+      setDatalistSolicitante(undefined);
+    }
+    return value;
+  };
+  // resuperar materias y grupos
+  const searchGroupsByApplicant = (newValue) => {
+    const foundUser = users.find(obj => obj.nombre_usuario === newValue);
+    if (foundUser?.id_usuario) {
+      axios
+        .get(`${database}/usuarios/${foundUser.id_usuario}/materias-grupos`)
+        .then((response) => {
+          const userGroups = response.data['materia-grupo'].map(group => ({
+            value: group.id_aux_grupo,
+            title: `${group.nombre_materia} - ${group.nombre_grupo}`,
+            inscritos: group.cantidad_est
           }));
-
-          return updatedSelectedGroups;
+          alertRef.current?.removeAllAlerts();
+          setGrupos(userGroups);
+          if (foundUser.tipo_usuario === 'ADMINISTRADOR') {
+            setIsAdmin(true);
+            setValue('listaGrupos', [userGroups[0]?.value]);
+            setValue('cantidad_est', userGroups[0]?.inscritos);
+          } else {
+            setIsAdmin(false);
+            setValue('listaGrupos', []);
+            setValue('cantidad_est', 0);
+          }
+        })
+        .catch((error) => {
+          setIsAdmin(false);
+          setValue('listaGrupos', []);
+          setValue('cantidad_est', 0);
+          console.error('Error al obtener las materias y grupos:', error);
         });
-      }
     }
   };
 
-  const handleGroupRemoval = (groupId) => {
-    setSelectedGroups((prevSelectedGroups) => {
-      const updatedGroups = prevSelectedGroups.filter(
-        (group) => group.id_aux_grupo !== parseInt(groupId),
-      );
+  const removeGropsSelected = (group) => {
+    const groupsFiltered = watch('listaGrupos')?.filter(obj => obj !== group.value);
+    setValue('listaGrupos', groupsFiltered);
+    setValue('cantidad_est', watch('cantidad_est') - group.inscritos);
+  };
 
-      const updatedGroupIds = updatedGroups.map((group) => group.id_aux_grupo);
-      setValue('listaGrupos', updatedGroupIds);
+  const addGropsSelected = (newValue) => {
+    const group = grupos.find(group => group.value === parseInt(newValue));
+    if (group && !watch('listaGrupos').includes(group.value)) {
+      alertRef.current.addAlert(alerts[watch('listaGrupos').length % 8], group.title, () => removeGropsSelected(group));
+      setValue('listaGrupos', [...watch('listaGrupos'), group.value]);
+      setValue('cantidad_est', watch('cantidad_est') + group.inscritos);
+    }
+    return new String();
+  };
 
-      const totalEstudiantes = updatedGroups.reduce(
-        (total, group) => total + group.cantidad_est,
-        0,
-      );
-      setValue('cantidad_est', totalEstudiantes > 0 ? totalEstudiantes : 0);
-
-      return updatedGroups;
+  const checkedAll = () => {
+    setAllCheckBox(prev => {
+      if (prev) {
+        setValue('periodos', []);
+      } else {
+        setValue('periodos', periodos.map(periodo => `${periodo.id_periodo}`));
+      }
+      return !prev;
     });
   };
 
-  const handleDateChange = (event) => {
-    const selectedDate = new Date(event.target.value);
-    const selectedDay = selectedDate.getDay();
-
-    if (selectedDay === 6) {
-      setValue('fecha_reserva', '');
-      setFilteredHorarios([]);
-    } else {
-      if (selectedDay === 5) {
-        // Si el día seleccionado es sábado
-        const filteredHorarios = horarios.periodos.filter((periodo) => periodo.id <= 6);
-        setFilteredHorarios(filteredHorarios);
-      } else {
-        setFilteredHorarios(horarios.periodos);
-      }
-      setValue('fecha_reserva', event.target.value);
-    }
-  };
-
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  const handleSolicitanteChange = (event) => {
-    const nombreSolicitante = event.target.value;
-    const user = users.find((user) => user.nombre_usuario === nombreSolicitante);
-    if (user) {
-      setSelectedUser(user);
-      setValue('solicitante', user.nombre_usuario);
-
-      // Verificar si el usuario es administrador
-      setIsAdmin(user.tipo_usuario === 'ADMINISTRADOR');
-
-      if (user.tipo_usuario === 'ADMINISTRADOR') {
-        // Si el usuario es administrador, permitir la edición del número de estudiantes
-        setValue(
-          'cantidad_est',
-          selectedGroups.reduce((total, group) => total + group.cantidad_est, 0),
-        );
-      } else {
-        // Si no es administrador, deshabilitar la edición del número de estudiantes
-        setValue('cantidad_est', 0); // Reinicia el valor del campo
-      }
-    } else {
-      setSelectedUser(initvalues);
-      setSelectedGroups([]);
-      setValue('listaGrupos', []);
-      setValue('cantidad_est', 0);
-    }
+  const handlePeriodoChange = (newValue) => {
+    const periodosId = periodos.map(periodo => periodo.id_periodo.toString());
+    const checkedPeriodos = watch('periodos').includes(newValue)
+      ? watch('periodos').filter(obj => obj !== newValue)
+      : [...watch('periodos'), newValue];
+    const _allCheckbox = periodosId.every(id => checkedPeriodos.includes(id));
+    setAllCheckBox(_allCheckbox);
   };
 
   return (
@@ -245,210 +239,113 @@ const RegistroReservaPage = () => {
           <h2 className="text-md-center">Formulario de reserva</h2>
 
           <form className="needs-validation" onSubmit={handleSubmit(onSubmit)}>
-            {/* Nombre solicitante */}
-            <div className="my-3">
-              <label className="form-label fw-bold">Nombre del solicitante</label>
-              <input
-                type="text"
-                maxLength={25}
-                className="form-control"
-                placeholder="Ingrese el nombre del solicitante"
-                {...register('solicitante')}
-                onChange={handleSolicitanteChange}
+            <TextInput
+              autoComplete='off'
+              label='Nombre del solicitante'
+              {...register('solicitante')}
+              placeholder='Ingrese el nombre del solicitante'
+              datalist={datalistSolicitante}
+              handleChange={handleSolicitante}
+              handleBlur={searchGroupsByApplicant}
+              error={errors.solicitante?.message}
+            />
+
+            <Select
+              label={<>Tipo de ambiente <span className="text-danger ms-1">*</span></>}
+              {...register('tipo_ambiente')}
+              placeholder='Seleccione el tipo de ambiente'
+              options={tiposAmbiente}
+              error={errors.tipo_ambiente?.message}
+            />
+
+            {!isAdmin && (<>
+              <Select
+                label={<>Materias y grupos <span className="text-danger ms-1">*</span></>}
+                name='listaGrupos'
+                placeholder='Seleccionar materias y grupos'
+                options={grupos.filter(group => !watch('listaGrupos')?.includes(group.value))}
+                handleChange={addGropsSelected}
+                error={errors.listaGrupos?.message}
               />
-              {errors.solicitante && (
-                <span className="text-danger">Ingrese un nombre de un usuario</span>
-              )}
-            </div>
 
-            {/* Tipo ambiente */}
-            <div className="my-3">
-              <label className="form-label fw-bold">
-                Tipo de ambiente <span className="text-danger ms-1">*</span>
-              </label>
-              <select
-                className="form-select"
-                placeholder="Seleccione el tipo de ambiente"
-                {...register('tipo_ambiente')}
-              >
-                <option value="">Seleccione el tipo de ambiente</option>
-                <option value={'aula comun'}>Aula común</option>
-                <option value={'auditorio'}>Auditorio</option>
-                <option value={'laboratorio'}>Laboratorio</option>
-              </select>
-              {errors.tipo_ambiente && (
-                <span className="text-danger">Seleccione una categoria</span>
-              )}
-            </div>
+              <div className="input-component" style={{ display: watch('listaGrupos').length > 0 ? 'block' : 'none' }}>
+                <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
 
-            {/* Seleccion de Materias y grupos */}
-            <div className="my-3">
-              <label className="form-label fw-bold">
-                Materias y grupos <span className="text-danger ms-1">*</span>
-              </label>
-              <select
-                className="form-select"
-                placeholder="Seleccionar materias y grupos"
-                onChange={handleGroupSelection}
-              >
-                <option value="">Seleccionar materias y grupos</option>
-                {selectedUser.materia_grupo.map((grupo, index) => {
-                  const isSelected = selectedGroups.some(
-                    (selectedGroup) => selectedGroup.id_aux_grupo === grupo.id_aux_grupo,
-                  );
-                  if (!isSelected) {
-                    return (
-                      <option key={index} value={grupo.id_aux_grupo}>
-                        {grupo.nombre_materia} - {grupo.nombre_grupo}
-                      </option>
-                    );
-                  }
-                  return null;
-                })}
-              </select>
-            </div>
-            {errors.listaGrupos && (
-              <span className="text-danger">Seleccione al menos una materia</span>
-            )}
-            <div className="my-3">
-              <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
-              {selectedGroups.map((group, index) => (
-                <div
-                  key={index}
-                  className={`mb-1 px-3 py-1 alert alert-${selectedAlerts[group.id_aux_grupo]
-                    } alert-dismissible fade show`}
-                >
-                  {group.nombre_materia} - {group.nombre_grupo}
-                  <button
-                    type="button"
-                    className="btn-close pe-1 py-2"
-                    onClick={() => handleGroupRemoval(group.id_aux_grupo)}
-                    aria-label="Close"
-                  ></button>
-                </div>
-              ))}
-            </div>
-            {/* Cantidad est */}
-            <div className="my-3 row row-cols6">
+                <AlertContainer ref={alertRef} />
+              </div>
+            </>)}
+
+            <div className="row row-cols6">
               <div className="col-md-6">
-                <label className="form-label fw-bold">Número de Estudiantes</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  min={0}
-                  max={500}
-                  disabled={!isAdmin}
+                <NumberInput
+                  label='Número de Estudiantes'
                   {...register('cantidad_est')}
+                  disabled={!isAdmin}
+                  error={errors.cantidad_est?.message}
                 />
               </div>
-              {/* Fecha */}
               <div className="col-md-6">
-                <label className="form-label fw-bold">
-                  Fecha de reserva <span className="text-danger ms-1">*</span>
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  // bug futuro :v
-                  min={currentDate}
-                  max={maxDate}
-                  onChange={handleDateChange}
+                <DateInput
+                  label={<>Fecha de reserva <span className="text-danger ms-1">*</span></>}
+                  {...register('fecha_reserva')}
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  handleChange={(newValue) => {
+                    setValue('periodos', []); setAllCheckBox(false);
+                    return new Date(newValue)?.getDay() === 6 ? new String() : undefined;
+                  }}
+                  error={errors.fecha_reserva?.message}
                 />
-                {errors.fecha_reserva && (
-                  <span className="text-danger">Seleccione una fecha valida</span>
-                )}
               </div>
             </div>
 
-            <div className="my-3">
-              <label className="form-label fw-bold">Motivos de reserva</label>
-              <textarea
-                rows={2}
-                type="text"
-                maxLength={200}
-                className="form-control"
-                placeholder="Escriba el motivo de la reserva"
-                {...register('motivo')}
-              />
-            </div>
+            <TextTarea
+              label='Motivos de reserva'
+              {...register('motivo')}
+              placeholder='Escriba el motivo de la reserva'
+              maxLength={201}
+              error={errors.motivo?.message}
+            />
 
-            {/* Horarios */}
-            <div className="my-3">
+            <div className='input-component'>
               <label className="form-label fw-bold">
                 Periodos y horarios <span className="text-danger ms-1">*</span>
               </label>
-              <div>
-                <button
-                  className="form-select text-start rounded-0"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target={`#collapse`}
-                  aria-expanded="false"
-                  aria-controls={`collapse`}
-                >
-                  Seleccione periodo/s
-                </button>
-                <div className="collapse horarios" id={`collapse`}>
-                  <div className="card card-body">
-                    <div className="d-flex flex-md-row justify-content-between">
-                      <p className="ms-3 fw-bold">Periodos</p>
-                      <div className="d-flex text-center">
-                        <div>
-                          <label className="form-check-label" htmlFor={`selectAll`}>
-                            Todo
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            className="form-check-input ms-md-2 me-3"
-                            type="checkbox"
-                            id={`selectAll`}
-                            {...register(`selectAll`)}
-                            disabled={!watch('fecha_reserva')}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              filteredHorarios.forEach((_, subIndex) => {
-                                const fieldName = `periodos[${subIndex}].id_periodo`;
-                                setValue(
-                                  fieldName,
-                                  checked ? filteredHorarios[subIndex].id : false,
-                                );
-                              });
-                            }}
-                          />
-                        </div>
-                      </div>
+
+              <Accordion id='periodos' accordionItems={[{
+                title: 'Selecione periodo/s',
+                body:
+                  <div className="w-100">
+                    <div className="d-flex justify-content-between pb-2">
+                      <label>Periodos</label>
+                      <CheckboxInput
+                        checked={allCheckbox}
+                        label='Selecionar todos'
+                        handleChange={checkedAll}
+                        disabled={!watch('fecha_reserva')}
+                      />
                     </div>
-                    <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
-                      {filteredHorarios.map((periodo, subIndex) => {
-                        const fieldName = `periodos[${subIndex}].id_periodo`;
+
+                    <div className='row row-cols4'>
+                      {periodos.map((periodo, index) => {
+                        const fechaReserva = watch('fecha_reserva');
+                        const selectedDay = fechaReserva && new Date(fechaReserva).getDay();
+                        if (!fechaReserva || (selectedDay === 5 && periodo.id_periodo > 6)) return;
                         return (
-                          <div className="col d-flex justify-content-around" key={subIndex}>
-                            <div>
-                              <label
-                                className="form-check-label me-md-2"
-                                htmlFor={`periodo_${subIndex}`}
-                              >
-                                {periodo.horario}
-                              </label>
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                id={`periodo_${subIndex}`}
-                                value={periodo.id}
-                                {...register(fieldName)}
-                              />
-                            </div>
+                          <div key={`periodo-${index}`} className='col-md-4 d-flex justify-content-center'>
+                            <CheckboxInput
+                              label={`${periodo.hora_inicio?.slice(0, 5)} - ${periodo.hora_fin?.slice(0, 5)}`}
+                              {...register('periodos')}
+                              value={periodo.id_periodo}
+                              handleChange={handlePeriodoChange}
+                            />
                           </div>
                         );
                       })}
                     </div>
                   </div>
-                </div>
-              </div>
-              {errors.periodos && (
-                <span className="text-danger">Seleccione al menos un horario</span>
-              )}
+              }]} />
+              {errors.periodos && (<span className="text-danger">{errors.periodos.message}</span>)}
             </div>
 
             <div className="d-flex justify-content-center">
@@ -460,7 +357,7 @@ const RegistroReservaPage = () => {
                 type="button"
                 onClick={() => {
                   confirmationModal({
-                    content: (
+                    body: (
                       <>
                         <div>
                           <img src={iconoError} />
@@ -485,11 +382,9 @@ const RegistroReservaPage = () => {
           <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
             <div className="d-flex justify-content-md-end pb-4 pe-3">
               <div className="alert alert-primary py-1 d-flex align-items-center" role="alert">
-                <img src={iconInfo} alt="info" className="iconAlert" />
+                <Icon className="iconAlert" icon="zondicons:information-outline"  style={{color: '#0D6EFD'}} />
                 <div className="ps-3">Enviando formulario</div>
-                <div className="spinner-border spinner-border-sm ms-4" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+                <div className="spinner-border spinner-border-sm ms-4" role="status" />
               </div>
             </div>
           </div>
@@ -499,7 +394,7 @@ const RegistroReservaPage = () => {
           <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
             <div className="d-flex justify-content-md-end pb-4 pe-3">
               <div className="alert alert-danger py-1 d-flex align-items-center" role="alert">
-                <img src={iconoError} alt="info" className="iconAlert" />
+                <Icon className="iconAlert" icon="charm:circle-cross"  style={{color: '#FF3B20'}} />
                 <div className="ps-3">Error al enviar, intente de nuevo</div>
               </div>
             </div>
@@ -510,8 +405,8 @@ const RegistroReservaPage = () => {
           <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
             <div className="d-flex justify-content-md-end pb-4 pe-3">
               <div className="alert alert-success py-1 d-flex align-items-center" role="alert">
-                <img src={iconoExito} alt="info" className="iconAlert" />
-                <div className="ps-3">Enviado correctamente</div>
+                <Icon className="iconAlert" icon="fa-regular:check-circle"  style={{color: '#0FA958'}} />
+                <span className="fs-6 ps-3">Enviado correctamente</span>
               </div>
             </div>
           </div>

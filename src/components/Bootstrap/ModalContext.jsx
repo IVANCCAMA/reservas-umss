@@ -29,22 +29,22 @@ export const ModalProvider = ({ children }) => {
    * Modal component that can be controlled externally via ref.
    *
    * @param {Object} props
-   * @param {React.ReactNode} props.content - The content to be displayed inside the modal.
+   * @param {React.ReactNode} props.body - The body to be displayed inside the modal.
    * @param {ButtonModal} props.button1 - Props for the first button inside the modal.
    * @param {ButtonModal} [props.button2] - Props for the second button inside the modal (optional).
    */
-  const showModal = ({ content, button1, button2 = undefined }) => {
+  const newModal = ({ body, button1, button2 = undefined }) => {
     setModal({
       ref: modalRef,
-      content: content,
+      body: body,
       button1: button1,
       button2: button2 ? button2 : undefined
     });
   };
 
-  const createModal = (content, button1, onClickButton1To = '', button2 = undefined, onClickButton2To = '') => {
+  const createModal = (body, button1, onClickButton1To = '', button2 = undefined, onClickButton2To = '') => {
     return {
-      content: content,
+      body: body,
       button1: {
         ...button1,
         onClick: () => {
@@ -72,62 +72,62 @@ export const ModalProvider = ({ children }) => {
    * Modal component for displaying confirmation messages.
    *
    * @param {Object} props
-   * @param {React.ReactNode} props.content - The content to be displayed inside the modal.
+   * @param {React.ReactNode} props.body - The body to be displayed inside the modal.
    * @param {string} [props.onClickYesTo] - URL to redirect when "Yes" button is clicked (optional).
    * @param {string} [props.onClickNoTo] - URL to redirect when "No" button is clicked (optional).
    * @param {Function} [props.onClickYes] - Function to execute when "Yes" button is clicked (optional).
    * @param {Function} [props.onClickNo] - Function to execute when "No" button is clicked (optional).
    */
-  const confirmationModal = ({ content, onClickYesTo = '', onClickNoTo = '', onClickYes = () => { }, onClickNo = () => { } }) => {
+  const confirmationModal = ({ body, onClickYesTo = '', onClickNoTo = '', onClickYes = () => { }, onClickNo = () => { } }) => {
     const button1 = {
-      type: 'success',
-      content: <p className="mx-4 my-auto">Si</p>,
+      style: 'success',
+      body: <p className="mx-4 my-auto">Si</p>,
       onClick: onClickYes
     };
     const button2 = {
-      type: 'danger',
-      content: <p className="mx-4 my-auto">No</p>,
+      style: 'danger',
+      body: <p className="mx-4 my-auto">No</p>,
       onClick: onClickNo
     };
-    showModal(createModal(content, button1, onClickYesTo, button2, onClickNoTo));
+    newModal(createModal(body, button1, onClickYesTo, button2, onClickNoTo));
   };
 
   /**
    * Modal component for displaying error messages.
    *
    * @param {Object} props
-   * @param {React.ReactNode} props.content - The content to be displayed inside the modal.
+   * @param {React.ReactNode} props.body - The body to be displayed inside the modal.
    * @param {string} [props.onClickTo] - URL to redirect when the button is clicked (optional).
    * @param {Function} [props.onClick] - Function to execute when the button is clicked (optional).
    */
-  const errorModal = ({ content, onClickTo = '', onClick = () => { } }) => {
+  const errorModal = ({ body, onClickTo = '', onClick = () => { } }) => {
     const button1 = {
-      type: 'danger',
-      content: <p className="mx-4 my-auto">Aceptar</p>,
+      style: 'danger',
+      body: <p className="mx-4 my-auto">Aceptar</p>,
       onClick: onClick
     };
-    showModal(createModal(content, button1, onClickTo));
+    newModal(createModal(body, button1, onClickTo));
   };
 
   /**
    * Modal component for displaying success messages.
    *
    * @param {Object} props
-   * @param {React.ReactNode} props.content - The content to be displayed inside the modal.
+   * @param {React.ReactNode} props.body - The body to be displayed inside the modal.
    * @param {string} [props.onClickTo] - URL to redirect when the button is clicked (optional).
    * @param {Function} [props.onClick] - Function to execute when the button is clicked (optional).
    */
-  const successModal = ({ content, onClickTo = '', onClick = () => { } }) => {
+  const successModal = ({ body, onClickTo = '', onClick = () => { } }) => {
     const button1 = {
-      type: 'success',
-      content: <p className="mx-4 my-auto">Aceptar</p>,
+      style: 'success',
+      body: <p className="mx-4 my-auto">Aceptar</p>,
       onClick: onClick
     };
-    showModal(createModal(content, button1, onClickTo));
+    newModal(createModal(body, button1, onClickTo));
   };
 
   return (
-    <ModalContext.Provider value={{ showModal, createModal, confirmationModal, errorModal, successModal }}>
+    <ModalContext.Provider value={{ newModal, confirmationModal, errorModal, successModal }}>
       {children}
       {modal && <Modal {...modal} />}
     </ModalContext.Provider>

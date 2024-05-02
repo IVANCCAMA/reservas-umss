@@ -11,20 +11,21 @@ import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/A
 import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
 import ModalProvider from './components/Bootstrap/ModalContext';
 import EditarAmbientePage from './pages/AmbientesPage/EditarAmbientePage/EditarAmbientePage';
+import BootstrapUI from './components/Bootstrap';
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="App container-fluid p-0">
-        {/* header */}
-        <div className="row m-0 justify-content-center">
-          <Navbar />
-          <div className="col-md-2 p-0 pt-5">
-            <Sidebar />
-          </div>
-          <div className="col-md-10 pt-md-5 p-0 main-content">
+      <BootstrapUI>
+        <div className="App container-fluid p-0">
+          {/* header */}
+          <div className="row m-0 justify-content-center">
+            <Navbar />
+            <div className="col-md-2 p-0 pt-5">
+              <Sidebar />
+            </div>
+            <div className="col-md-10 pt-md-5 p-0 main-content">
 
-            <ModalProvider>
               <Routes>
                 <Route path="/" index element={<HomePage />} />
 
@@ -47,10 +48,10 @@ function App() {
                 <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
                 <Route path="/ambientes/listaAmbientes/editar/:id_ambiente" element={<EditarAmbientePage />}/>
               </Routes>
-            </ModalProvider>
+            </div>
           </div>
         </div>
-      </div>
+      </BootstrapUI>
     </BrowserRouter>
   );
 }

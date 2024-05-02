@@ -1,67 +1,93 @@
 import React from 'react';
+import { UseFormRegister } from 'react-hook-form';
 
 interface option {
-  value: string;
+  value: string | readonly string[] | number | undefined;
   title: string;
   hidden?: boolean;
 }
 
 interface SelectProps {
-  name: string;
-  label: string;
+  // name: string;
+  label: React.ReactNode;
   options: option[] | string[];
-  onChange?: (newValue: string) => void;
-  onFocus?: (newValue: string) => void;
-  onBlur?: (newValue: string) => void;
+  handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
+  handleFocus?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
+  handleBlur?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   required?: boolean;
+  multiple?: boolean;
   defaultValue?: string;
   placeholder?: string;
-  value?: number | string | undefined;
+  error?: string;
 }
 
-const Select: React.FC<SelectProps> = ({
+const Select = React.forwardRef<
+  HTMLSelectElement,
+  SelectProps & ReturnType<UseFormRegister<any>>
+>(({
   name,
   label,
   options,
   onChange = () => { },
-  onFocus = () => { },
   onBlur = () => { },
+  handleChange = () => { },
+  handleFocus = () => { },
+  handleBlur = () => { },
   required = false,
-  defaultValue = 'default',
-  placeholder = '',
-  value = undefined
-}) => {
-  return (
-    <div className='my-3'>
-      <label htmlFor={name} className='form-label'>{label}</label>
+  multiple = false,
+  defaultValue = undefined,
+  placeholder = undefined,
+  error = undefined
+}, ref) => (
+  <div className='input-component'>
+    <label htmlFor={name} className='form-label fw-bold'>{label}</label>
 
-      <select
-        required={required}
-        id={name}
-        name={name}
-        className='form-select'
-        defaultValue={options.length !== 0 ? defaultValue : undefined}
-        value={options.length === 0 ? defaultValue : value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={(e) => onFocus(e.target.value)}
-        onBlur={(e) => onBlur(e.target.value)}
-      >
-        {placeholder && (
-          <option disabled hidden value='default'>{placeholder}</option>
-        )}
+    <select
+      ref={ref}
+      required={required}
+      multiple={multiple}
+      id={name}
+      name={name}
+      className='form-select'
+      defaultValue={defaultValue}
+      onChange={(e) => {
+        const newValue = handleChange(e.target.value);
+        if (newValue) {
+          e.target.value = newValue;
+        }
+        onChange(e);
+      }}
+      onFocus={(e) => {
+        const newValue = handleFocus(e.target.value);
+        if (newValue) {
+          e.target.value = newValue;
+        }
+      }}
+      onBlur={(e) => {
+        const newValue = handleBlur(e.target.value);
+        if (newValue) {
+          e.target.value = newValue;
+        }
+        onBlur(e);
+      }}
+    >
+      {placeholder && (
+        <option value=''>{placeholder}</option>
+      )}
 
-        {options.map((option: string | option, index: number) => (
-          <option
-            key={`${name}-${index}`}
-            value={typeof option === 'string' ? option : option.value}
-            hidden={typeof option === 'string' ? undefined : option.hidden}
-          >
-            {typeof option === 'string' ? option : option.title}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-};
+      console.log(options)
+      {options.map((option: string | option, index: number) => (
+        <option
+          key={`${name}-${index}`}
+          value={typeof option === 'string' ? option : option.value}
+          hidden={typeof option === 'string' ? undefined : option.hidden}
+        >
+          {typeof option === 'string' ? option : option.title}
+        </option>
+      ))}
+    </select>
+    {error && (<span className="text-danger">{error}</span>)}
+  </div>
+))
 
 export default Select;
