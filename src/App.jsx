@@ -45,7 +45,7 @@ function App() {
                 />
 
                 <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
-                <Route path="/ambientes/listaAmbientes/editar" element={<EditarAmbientePage />}/>
+                <Route path="/ambientes/listaAmbientes/editar/:id_ambiente" element={<EditarAmbientePage />}/>
               </Routes>
             </ModalProvider>
           </div>

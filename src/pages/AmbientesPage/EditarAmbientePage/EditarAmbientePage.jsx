@@ -13,28 +13,52 @@ import { useParams } from 'react-router-dom';
 const EditarAmbientePage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
   const { confirmationModal, errorModal, successModal } = useModal();
-  const [ambientes, setAmbientes] = useState([]);
+  const horarios = horariosJSON;
+  let { id_ambiente } = useParams();
+  const [ambiente, setAmbiente] = useState({});
+  //const [disponibilidadPorDia, setDisponibilidadPorDia] = useState([]);
+  //const [isChecked, /* setIsChecked */] = useState(true);
+  
+  useEffect(() => {
+    if (id_ambiente){
+      loadAmbiente(id_ambiente);
+    }
+  }, [id_ambiente]);
 
-  const loadAmbientes = () => {
-    axios
-      .get(`${baseURL}/ambientes`)
+  const loadAmbiente = (id) => { //recuperar datos por el id
+    axios 
+      .get(`${baseURL}/disponibles/ambiente/${id}`)
       .then((response) => {
-        setAmbientes(response.data);
+        setAmbiente(response.data);
+        //setDisponibilidadPorDia(response.data.disponibilidadPorDia);
+        console.log('Ambiente:', ambiente);
       })
       .catch((error) => {
-        console.error('Error al obtener los ambientes:', error);
+        console.error('Error al obtener los datos del ambiente:', error);
       });
-  };
-  useEffect(() => {
-    loadAmbientes();
-  }, []);
+  }
+
+  /* const diasSemana = {
+    lunes: 'Lunes',
+    martes: 'Martes',
+    miercoles: 'Miércoles',
+    jueves: 'Jueves',
+    viernes: 'Viernes',
+    sabado: 'Sábado',
+  }; */
+
+  /* const obtenerNombreDia = (nombreDia) => {
+    const nombreDiaMinusculas = nombreDia.toLowerCase();
+    const nombreDiaEnEspanol = diasSemana[nombreDiaMinusculas];
+    return nombreDiaEnEspanol || nombreDia;
+  }; */
 
   const errorModalContent = (
     <>
       <div>
         <img src={iconoError} />
       </div>
-      <div className="pt-md-3">Error al registrar ambiente intente de nuevo</div>
+      <div className="pt-md-3">Error al editar ambiente intente de nuevo</div>
     </>
   );
 
@@ -48,10 +72,7 @@ const EditarAmbientePage = () => {
         /^[\w]+(?:-[\w]+)*(?: [\w]+(?:-[\w]+)*)*$/,
         'Formato no válido. Solo se permite letras y no se acepta acentos.',
       )
-      .test('is-unique', 'El nombre del ambiente ya está en uso', function (value) {
-        loadAmbientes();
-        return isUniqueName(value.toUpperCase());
-      })
+      
       .test('is-valid-format', 'Formato no válido', function (value) {
         // Verifica si hay más de un espacio consecutivo en el valor
         return !/\s{2,}/.test(value);
@@ -72,8 +93,8 @@ const EditarAmbientePage = () => {
       .min(0, 'El número mínimo es 0')
       .max(250, 'El número máximo es 250')
       .test('is-required', 'El campo es obligatorio para laboratorios', function (value) {
-        const tipoAmbiente = this.parent.tipo;
-        if (tipoAmbiente === 'Laboratorio') {
+        //const tipoAmbiente = this.parent.tipo;
+        if (ambiente.tipo === 'laboratorio') {
           return typeof value === 'number';
         }
         return true;
@@ -108,32 +129,16 @@ const EditarAmbientePage = () => {
       ),
   });
 
-  const isUniqueName = (inputName) => {
-    const trimmedInputName = inputName.trim();
-
-    return !ambientes.some((ambiente) => ambiente.nombre_ambiente.trim() === trimmedInputName);
-  };
-
   // react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset,
-    clearErrors,
-    setValue,
-    watch,
+    setValue, 
+    //watch
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: {
-      disponible: true,
-      proyector: false,
-      computadora: 0,
-    },
   });
-
-  // json horarios
-  const horarios = horariosJSON;
 
   const removeAccents = (str) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -164,7 +169,7 @@ const EditarAmbientePage = () => {
 
       console.log('Datos enviados', filteredData);
 
-      const response = await axios.post(`${baseURL}/ambientes/completo`, filteredData);
+      const response = await axios.put(`${baseURL}/ambientes/completo/${id_ambiente}`, data);
 
       console.log(response);
 
@@ -175,31 +180,13 @@ const EditarAmbientePage = () => {
               <div>
                 <img src={iconoExito} />
               </div>
-              <div className="pt-md-3">Ambiente registrado con éxito</div>
+              <div className="pt-md-3">Ambiente editado con éxito</div>
             </>
           ),
         });
-
-        reset({
-          nombre_ambiente: '',
-          tipo: '',
-          capacidad: '',
-          computadora: '',
-          ubicacion: '',
-          dia: '',
-          proyector: false,
-        });
-
-        setValue('disponible', true);
-        clearErrors();
-
+        
         // eslint-disable-next-line no-unused-vars
-        horarios.forEach((horario, index) => {
-          horario.periodos.forEach((_, subIndex) => {
-            const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
-            setValue(fieldName, false);
-          });
-        });
+        
       } else {
         errorModal({ content: errorModalContent });
       }
@@ -209,26 +196,26 @@ const EditarAmbientePage = () => {
     }
   };
 
-  const tipoAmbiente = watch('tipo');
-
   return (
     <div className="container registro-ambientes">
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
-          <h2 className="text-md-center">Registrar ambientes</h2>
+          <h2 className="text-md-center">Editar ambiente</h2>
           <form className="forms" onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="my-3">
               <label className="form-label fw-bold">
                 Nombre de ambiente
                 <span className="text-danger ms-1">*</span>
               </label>
+              {ambiente.nombre_ambiente? (
               <input
                 type="text"
                 maxLength={25}
                 className="form-control"
-                placeholder="Escriba el nombre del ambiente"
+                defaultValue={ambiente.nombre_ambiente || ''}
                 {...register('nombre_ambiente')}
               />
+            ) : ('Cargando') }
               {errors.nombre_ambiente && (
                 <span className="text-danger">{errors.nombre_ambiente.message}</span>
               )}
@@ -237,16 +224,19 @@ const EditarAmbientePage = () => {
               <label className="form-label fw-bold">
                 Tipo de ambiente <span className="text-danger ms-1">*</span>
               </label>
+              {ambiente.tipo? (
               <select
                 className="form-select"
-                placeholder="Seleccione el tipo de ambiente"
+                value={ambiente.tipo  || ''}
+                onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
                 {...register('tipo')}
               >
                 <option value="">Seleccione el tipo de ambiente</option>
-                <option>Aula común</option>
-                <option>Auditorio</option>
-                <option>Laboratorio</option>
+                <option value="aula comun">Aula común</option>
+                <option value="auditorio">Auditorio</option>
+                <option value="laboratorio">Laboratorio</option>
               </select>
+              ) : ('Cargando') }
               {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
             <div className="my-3">
@@ -267,7 +257,7 @@ const EditarAmbientePage = () => {
                 maxLength={350}
                 type="text"
                 className="form-control"
-                placeholder="Escriba la ubicación del ambiente"
+                defaultValue={ambiente.ubicacion || ''}
                 {...register('ubicacion')}
               />
             </div>
@@ -276,12 +266,15 @@ const EditarAmbientePage = () => {
                 <label className="form-label fw-bold">
                   Capacidad de estudiantes <span className="text-danger ms-1">*</span>
                 </label>
+                {ambiente.capacidad? (
                 <input
                   type="number"
                   className="form-control"
-                  placeholder="Escriba la capacidad de estudiantes"
+                  defaultValue={ambiente.capacidad  || ''}
                   {...register('capacidad')}
+                  
                 />
+                ) : ('Cargando') }
                 {errors.capacidad && (
                   <span className="text-danger">{errors.capacidad.message}</span>
                 )}
@@ -290,13 +283,15 @@ const EditarAmbientePage = () => {
                 <label className="form-label fw-bold">
                   Min (%)<span className="text-danger ms-1">*</span>
                 </label>
+                {ambiente.porcentaje_min? (
                 <input
-                  defaultValue={85}
+                  defaultValue={ambiente.porcentaje_min}
                   type="number"
                   className="form-control"
                   placeholder="Cap. maxima"
                   {...register('porcentaje_min')}
                 />
+              ) : ('Cargando') }
                 {errors.porcentaje_min && (
                   <span className="text-danger">{errors.porcentaje_min.message}</span>
                 )}
@@ -305,20 +300,22 @@ const EditarAmbientePage = () => {
                 <label className="form-label fw-bold">
                   Max (%)<span className="text-danger ms-1">*</span>
                 </label>
+                {ambiente.porcentaje_max? (
                 <input
-                  defaultValue={115}
+                  defaultValue={ambiente.porcentaje_max}
                   type="number"
                   className="form-control"
                   placeholder="Cap. de minima"
                   {...register('porcentaje_max')}
                 />
+                ) : ('Cargando') }
                 {errors.porcentaje_max && (
                   <span className="text-danger">{errors.porcentaje_max.message}</span>
                 )}
               </div>
             </div>
 
-            {tipoAmbiente === 'Laboratorio' && (
+            {ambiente.tipo === 'laboratorio' && (
               <div className="my-3">
                 <label className="form-label fw-bold">
                   Nº Computadoras <span className="text-danger ms-1">*</span>
@@ -327,6 +324,7 @@ const EditarAmbientePage = () => {
                   type="number"
                   className="form-control"
                   placeholder="Escriba el número de computadoras"
+                  defaultValue={ambiente.computadora}
                   {...register('computadora')}
                 />
                 {errors.computadora && (
@@ -344,6 +342,7 @@ const EditarAmbientePage = () => {
                   className="form-check-input"
                   type="checkbox"
                   id={`proyector`}
+                  defaultChecked={ambiente.proyector}
                   {...register('proyector')}
                 />
               </div>
@@ -355,6 +354,7 @@ const EditarAmbientePage = () => {
                   className="form-check-input"
                   type="checkbox"
                   id={`disponible`}
+                  defaultChecked={ambiente.disponible}
                   {...register('disponible')}
                 />
               </div>
@@ -365,6 +365,7 @@ const EditarAmbientePage = () => {
               <label className="form-label fw-bold">
                 Días y horarios disponibles <span className="text-danger ms-1">*</span>
               </label>
+              {/* //////////////// */}
               {horarios.map((horario, index) => {
                 return (
                   <div key={index}>
@@ -425,6 +426,7 @@ const EditarAmbientePage = () => {
                                     type="checkbox"
                                     id={`periodo_${index}_${subIndex}`}
                                     value={periodo.id}
+                                    //defaultChecked={isChecked}
                                     {...register(fieldName)}
                                   />
                                 </div>
@@ -437,6 +439,92 @@ const EditarAmbientePage = () => {
                   </div>
                 );
               })}
+              {/* ///////////////////////// */}
+              {/* {disponibilidadPorDia.map((diaDisponible, index) => {
+                const hayPeriodosDisponibles =
+                diaDisponible.periodos && diaDisponible.periodos.length > 0;
+  
+                if (!hayPeriodosDisponibles) {
+                  return null;
+                }
+                return (
+                  <div key={index}>
+                    <button
+                      className="form-select text-start rounded-0"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target={`#collapseTwo${index}`}
+                      aria-expanded="true"
+                      aria-controls={`collapseTwo${index}`}
+                    >
+                      {obtenerNombreDia(diaDisponible.dia)}
+                    </button>
+                    <div
+                      id={`collapseTwo${index}`}
+                      className=" horarios"
+                      aria-labelledby={`headingTwo${index}`}
+                    >
+                      <div className="card card-body">
+                        <div className="d-flex flex-md-row justify-content-between">
+                        <p className="ms-3 fw-bolds">Periodos</p>
+                        <div className="d-flex text-center">
+                          <div>
+                            <label className="form-check-label" htmlFor={`selectAll_${index}`}>
+                              Todo
+                            </label>
+                          </div>
+                          <div className="accordion-body">
+                            <input
+                              className="form-check-input ms-md-2 me-3"
+                              type="checkbox"
+                              id={`selectAll_${index}`}
+                              {...register(`selectAll`)}
+                                onChange={(e) => {
+                                  const checked = e.target.checked;
+                                  horario.periodos.forEach((_, subIndex) => {
+                                    const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
+                                    setValue(
+                                      fieldName,
+                                      checked ? horario.periodos[subIndex].id : false,
+                                    );
+                                  });
+                                }} 
+                            />
+                          </div>
+                        </div>
+                        </div>
+                        <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
+                          {diaDisponible.periodos?.map((periodoDia, index) => {
+                            return (
+                              <div className="col d-flex justify-content-around" key={index}>
+                                <div>
+                                  <label
+                                      className="form-check-label me-md-2"
+                                      htmlFor={periodoDia} 
+                                  >
+                                    {periodoDia.hora_inicio} - {periodoDia.hora_fin}
+                                  </label>
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    defaultChecked={isChecked} 
+                                    id={periodoDia} 
+                                    //value={periodo.id}
+                                    //{...register(fieldName)}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                );
+              })} */}
+
               <div>
                 {errors.dia && (
                   <span className="text-danger">Seleccione al menos un periodo para un día</span>
@@ -446,7 +534,7 @@ const EditarAmbientePage = () => {
 
             <div className="d-flex justify-content-center">
               <button type="submit" className="btn btn-success me-5" disabled={isSubmitting}>
-                {isSubmitting ? 'Enviando...' : 'Registrar'}
+                {isSubmitting ? 'Enviando...' : 'Guardar'}
               </button>
 
               <button
@@ -460,7 +548,7 @@ const EditarAmbientePage = () => {
                           <img src={iconoError} />
                         </div>
                         <div className="pt-md-3">
-                          ¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?
+                          ¿Estás seguro que desea <br /> cancelar los cambios <br /> realizados?
                         </div>
                       </>
                     ),
