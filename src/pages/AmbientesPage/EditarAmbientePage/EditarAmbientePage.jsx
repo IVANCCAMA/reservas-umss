@@ -19,7 +19,6 @@ const EditarAmbientePage = () => {
 
   useEffect(() => {
     const loadAmbiente = (id) => {
-      //recuperar datos por el id
       axios
         .get(`${baseURL}/disponibles/ambiente/${id}`)
         .then((response) => {
@@ -195,7 +194,7 @@ const EditarAmbientePage = () => {
                   {...register('nombre_ambiente')}
                 />
               ) : (
-                'Cargando'
+                ''
               )}
               {errors.nombre_ambiente && (
                 <span className="text-danger">{errors.nombre_ambiente.message}</span>
@@ -218,7 +217,7 @@ const EditarAmbientePage = () => {
                   <option value="laboratorio">Laboratorio</option>
                 </select>
               ) : (
-                'Cargando'
+                ''
               )}
               {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
@@ -257,7 +256,7 @@ const EditarAmbientePage = () => {
                     {...register('capacidad')}
                   />
                 ) : (
-                  'Cargando'
+                  ''
                 )}
                 {errors.capacidad && (
                   <span className="text-danger">{errors.capacidad.message}</span>
@@ -276,7 +275,7 @@ const EditarAmbientePage = () => {
                     {...register('porcentaje_min')}
                   />
                 ) : (
-                  'Cargando'
+                  ''
                 )}
                 {errors.porcentaje_min && (
                   <span className="text-danger">{errors.porcentaje_min.message}</span>
