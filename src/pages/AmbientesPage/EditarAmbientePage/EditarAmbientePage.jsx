@@ -18,15 +18,15 @@ const EditarAmbientePage = () => {
   const [ambiente, setAmbiente] = useState({});
   //const [disponibilidadPorDia, setDisponibilidadPorDia] = useState([]);
   //const [isChecked, /* setIsChecked */] = useState(true);
-  
+
   useEffect(() => {
-    if (id_ambiente){
+    if (id_ambiente) {
       loadAmbiente(id_ambiente);
     }
   }, [id_ambiente]);
 
   const loadAmbiente = (id) => { //recuperar datos por el id
-    axios 
+    axios
       .get(`${baseURL}/disponibles/ambiente/${id}`)
       .then((response) => {
         setAmbiente(response.data);
@@ -72,7 +72,7 @@ const EditarAmbientePage = () => {
         /^[\w]+(?:-[\w]+)*(?: [\w]+(?:-[\w]+)*)*$/,
         'Formato no válido. Solo se permite letras y no se acepta acentos.',
       )
-      
+
       .test('is-valid-format', 'Formato no válido', function (value) {
         // Verifica si hay más de un espacio consecutivo en el valor
         return !/\s{2,}/.test(value);
@@ -134,11 +134,11 @@ const EditarAmbientePage = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setValue, 
+    setValue,
     //watch
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues:{}
+    defaultValues: {}
   });
 
   const removeAccents = (str) => {
@@ -185,9 +185,9 @@ const EditarAmbientePage = () => {
             </>
           ),
         });
-        
+
         // eslint-disable-next-line no-unused-vars
-        
+
       } else {
         errorModal({ content: errorModalContent });
       }
@@ -208,15 +208,15 @@ const EditarAmbientePage = () => {
                 Nombre de ambiente
                 <span className="text-danger ms-1">*</span>
               </label>
-              {ambiente.nombre_ambiente? (
-              <input
-                type="text"
-                maxLength={25}
-                className="form-control"
-                defaultValue={ambiente.nombre_ambiente || ''}
-                {...register('nombre_ambiente')}
-              />
-            ) : ('Cargando') }
+              {ambiente.nombre_ambiente ? (
+                <input
+                  type="text"
+                  maxLength={25}
+                  className="form-control"
+                  defaultValue={ambiente.nombre_ambiente || ''}
+                  {...register('nombre_ambiente')}
+                />
+              ) : ('Cargando')}
               {errors.nombre_ambiente && (
                 <span className="text-danger">{errors.nombre_ambiente.message}</span>
               )}
@@ -225,19 +225,19 @@ const EditarAmbientePage = () => {
               <label className="form-label fw-bold">
                 Tipo de ambiente <span className="text-danger ms-1">*</span>
               </label>
-              {ambiente.tipo? (
-              <select
-                className="form-select"
-                value={ambiente.tipo  || ''}
-                onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
-                {...register('tipo')}
-              >
-                <option value="">Seleccione el tipo de ambiente</option>
-                <option value="aula comun">Aula común</option>
-                <option value="auditorio">Auditorio</option>
-                <option value="laboratorio">Laboratorio</option>
-              </select>
-              ) : ('Cargando') }
+              {ambiente.tipo ? (
+                <select
+                  className="form-select"
+                  value={ambiente.tipo || ''}
+                  onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
+                  {...register('tipo')}
+                >
+                  <option value="">Seleccione el tipo de ambiente</option>
+                  <option value="aula comun">Aula común</option>
+                  <option value="auditorio">Auditorio</option>
+                  <option value="laboratorio">Laboratorio</option>
+                </select>
+              ) : ('Cargando')}
               {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
             <div className="my-3">
@@ -267,15 +267,15 @@ const EditarAmbientePage = () => {
                 <label className="form-label fw-bold">
                   Capacidad de estudiantes <span className="text-danger ms-1">*</span>
                 </label>
-                {ambiente.capacidad? (
-                <input
-                  type="number"
-                  className="form-control"
-                  defaultValue={ambiente.capacidad  || ''}
-                  {...register('capacidad')}
-                  
-                />
-                ) : ('Cargando') }
+                {ambiente.capacidad ? (
+                  <input
+                    type="number"
+                    className="form-control"
+                    defaultValue={ambiente.capacidad || ''}
+                    {...register('capacidad')}
+
+                  />
+                ) : ('Cargando')}
                 {errors.capacidad && (
                   <span className="text-danger">{errors.capacidad.message}</span>
                 )}
@@ -284,15 +284,15 @@ const EditarAmbientePage = () => {
                 <label className="form-label fw-bold">
                   Min (%)<span className="text-danger ms-1">*</span>
                 </label>
-                {ambiente.porcentaje_min? (
-                <input
-                  defaultValue={ambiente.porcentaje_min}
-                  type="number"
-                  className="form-control"
-                  placeholder="Cap. maxima"
-                  {...register('porcentaje_min')}
-                />
-              ) : ('Cargando') }
+                {ambiente.porcentaje_min ? (
+                  <input
+                    defaultValue={ambiente.porcentaje_min}
+                    type="number"
+                    className="form-control"
+                    placeholder="Cap. maxima"
+                    {...register('porcentaje_min')}
+                  />
+                ) : ('Cargando')}
                 {errors.porcentaje_min && (
                   <span className="text-danger">{errors.porcentaje_min.message}</span>
                 )}
@@ -301,15 +301,15 @@ const EditarAmbientePage = () => {
                 <label className="form-label fw-bold">
                   Max (%)<span className="text-danger ms-1">*</span>
                 </label>
-                {ambiente.porcentaje_max? (
-                <input
-                  defaultValue={ambiente.porcentaje_max}
-                  type="number"
-                  className="form-control"
-                  placeholder="Cap. de minima"
-                  {...register('porcentaje_max')}
-                />
-                ) : ('Cargando') }
+                {ambiente.porcentaje_max ? (
+                  <input
+                    defaultValue={ambiente.porcentaje_max}
+                    type="number"
+                    className="form-control"
+                    placeholder="Cap. de minima"
+                    {...register('porcentaje_max')}
+                  />
+                ) : ('Cargando')}
                 {errors.porcentaje_max && (
                   <span className="text-danger">{errors.porcentaje_max.message}</span>
                 )}
@@ -368,6 +368,7 @@ const EditarAmbientePage = () => {
               </label>
               {/* //////////////// */}
               {horarios.map((horario, index) => {
+                const dia = ambiente.disponibilidadPorDia?.find(dia => dia.dia.toUpperCase() === horario.nombre.toUpperCase());
                 return (
                   <div key={index}>
                     <button
@@ -380,7 +381,7 @@ const EditarAmbientePage = () => {
                     >
                       {horario.nombre}
                     </button>
-                    <div className="collapse horarios" id={`collapse${horario.nombre}`}>
+                    <div className={`collapse horarios${dia?.periodos?.length > 0 ? ' show' : ''}`} id={`collapse${horario.nombre}`}>
                       <div className="card card-body">
                         <div className="d-flex flex-md-row justify-content-between">
                           <p className="ms-3 fw-bolds">Periodos</p>
@@ -413,6 +414,10 @@ const EditarAmbientePage = () => {
                         <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
                           {horario.periodos.map((periodo, subIndex) => {
                             const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
+                            const per = dia?.periodos.find(per => per.id_periodo === periodo.id);
+                            if (per) {
+                              setValue(fieldName, periodo.id);
+                            }
                             return (
                               <div className="col d-flex justify-content-around" key={subIndex}>
                                 <div>
