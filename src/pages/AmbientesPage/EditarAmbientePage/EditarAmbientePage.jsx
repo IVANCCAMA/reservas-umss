@@ -433,6 +433,7 @@ const EditarAmbientePage = () => {
                                     id={`periodo_${index}_${subIndex}`}
                                     value={periodo.id}
                                     //defaultChecked={isChecked}
+                                    
                                     {...register(fieldName)}
                                   />
                                 </div>
