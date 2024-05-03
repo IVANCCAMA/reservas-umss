@@ -16,42 +16,22 @@ const EditarAmbientePage = () => {
   const horarios = horariosJSON;
   let { id_ambiente } = useParams();
   const [ambiente, setAmbiente] = useState({});
-  //const [disponibilidadPorDia, setDisponibilidadPorDia] = useState([]);
-  //const [isChecked, /* setIsChecked */] = useState(true);
 
   useEffect(() => {
-    if (id_ambiente) {
-      loadAmbiente(id_ambiente);
-    }
-  }, [id_ambiente]);
-
-  const loadAmbiente = (id) => { //recuperar datos por el id
-    axios
-      .get(`${baseURL}/disponibles/ambiente/${id}`)
-      .then((response) => {
-        setAmbiente(response.data);
-        //setDisponibilidadPorDia(response.data.disponibilidadPorDia);
-        console.log('Ambiente:', response.data);
-      })
-      .catch((error) => {
-        console.error('Error al obtener los datos del ambiente:', error);
-      });
-  }
-
-  /* const diasSemana = {
-    lunes: 'Lunes',
-    martes: 'Martes',
-    miercoles: 'Miércoles',
-    jueves: 'Jueves',
-    viernes: 'Viernes',
-    sabado: 'Sábado',
-  }; */
-
-  /* const obtenerNombreDia = (nombreDia) => {
-    const nombreDiaMinusculas = nombreDia.toLowerCase();
-    const nombreDiaEnEspanol = diasSemana[nombreDiaMinusculas];
-    return nombreDiaEnEspanol || nombreDia;
-  }; */
+    const loadAmbiente = (id) => {
+      //recuperar datos por el id
+      axios
+        .get(`${baseURL}/disponibles/ambiente/${id}`)
+        .then((response) => {
+          setAmbiente(response.data);
+          console.log('Ambiente:', response.data);
+        })
+        .catch((error) => {
+          console.error('Error al obtener los datos del ambiente:', error);
+        });
+    };
+    loadAmbiente(id_ambiente);
+  }, [id_ambiente, baseURL]);
 
   const errorModalContent = (
     <>
@@ -138,7 +118,6 @@ const EditarAmbientePage = () => {
     //watch
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: {}
   });
 
   const removeAccents = (str) => {
@@ -187,7 +166,6 @@ const EditarAmbientePage = () => {
         });
 
         // eslint-disable-next-line no-unused-vars
-
       } else {
         errorModal({ content: errorModalContent });
       }
@@ -216,7 +194,9 @@ const EditarAmbientePage = () => {
                   defaultValue={ambiente.nombre_ambiente || ''}
                   {...register('nombre_ambiente')}
                 />
-              ) : ('Cargando')}
+              ) : (
+                'Cargando'
+              )}
               {errors.nombre_ambiente && (
                 <span className="text-danger">{errors.nombre_ambiente.message}</span>
               )}
@@ -237,7 +217,9 @@ const EditarAmbientePage = () => {
                   <option value="auditorio">Auditorio</option>
                   <option value="laboratorio">Laboratorio</option>
                 </select>
-              ) : ('Cargando')}
+              ) : (
+                'Cargando'
+              )}
               {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
             <div className="my-3">
@@ -273,9 +255,10 @@ const EditarAmbientePage = () => {
                     className="form-control"
                     defaultValue={ambiente.capacidad || ''}
                     {...register('capacidad')}
-
                   />
-                ) : ('Cargando')}
+                ) : (
+                  'Cargando'
+                )}
                 {errors.capacidad && (
                   <span className="text-danger">{errors.capacidad.message}</span>
                 )}
@@ -292,7 +275,9 @@ const EditarAmbientePage = () => {
                     placeholder="Cap. maxima"
                     {...register('porcentaje_min')}
                   />
-                ) : ('Cargando')}
+                ) : (
+                  'Cargando'
+                )}
                 {errors.porcentaje_min && (
                   <span className="text-danger">{errors.porcentaje_min.message}</span>
                 )}
@@ -309,7 +294,9 @@ const EditarAmbientePage = () => {
                     placeholder="Cap. de minima"
                     {...register('porcentaje_max')}
                   />
-                ) : ('Cargando')}
+                ) : (
+                  'Cargando'
+                )}
                 {errors.porcentaje_max && (
                   <span className="text-danger">{errors.porcentaje_max.message}</span>
                 )}
@@ -366,9 +353,12 @@ const EditarAmbientePage = () => {
               <label className="form-label fw-bold">
                 Días y horarios disponibles <span className="text-danger ms-1">*</span>
               </label>
-              {/* //////////////// */}
               {horarios.map((horario, index) => {
-                const dia = ambiente.disponibilidadPorDia?.find(dia => dia.dia.toUpperCase() === horario.nombre.toUpperCase());
+                const dia = ambiente.disponibilidadPorDia?.find(
+                  (dia) => dia.dia.toUpperCase() === horario.nombre.toUpperCase(),
+                );
+                const selectAll = horario?.periodos.length === dia?.periodos.length;
+                setValue(`selectAll_${index}`, selectAll ? true : false);
                 return (
                   <div key={index}>
                     <button
@@ -381,7 +371,10 @@ const EditarAmbientePage = () => {
                     >
                       {horario.nombre}
                     </button>
-                    <div className={`collapse horarios${dia?.periodos?.length > 0 ? ' show' : ''}`} id={`collapse${horario.nombre}`}>
+                    <div
+                      className={`collapse horarios${dia?.periodos?.length > 0 ? ' show' : ''}`}
+                      id={`collapse${horario.nombre}`}
+                    >
                       <div className="card card-body">
                         <div className="d-flex flex-md-row justify-content-between">
                           <p className="ms-3 fw-bolds">Periodos</p>
@@ -395,8 +388,7 @@ const EditarAmbientePage = () => {
                               <input
                                 className="form-check-input ms-md-2 me-3"
                                 type="checkbox"
-                                id={`selectAll_${index}`}
-                                {...register(`selectAll`)}
+                                {...register(`selectAll_${index}`)}
                                 onChange={(e) => {
                                   const checked = e.target.checked;
                                   horario.periodos.forEach((_, subIndex) => {
@@ -414,7 +406,7 @@ const EditarAmbientePage = () => {
                         <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
                           {horario.periodos.map((periodo, subIndex) => {
                             const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
-                            const per = dia?.periodos.find(per => per.id_periodo === periodo.id);
+                            const per = dia?.periodos.find((per) => per.id_periodo === periodo.id);
                             if (per) {
                               setValue(fieldName, periodo.id);
                             }
@@ -433,7 +425,7 @@ const EditarAmbientePage = () => {
                                     id={`periodo_${index}_${subIndex}`}
                                     value={periodo.id}
                                     //defaultChecked={isChecked}
-                                    
+
                                     {...register(fieldName)}
                                   />
                                 </div>
@@ -446,92 +438,6 @@ const EditarAmbientePage = () => {
                   </div>
                 );
               })}
-              {/* ///////////////////////// */}
-              {/* {disponibilidadPorDia.map((diaDisponible, index) => {
-                const hayPeriodosDisponibles =
-                diaDisponible.periodos && diaDisponible.periodos.length > 0;
-  
-                if (!hayPeriodosDisponibles) {
-                  return null;
-                }
-                return (
-                  <div key={index}>
-                    <button
-                      className="form-select text-start rounded-0"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target={`#collapseTwo${index}`}
-                      aria-expanded="true"
-                      aria-controls={`collapseTwo${index}`}
-                    >
-                      {obtenerNombreDia(diaDisponible.dia)}
-                    </button>
-                    <div
-                      id={`collapseTwo${index}`}
-                      className=" horarios"
-                      aria-labelledby={`headingTwo${index}`}
-                    >
-                      <div className="card card-body">
-                        <div className="d-flex flex-md-row justify-content-between">
-                        <p className="ms-3 fw-bolds">Periodos</p>
-                        <div className="d-flex text-center">
-                          <div>
-                            <label className="form-check-label" htmlFor={`selectAll_${index}`}>
-                              Todo
-                            </label>
-                          </div>
-                          <div className="accordion-body">
-                            <input
-                              className="form-check-input ms-md-2 me-3"
-                              type="checkbox"
-                              id={`selectAll_${index}`}
-                              {...register(`selectAll`)}
-                                onChange={(e) => {
-                                  const checked = e.target.checked;
-                                  horario.periodos.forEach((_, subIndex) => {
-                                    const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
-                                    setValue(
-                                      fieldName,
-                                      checked ? horario.periodos[subIndex].id : false,
-                                    );
-                                  });
-                                }} 
-                            />
-                          </div>
-                        </div>
-                        </div>
-                        <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
-                          {diaDisponible.periodos?.map((periodoDia, index) => {
-                            return (
-                              <div className="col d-flex justify-content-around" key={index}>
-                                <div>
-                                  <label
-                                      className="form-check-label me-md-2"
-                                      htmlFor={periodoDia} 
-                                  >
-                                    {periodoDia.hora_inicio} - {periodoDia.hora_fin}
-                                  </label>
-                                  <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    defaultChecked={isChecked} 
-                                    id={periodoDia} 
-                                    //value={periodo.id}
-                                    //{...register(fieldName)}
-                                  />
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-
-                );
-              })} */}
-
               <div>
                 {errors.dia && (
                   <span className="text-danger">Seleccione al menos un periodo para un día</span>
