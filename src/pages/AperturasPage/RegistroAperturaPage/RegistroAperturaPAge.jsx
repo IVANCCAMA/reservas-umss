@@ -260,7 +260,7 @@ const RegistroAperturaPage = () => {
           error={errors.listaGrupos?.message}
         />
 
-        <div className="input-component" style={{ display: watch('listaGrupos').length > 0 ? 'block' : 'none' }}>
+        <div className={`component-animation${watch('tipo_ambiente') !== '' ? ' show' : ''}`}>
           <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
 
           <AlertContainer ref={alertRef} />

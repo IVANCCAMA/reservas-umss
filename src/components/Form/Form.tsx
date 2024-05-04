@@ -27,19 +27,19 @@ const Form: React.FC<FormProps> = ({
     <div className="container">
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
-          <form {...{ ...rest, onSubmit: handleOnSubmit }}>
+        <form {...{ ...rest, className: `${rest.className || ''} form-component`, onSubmit: handleOnSubmit }}>
             {title && (<h2 className="text-md-center">{title}</h2>)}
 
             {children}
 
-            <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center pt-3">
               <button
                 type="submit"
                 className="btn btn-success me-md-5"
                 disabled={isSubmitting}
                 style={{ width: "86px" }}
               >
-                {isSubmitting ? 'Enviando...' : 'Registrar'}
+                {isSubmitting ? 'Enviando...' : 'Enviar'}
               </button>
               <button
                 type="button"
