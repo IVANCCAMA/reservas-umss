@@ -1,7 +1,7 @@
 import React from 'react';
 import { UseFormRegister } from 'react-hook-form';
 
-interface DateInputProps {
+interface TimeInputProps {
   name: string;
   label: React.ReactNode;
   handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
@@ -11,14 +11,15 @@ interface DateInputProps {
   afterFocus?: (newValue: string | readonly string[] | number | undefined) => void;
   afterBlur?: (newValue: string | readonly string[] | number | undefined) => void;
   required?: boolean;
-  minDate?: string;
-  maxDate?: string;
+  minTime?: string;
+  maxTime?: string;
   error?: string;
+  step?: string;
 }
 
-const DateInput = React.forwardRef<
+const TimeInput = React.forwardRef<
   HTMLInputElement,
-  DateInputProps & ReturnType<UseFormRegister<any>>
+  TimeInputProps & ReturnType<UseFormRegister<any>>
 >(({
   name,
   label,
@@ -31,9 +32,10 @@ const DateInput = React.forwardRef<
   afterFocus = () => { },
   afterBlur = () => { },
   required = false,
-  minDate= '2024-01-01',
-  maxDate= '2024-12-31',
-  error = undefined
+  minTime= '2024-01-01',
+  maxTime= '2024-12-31',
+  error = undefined,
+  step = undefined
 }, ref) => (
   <div className='input-component'>
     <label htmlFor={name} className='form-label fw-bold'>{label}</label>
@@ -43,7 +45,7 @@ const DateInput = React.forwardRef<
       required={required}
       id={name}
       name={name}
-      type='date'
+      type='time'
       className='form-control'
       onChange={(e) => {
         const newValue = handleChange(e.target.value);
@@ -68,11 +70,12 @@ const DateInput = React.forwardRef<
         onBlur(e);
         afterBlur(e.target.value);
       }}
-      min={minDate || undefined}
-      max={maxDate || undefined}
+      min={minTime || undefined}
+      max={maxTime || undefined}
+      step={step}
     />
     {error && (<span className="text-danger">{error}</span>)}
   </div>
 ))
 
-export default DateInput;
+export default TimeInput;

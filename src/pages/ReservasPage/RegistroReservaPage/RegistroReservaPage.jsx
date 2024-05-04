@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useLocation } from 'react-router-dom';
-import iconoError from '../../../assets/Images/iconoError.png';
 import { useModal, AlertContainer, useNotification } from '../../../components/Bootstrap';
 import Form, { TextInput, Select, NumberInput, DateInput, TextTarea, Accordion, CheckboxInput } from '../../../components/Form';
+import { Icon } from '@iconify/react';
 
 const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
@@ -43,7 +43,7 @@ const RegistroReservaPage = () => {
       .min(20, 'El número de estudiantes debe ser mayor a 20')
       .integer('El número de estudiantes debe ser un número entero'),
     fecha_reserva: yup.string()
-      .typeError('Seleccione una fecha valida'),
+      .required('Seleccione una fecha valida'),
     motivo: yup.string()
       .max(200, 'El motivo debe tener como máximo 200 caracteres'),
     periodos: yup.array()
@@ -228,20 +228,23 @@ const RegistroReservaPage = () => {
       if (prev) {
         setValue('periodos', []);
       } else {
-        setValue('periodos', periodos.map(periodo => `${periodo.id_periodo}`));
+        const isSaturday = new Date(watch('fecha_reserva')).getDay() === 5;
+        setValue('periodos', periodos
+          .filter(periodo => !isSaturday || periodo.id_periodo < 7)
+          .map(periodo => `${periodo.id_periodo}`));
       }
       return !prev;
     });
   };
 
-  const handlePeriodoChange = (newValue) => {
-    const periodosId = periodos.map(periodo => periodo.id_periodo.toString());
-    const checkedPeriodos = watch('periodos').includes(newValue)
-      ? watch('periodos').filter(obj => obj !== newValue)
-      : [...watch('periodos'), newValue];
-    const _allCheckbox = periodosId.every(id => checkedPeriodos.includes(id));
+  const handlePeriodoChange = () => {
+    const isSaturday = new Date(watch('fecha_reserva')).getDay() === 5;
+    const periodosId = periodos
+      .filter(periodo => !isSaturday || periodo.id_periodo < 7)
+      .map(periodo => `${periodo.id_periodo}`);
+    const _allCheckbox = periodosId.every(id => watch('periodos').includes(id));
     setAllCheckBox(_allCheckbox);
-    console.log(periodosId, checkedPeriodos, _allCheckbox);
+    console.log(periodosId, _allCheckbox, watch('periodos'), isSaturday);
   };
 
   return (
@@ -253,9 +256,9 @@ const RegistroReservaPage = () => {
       onClickCancel={() => {
         confirmationModal({
           body: (<>
-            <img src={iconoError} />
+            <Icon className="iconAlert" icon="charm:circle-cross" style={{ color: '#FF3B20',  height: '90px', width: '90px' }} />
             <div className="pt-md-3">
-              ¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?
+              ¿Estás seguro que desea <br /> cancelar el registro de <br /> reserva?
             </div>
           </>),
           onClickYesTo: '/',
@@ -360,7 +363,7 @@ const RegistroReservaPage = () => {
                         label={`${periodo.hora_inicio?.slice(0, 5)} - ${periodo.hora_fin?.slice(0, 5)}`}
                         {...register('periodos')}
                         value={periodo.id_periodo}
-                        handleChange={handlePeriodoChange}
+                        afterChange={handlePeriodoChange}
                       />
                     </div>
                   );

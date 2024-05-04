@@ -1,230 +1,100 @@
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
-import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigate } from 'react-router-dom';
-import iconoError from '../../../assets/Images/iconoError.png';
-import { useModal, AlertContainer } from '../../../components/Bootstrap';
-import Form, { TextInput, Select, NumberInput, DateInput, TextTarea, Accordion, CheckboxInput } from '../../../components/Form';
+import { useModal, useNotification } from '../../../components/Bootstrap';
+import Form, { TextInput, DateInput, CheckboxInput, TimeInput } from '../../../components/Form';
 import { Icon } from '@iconify/react';
 
 const RegistroAperturaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
-  const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
 
-  const navigate = useNavigate();
-  const { confirmationModal } = useModal();
-  const alertRef = useRef(null);
-  // aux
-  const [users, setUsers] = useState([]);
-  const [datalistSolicitante, setDatalistSolicitante] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [tiposAmbiente, setTiposAmbiente] = useState([]);
-  const [grupos, setGrupos] = useState([]);
-  const [minDate, setMinDate] = useState('');
-  const [maxDate, setMaxDate] = useState('');
-  const [periodos, setPeriodos] = useState([{}]);
-  const [allCheckbox, setAllCheckBox] = useState(false);
+  const { confirmationModal, successModal } = useModal();
+  const { loadNotification, errorNotification } = useNotification();
 
   const schema = yup.object().shape({
-    solicitante: yup.string()
-      .required('Ingrese un nombre de un usuario')
-      .max(40, 'El nombre debe tener como máximo 40 caracteres'),
-    tipo_ambiente: yup.string()
-      .required('Seleccione una categoria'),
-    listaGrupos: yup.array()
-      .of(yup.number().positive().integer(), 'error type')
-      .min(1, 'Seleccione al menos una materia'),
-    cantidad_est: yup.number()
-      .typeError('Ingrese el número de estudiantes')
-      .max(500, 'el número de estudiantes debe ser menor a 500')
-      .min(20, 'El número de estudiantes debe ser mayor a 20')
-      .integer('El número de estudiantes debe ser un número entero'),
-    fecha_reserva: yup.date()
-      .typeError('Seleccione una fecha valida'),
-    motivo: yup.string()
-      .max(200, 'El motivo debe tener como máximo 200 caracteres'),
-    periodos: yup.array()
+    motivo: yup.string().default('')
+      .required('Ingrese el motivo de la apertura del sistema')
+      .max(40, 'El motivo debe tener como máximo 40 caracteres'),
+    userType: yup.array().default([])
       .of(yup.string())
-      .min(1, 'Seleccione al menos un horario')
+      .min(1, 'Seleccione al menos un tipo de usuario'),
+    fechaInicio: yup.date().default('')
+      .typeError('Seleccione una fecha válida')
+      .min(new Date(), 'Selecciona una fecha a futuro'),
+    fechaFin: yup.date().default('')
+      .typeError('Seleccione una fecha válida')
+      .min(yup.ref('fechaInicio'), 'Selecciona una fecha posterior a la fecha de inicio'),
+    horaInicio: yup.string().default('')
+      .required('Seleccione una hora válida')
+      .matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Debe tener un formato de hora válido (HH:MM)'),
+    horaFin: yup.string().default('')
+      .required('Seleccione una hora válida')
+      .matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Debe tener un formato de hora válido (HH:MM)')
+      .test('es-mayor', 'Seleccione una hora posterior a la hora de inicio', function (value) {
+        const primerString = this.parent.horaInicio;
+        return value > primerString;
+      }),
+    reservaInicio: yup.date().default('')
+      .typeError('Seleccione una fecha válida')
+      .min(new Date(), 'Selecciona una fecha a futuro'),
+    reservaFin: yup.date().default('')
+      .typeError('Seleccione una fecha válida')
+      .min(yup.ref('reservaInicio'), 'Selecciona una fecha posterior a la fecha de inicio'),
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-  } = useForm({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      solicitante: '',
-      tipo_ambiente: '',
-      listaGrupos: [],
-      cantidad_est: 0,
-      fecha_reserva: '',
-      motivo: '',
-      periodos: [],
-    },
+  const { register, handleSubmit, clearErrors, formState: { errors } } = useForm({
+    resolver: yupResolver(schema), defaultValues: schema.describe().default
   });
-
-  useEffect(() => {
-    // recuperar users para el id del solicitante
-    axios
-      .get(`${database}/usuarios`)
-      .then((response) => {
-        setUsers(response.data);
-      })
-      .catch((error) => {
-        console.error('Error al obtener los usuarios:', error);
-      });
-    // recuperar tipos de ambientes
-    setTiposAmbiente([
-      { title: 'Aula común', value: 'aula comun' },
-      { title: 'Laboratorio', value: 'laboratorio' },
-      { title: 'Auditorio', value: 'auditorio' }
-    ]);
-    // recuperar fechas max min
-    axios
-      .get(`${database}/aperturas/2`)
-      .then(({ data: { apertura_inicio, apertura_fin } }) => {
-        const aperturaIni = new Date(Math.max(new Date(), new Date(apertura_inicio))).toISOString().split('T')[0];
-        const aperturaFin = new Date(apertura_fin).toISOString().split('T')[0];
-        setMinDate(aperturaIni);
-        setMaxDate(aperturaFin);
-      })
-      .catch((error) => {
-        console.error('Error al obtener la apertura 2:', error);
-      });
-    // recuperar periodos
-    axios
-      .get(`${database}/periodos`)
-      .then((response) => {
-        setPeriodos(response.data);
-      })
-      .catch((error) => {
-        console.error('Error al obtener los periodos:', error);
-      });
-  }, []);
 
   const onSubmit = (data) => {
-    setTimeout(() => {
-      axios
-        .post(`${database}/reservas`, {
-          tipo_ambiente: data.tipo_ambiente,
-          cantidad_est: data.cantidad_est,
-          periodos: data.periodos.map(obj => ({ id_periodo: parseInt(obj) })),
-          fecha_reserva: data.fecha_reserva.toISOString().split('T')[0]
-        })
-        .then((response) => {
-          setTimeout(() => {
-            navigate('./ambientesDisponibles', {
-              state: {
-                ...data,
-                ambienteDisp: response.data,
-              },
+    console.log(data);
+
+    loadNotification({
+      body: 'Enviando formulario',
+      onTimeout: () => {
+        axios
+          .post(`${database}/aperturas`, {
+            motivo: data.motivo,
+            apertura_inicio: data.fechaInicio.toISOString().split('T')[0],
+            apertura_fin: data.fechaFin.toISOString().split('T')[0],
+            apertura_hora_inicio: `${data.horaInicio}:00`,
+            apertura_hora_fin: `${data.horaFin}:00`,
+            reserva_inicio: data.reservaInicio.toISOString().split('T')[0],
+            reserva_fin: data.reservaFin.toISOString().split('T')[0],
+            esDocente: data.userType.includes('DOCENTE'),
+            esAuxiliar: data.userType.includes('AUXILIAR')
+          })
+          .then((response) => {
+            console.log(response);
+
+            successModal({
+              body: (<>
+                <Icon icon="fa-regular:check-circle" style={{ color: '#0fa958', height: '90px', width: '90px' }} />
+                <div className="pt-md-3">Apertura registrada con éxito</div>
+              </>),
+              onClickTo: '/aperturas/listaAperturas'
             });
-          }, 2000);
-        })
-        .catch((error) => {
-          console.error('Error al obtener los ambiente disponibles: ', error);
-        })
-    }, 2000);
-  };
-
-  const handleSolicitante = (newValue) => {
-    const value = newValue.replace(/[^a-zA-Z ]/g, '').toUpperCase();
-    const filteredValues = users
-      .filter(obj => obj.nombre_usuario.includes(value))
-      .map(filteredObj => filteredObj.nombre_usuario);
-    if (filteredValues.length < 10 && filteredValues.length > 0) {
-      setDatalistSolicitante(filteredValues);
-    } else {
-      setDatalistSolicitante(undefined);
-    }
-    return value;
-  };
-  // resuperar materias y grupos
-  const searchGroupsByApplicant = (newValue) => {
-    const foundUser = users.find(obj => obj.nombre_usuario === newValue);
-    if (foundUser?.id_usuario) {
-      axios
-        .get(`${database}/usuarios/${foundUser.id_usuario}/materias-grupos`)
-        .then((response) => {
-          const userGroups = response.data['materia-grupo'].map(group => ({
-            value: group.id_aux_grupo,
-            title: `${group.nombre_materia} - ${group.nombre_grupo}`,
-            inscritos: group.cantidad_est
-          }));
-          alertRef.current?.removeAllAlerts();
-          setGrupos(userGroups);
-          if (foundUser.tipo_usuario === 'ADMINISTRADOR') {
-            setIsAdmin(true);
-            setValue('listaGrupos', [userGroups[0]?.value]);
-            setValue('cantidad_est', userGroups[0]?.inscritos);
-          } else {
-            setIsAdmin(false);
-            setValue('listaGrupos', []);
-            setValue('cantidad_est', 0);
-          }
-        })
-        .catch((error) => {
-          setIsAdmin(false);
-          setValue('listaGrupos', []);
-          setValue('cantidad_est', 0);
-          console.error('Error al obtener las materias y grupos:', error);
-        });
-    }
-  };
-
-  const removeGropsSelected = (group) => {
-    const groupsFiltered = watch('listaGrupos')?.filter(obj => obj !== group.value);
-    setValue('listaGrupos', groupsFiltered);
-    setValue('cantidad_est', watch('cantidad_est') - group.inscritos);
-  };
-
-  const addGropsSelected = (newValue) => {
-    const group = grupos.find(group => group.value === parseInt(newValue));
-    if (group && !watch('listaGrupos').includes(group.value)) {
-      alertRef.current.addAlert(alerts[watch('listaGrupos').length % 8], group.title, () => removeGropsSelected(group));
-      setValue('listaGrupos', [...watch('listaGrupos'), group.value]);
-      setValue('cantidad_est', watch('cantidad_est') + group.inscritos);
-    }
-    return new String();
-  };
-
-  const checkedAll = () => {
-    setAllCheckBox(prev => {
-      if (prev) {
-        setValue('periodos', []);
-      } else {
-        setValue('periodos', periodos.map(periodo => `${periodo.id_periodo}`));
+          })
+          .catch((error) => {
+            console.error('Error al obtener los ambiente disponibles: ', error);
+            errorNotification({ body: 'Error al enviar, intente de nuevo' });
+          })
       }
-      return !prev;
     });
-  };
-
-  const handlePeriodoChange = (newValue) => {
-    const periodosId = periodos.map(periodo => periodo.id_periodo.toString());
-    const checkedPeriodos = watch('periodos').includes(newValue)
-      ? watch('periodos').filter(obj => obj !== newValue)
-      : [...watch('periodos'), newValue];
-    const _allCheckbox = periodosId.every(id => checkedPeriodos.includes(id));
-    setAllCheckBox(_allCheckbox);
   };
 
   return (<>
     <Form
-      title='Formulario de reserva'
+      title='Apertura del sistema'
       className='needs-validation'
       onSubmit={handleSubmit(onSubmit)}
       onClickCancel={() => {
         confirmationModal({
           body: (<>
-            <div><img src={iconoError} /></div>
+            <Icon className="iconAlert" icon="charm:circle-cross" style={{ color: '#FF3B20',  height: '90px', width: '90px' }} />
             <div className="pt-md-3">
-              ¿Estás seguro que desea <br /> cancelar el registro de <br /> ambiente?
+              ¿Estás seguro que desea <br /> cancelar el registro de <br /> apertura?
             </div>
           </>),
           onClickYesTo: '/',
@@ -233,111 +103,84 @@ const RegistroAperturaPage = () => {
     >
       <TextInput
         autoComplete='off'
-        label='Nombre del solicitante'
-        {...register('solicitante')}
-        placeholder='Ingrese el nombre del solicitante'
-        datalist={datalistSolicitante}
-        handleChange={handleSolicitante}
-        handleBlur={searchGroupsByApplicant}
-        error={errors.solicitante?.message}
+        label={<>Motivo de apertura <span className="text-danger ms-1">*</span></>}
+        {...register('motivo')}
+        placeholder='Escriba el motivo de apertura'
+        error={errors.motivo?.message}
       />
 
-      <Select
-        label={<>Tipo de ambiente <span className="text-danger ms-1">*</span></>}
-        {...register('tipo_ambiente')}
-        placeholder='Seleccione el tipo de ambiente'
-        options={tiposAmbiente}
-        error={errors.tipo_ambiente?.message}
-      />
+      <div className='input-component d-flex'>
+        <label className='form-label fw-bold col-md-6 mb-0'>
+          Tipo de usuario <span className="text-danger ms-1">*</span>
+        </label>
 
-      {!isAdmin && (<>
-        <Select
-          label={<>Materias y grupos <span className="text-danger ms-1">*</span></>}
-          name='listaGrupos'
-          placeholder='Seleccionar materias y grupos'
-          options={grupos.filter(group => !watch('listaGrupos')?.includes(group.value))}
-          handleChange={addGropsSelected}
-          error={errors.listaGrupos?.message}
-        />
-
-        <div className={`component-animation${watch('tipo_ambiente') !== '' ? ' show' : ''}`}>
-          <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
-
-          <AlertContainer ref={alertRef} />
+        <div className="d-flex col-md-6">
+          <div className="col-md-6 d-flex justify-content-center  align-content-center">
+            <CheckboxInput label='Docente' value={'DOCENTE'} {...register('userType')} />
+          </div>
+          <div className="col-md-6 d-flex justify-content-center">
+            <CheckboxInput label='Auxiliar' value={'AUXILIAR'} {...register('userType')} />
+          </div>
         </div>
-      </>)}
+      </div>
+      {errors.userType ? <span className="text-danger">{errors.userType.message}</span> : <></>}
+
+      <h5 className='fw-bold'>Periodo de apertura del sistema</h5>
 
       <div className="row row-cols6">
         <div className="col-md-6">
-          <NumberInput
-            label='Número de Estudiantes'
-            {...register('cantidad_est')}
-            disabled={!isAdmin}
-            error={errors.cantidad_est?.message}
+          <DateInput
+            label={<>Fecha de inicio <span className="text-danger ms-1">*</span></>}
+            {...register('fechaInicio')}
+            error={errors.fechaInicio?.message}
+            afterChange={() => { clearErrors('fechaFin') }}
           />
         </div>
         <div className="col-md-6">
           <DateInput
-            label={<>Fecha de reserva <span className="text-danger ms-1">*</span></>}
-            {...register('fecha_reserva')}
-            minDate={minDate}
-            maxDate={maxDate}
-            handleChange={(newValue) => {
-              setValue('periodos', []); setAllCheckBox(false);
-              return new Date(newValue)?.getDay() === 6 ? new String() : undefined;
-            }}
-            error={errors.fecha_reserva?.message}
+            label={<>Fecha fin <span className="text-danger ms-1">*</span></>}
+            {...register('fechaFin')}
+            error={errors.fechaFin?.message}
           />
         </div>
       </div>
 
-      <TextTarea
-        label='Motivos de reserva'
-        {...register('motivo')}
-        placeholder='Escriba el motivo de la reserva'
-        maxLength={201}
-        error={errors.motivo?.message}
-      />
+      <div className="row row-cols6">
+        <div className="col-md-6">
+          <TimeInput
+            label={<>Hora de inicio <span className="text-danger ms-1">*</span></>}
+            {...register('horaInicio')}
+            error={errors.horaInicio?.message}
+            afterChange={() => { clearErrors('horaFin') }}
+          />
+        </div>
+        <div className="col-md-6">
+          <TimeInput
+            label={<>Hora fin <span className="text-danger ms-1">*</span></>}
+            {...register('horaFin')}
+            error={errors.horaFin?.message}
+          />
+        </div>
+      </div>
 
-      <div className='input-component'>
-        <label className="form-label fw-bold">
-          Periodos y horarios <span className="text-danger ms-1">*</span>
-        </label>
+      <h5 className='fw-bold'>Periodo de reservas</h5>
 
-        <Accordion id='periodos' accordionItems={[{
-          title: 'Selecione periodo/s',
-          body:
-            <div className="w-100">
-              <div className="d-flex justify-content-between pb-2">
-                <label>Periodos</label>
-                <CheckboxInput
-                  checked={allCheckbox}
-                  label='Selecionar todos'
-                  handleChange={checkedAll}
-                  disabled={!watch('fecha_reserva')}
-                />
-              </div>
-
-              <div className='row row-cols4'>
-                {periodos.map((periodo, index) => {
-                  const fechaReserva = watch('fecha_reserva');
-                  const selectedDay = fechaReserva && new Date(fechaReserva).getDay();
-                  if (!fechaReserva || (selectedDay === 5 && periodo.id_periodo > 6)) return;
-                  return (
-                    <div key={`periodo-${index}`} className='col-md-4 d-flex justify-content-center'>
-                      <CheckboxInput
-                        label={`${periodo.hora_inicio?.slice(0, 5)} - ${periodo.hora_fin?.slice(0, 5)}`}
-                        {...register('periodos')}
-                        value={periodo.id_periodo}
-                        handleChange={handlePeriodoChange}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-        }]} />
-        {errors.periodos && (<span className="text-danger">{errors.periodos.message}</span>)}
+      <div className="row row-cols6">
+        <div className="col-md-6">
+          <DateInput
+            label={<>Fecha de inicio <span className="text-danger ms-1">*</span></>}
+            {...register('reservaInicio')}
+            error={errors.reservaInicio?.message}
+            afterChange={() => { clearErrors('reservaFin') }}
+          />
+        </div>
+        <div className="col-md-6">
+          <DateInput
+            label={<>Fecha fin <span className="text-danger ms-1">*</span></>}
+            {...register('reservaFin')}
+            error={errors.reservaFin?.message}
+          />
+        </div>
       </div>
     </Form>
   </>);
