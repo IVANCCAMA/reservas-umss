@@ -8,6 +8,9 @@ interface CheckboxInputProps {
   handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleFocus?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleBlur?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
+  afterChange?: (newValue: string | readonly string[] | number | undefined) => void;
+  afterFocus?: (newValue: string | readonly string[] | number | undefined) => void;
+  afterBlur?: (newValue: string | readonly string[] | number | undefined) => void;
   required?: boolean;
   checked?: boolean;
   disabled?: boolean;
@@ -26,12 +29,15 @@ const CheckboxInput = React.forwardRef<
   handleChange = () => { },
   handleFocus = () => { },
   handleBlur = () => { },
+  afterChange = () => { },
+  afterFocus = () => { },
+  afterBlur = () => { },
   required = undefined,
   checked = undefined,
   error = undefined,
   disabled = undefined
 }, ref) => (
-  <div className='form-check'>
+  <div className='form-check align-content-center'>
     <label htmlFor={name} className='form-check-label px-2'>{label}</label>
 
     <input
@@ -50,12 +56,14 @@ const CheckboxInput = React.forwardRef<
           e.target.value = newValue;
         }
         onChange(e);
+        afterChange(e.target.value);
       }}
       onFocus={(e) => {
         const newValue = handleFocus(e.target.value);
         if (newValue) {
           e.target.value = newValue;
         }
+        afterFocus(e.target.value);
       }}
       onBlur={(e) => {
         const newValue = handleBlur(e.target.value);
@@ -63,6 +71,7 @@ const CheckboxInput = React.forwardRef<
           e.target.value = newValue;
         }
         onBlur(e);
+        afterBlur(e.target.value);
       }}
     />
     {error && (<span className="text-danger">{error}</span>)}
