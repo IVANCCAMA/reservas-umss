@@ -21,9 +21,11 @@ const EditarAmbientePage = () => {
     const loadAmbiente = (id) => {
       axios
         .get(`${baseURL}/disponibles/ambiente/${id}`)
+        //.post(`${baseURL}/ambientes/editar-completo`)
         .then((response) => {
           setAmbiente(response.data);
           console.log('Ambiente:', response.data);
+          setValue('computadora', response.data.computadora)
         })
         .catch((error) => {
           console.error('Error al obtener los datos del ambiente:', error);
@@ -68,7 +70,7 @@ const EditarAmbientePage = () => {
       .number()
       .integer('El número debe ser un número entero')
       .typeError('El campo es obligatorio, el número debe ser un número entero')
-      .required('El campo es obligatorio')
+      //.required('El campo es obligatorio')
       .min(0, 'El número mínimo es 0')
       .max(250, 'El número máximo es 250')
       .test('is-required', 'El campo es obligatorio para laboratorios', function (value) {
@@ -117,40 +119,66 @@ const EditarAmbientePage = () => {
     //watch
   } = useForm({
     resolver: yupResolver(schema),
+    
   });
-
+  console.log(errors)
   const removeAccents = (str) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   };
 
   // logic api
-  const onSubmit = async (data) => {
-    try {
+  
+  const onSubmit = (data) => {
+    const filteredDia = Object.fromEntries(
+      // eslint-disable-next-line no-unused-vars
+      Object.entries(data.dia).filter(([key, value]) =>
+        value.periodos.some((periodo) => periodo.id_periodo !== false),
+      ),
+    );
+    const filteredData = {
+      ...data, id_ambiente:id_ambiente,
+      tipo: removeAccents(data.tipo.toLowerCase()),
+      computadora: data.computadora === '' ? 0 : data.computadora,
+      dia: Object.fromEntries(
+        Object.entries(filteredDia).map(([key, value]) => [
+          removeAccents(key.toLowerCase()),
+          { periodos: value.periodos.filter((periodo) => periodo.id_periodo !== false) },
+        ]),
+      ),
+    };
+
+    console.log('filteredDAta', filteredData)
+
+    axios
+        .post(`${baseURL}/ambientes/editar-completo`, filteredData)
+        .then((response) => {
+          console.log(response)
+          successModal({
+            body: (
+              <>
+                <div>
+                  <img src={iconoExito} />
+                </div>
+                <div className="pt-md-3">Cambios guardados con éxito</div>
+              </>
+            ),
+          });
+        })
+        .catch((error) => {
+          console.error('Error al obtener los ambiente disponibles: ',error);
+          
+        })
+    /* try {
       console.log('Datos inicial', data);
-      const filteredDia = Object.fromEntries(
-        // eslint-disable-next-line no-unused-vars
-        Object.entries(data.dia).filter(([key, value]) =>
-          value.periodos.some((periodo) => periodo.id_periodo !== false),
-        ),
-      );
+      const dataSend = { ...filteredData, id_ambiente}
+      
 
-      const filteredData = {
-        ...data,
-        tipo: removeAccents(data.tipo.toLowerCase()),
-        computadora: data.computadora === '' ? 0 : data.computadora,
-        dia: Object.fromEntries(
-          Object.entries(filteredDia).map(([key, value]) => [
-            removeAccents(key.toLowerCase()),
-            { periodos: value.periodos.filter((periodo) => periodo.id_periodo !== false) },
-          ]),
-        ),
-      };
-
+      
       console.log('Datos enviados', filteredData);
 
-      const response = await axios.put(`${baseURL}/ambientes/completo/${id_ambiente}`, data);
+      //const response = axios.post(`${baseURL}/ambientes/editar-completo`, dataSend);
 
-      console.log(response);
+      //console.log('Respuesta del servidor', response.data);
 
       if (response.status === 201) {
         successModal({
@@ -171,7 +199,7 @@ const EditarAmbientePage = () => {
     } catch (error) {
       console.log(error);
       errorModal({ content: errorModalContent });
-    }
+    }  */
   };
 
   return (
@@ -179,7 +207,7 @@ const EditarAmbientePage = () => {
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
           <h2 className="text-md-center">Editar ambiente</h2>
-          <form className="forms" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <form className="forms" onSubmit={handleSubmit(onSubmit)} >
             <div className="my-3">
               <label className="form-label fw-bold">
                 Nombre de ambiente
@@ -309,7 +337,7 @@ const EditarAmbientePage = () => {
                   type="number"
                   className="form-control"
                   placeholder="Escriba el número de computadoras"
-                  defaultValue={ambiente.computadora}
+                  //defaultValue={ambiente.computadora === undefined? 0: ambiente.computadora}
                   {...register('computadora')}
                 />
                 {errors.computadora && (
@@ -450,7 +478,7 @@ const EditarAmbientePage = () => {
                 type="button"
                 onClick={() => {
                   confirmationModal({
-                    content: (
+                    body: (
                       <>
                         <div>
                           <img src={iconoError} />
