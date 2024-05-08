@@ -43,7 +43,7 @@ const RegistroAperturaPage = () => {
       .min(yup.ref('reservaInicio'), 'Selecciona una fecha posterior a la fecha de inicio'),
   });
 
-  const { register, handleSubmit, clearErrors, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, clearErrors } = useForm({
     resolver: yupResolver(schema), defaultValues: schema.describe().default
   });
 
@@ -107,6 +107,7 @@ const RegistroAperturaPage = () => {
         {...register('motivo')}
         placeholder='Escriba el motivo de apertura'
         error={errors.motivo?.message}
+        handleChange={(newValue) => newValue.toUpperCase()}
       />
 
       <div className='input-component d-flex'>
