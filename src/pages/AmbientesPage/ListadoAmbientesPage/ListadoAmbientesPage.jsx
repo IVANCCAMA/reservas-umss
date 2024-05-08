@@ -22,9 +22,22 @@ const ListadoAmbientesPage = () => {
             return {
               Aula: amb.nombre_ambiente,
               Capacidad: amb.capacidad,
-              Estado: amb.disponible ? 'HABILITADO' : 'DESHABILITADO',
+              Disponibilidad: amb.disponible ? 'HABILITADO' : 'DESHABILITADO',
               Tipo: amb.tipo.toUpperCase(),
               Proyector: amb.proyector ? 'SI' : 'NO',
+              'Editar': (
+                <div className="boton-editar  text-center me-md-3 rounded">
+                  <Link
+                    to={'/ambientes/listaAmbientes/editar/' + amb.id_ambiente}
+                    className="btn border border-0"
+                  >
+                    <div>
+                      <Icon icon="fa6-regular:pen-to-square" className="boton-icon" />
+                    </div>
+                  </Link>
+                </div>
+              ),
+              
               'Ver más': (
                 <div className="boton-style  text-center me-md-3 rounded">
                   <Link
@@ -37,6 +50,7 @@ const ListadoAmbientesPage = () => {
                   </Link>
                 </div>
               ),
+              
             };
           }),
         );
@@ -50,6 +64,7 @@ const ListadoAmbientesPage = () => {
   useEffect(() => {
     loadAmbientes();
   }, []);
+
 
   return (
     <div className="container-fluid listado-ambientes p-md-5">
