@@ -21,7 +21,6 @@ const EditarAmbientePage = () => {
     const loadAmbiente = (id) => {
       axios
         .get(`${baseURL}/disponibles/ambiente/${id}`)
-        //.post(`${baseURL}/ambientes/editar-completo`)
         .then((response) => {
           setAmbiente(response.data);
           console.log('Ambiente:', response.data);
@@ -116,7 +115,6 @@ const EditarAmbientePage = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
-    //watch
   } = useForm({
     resolver: yupResolver(schema),
     
@@ -152,54 +150,26 @@ const EditarAmbientePage = () => {
     axios
         .post(`${baseURL}/ambientes/editar-completo`, filteredData)
         .then((response) => {
-          console.log(response)
-          successModal({
-            body: (
-              <>
-                <div>
-                  <img src={iconoExito} />
-                </div>
-                <div className="pt-md-3">Cambios guardados con éxito</div>
-              </>
-            ),
-          });
+          console.log('response', response)
+          if (response.status === 200) {
+            successModal({
+              body: (
+                <>
+                  <div>
+                    <img src={iconoExito} />
+                  </div>
+                  <div className="pt-md-3">Cambios guardados con éxito</div>
+                </>
+              ),
+            });
+          } else {
+            errorModal({ content: errorModalContent });
+          }
         })
         .catch((error) => {
           console.error('Error al obtener los ambiente disponibles: ',error);
           
         })
-    /* try {
-      console.log('Datos inicial', data);
-      const dataSend = { ...filteredData, id_ambiente}
-      
-
-      
-      console.log('Datos enviados', filteredData);
-
-      //const response = axios.post(`${baseURL}/ambientes/editar-completo`, dataSend);
-
-      //console.log('Respuesta del servidor', response.data);
-
-      if (response.status === 201) {
-        successModal({
-          content: (
-            <>
-              <div>
-                <img src={iconoExito} />
-              </div>
-              <div className="pt-md-3">Cambios guardados con éxito</div>
-            </>
-          ),
-        });
-
-        // eslint-disable-next-line no-unused-vars
-      } else {
-        errorModal({ content: errorModalContent });
-      }
-    } catch (error) {
-      console.log(error);
-      errorModal({ content: errorModalContent });
-    }  */
   };
 
   return (
@@ -337,7 +307,6 @@ const EditarAmbientePage = () => {
                   type="number"
                   className="form-control"
                   placeholder="Escriba el número de computadoras"
-                  //defaultValue={ambiente.computadora === undefined? 0: ambiente.computadora}
                   {...register('computadora')}
                 />
                 {errors.computadora && (
