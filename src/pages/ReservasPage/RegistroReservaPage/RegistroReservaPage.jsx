@@ -21,54 +21,51 @@ const RegistroReservaPage = () => {
   const [datalistSolicitante, setDatalistSolicitante] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [tiposAmbiente, setTiposAmbiente] = useState([]);
+  const [addAssociates, setAddAssociates] = useState(false);
   const [grupos, setGrupos] = useState([]);
-  const alertRef = useRef(null);
+  const addedGroupsRef = useRef(null);
+  const addedAssociatesRef = useRef(null);
   const [minDate, setMinDate] = useState('');
   const [maxDate, setMaxDate] = useState('');
   const [periodos, setPeriodos] = useState([{}]);
   const [allCheckbox, setAllCheckBox] = useState(false);
 
   const schema = yup.object().shape({
-    solicitante: yup.string()
+    solicitante: yup.string().default('')
       .required('Ingrese un nombre de un usuario')
       .max(40, 'El nombre debe tener como máximo 40 caracteres'),
-    tipo_ambiente: yup.string()
+    tipo_ambiente: yup.string().default('')
       .required('Seleccione una categoria'),
-    listaGrupos: yup.array()
+    asociados: yup.array().default([])
+      .of(yup.number())
+      .max(3, 'Solo puedes agregar a 3 asociados como máximo'),
+    listaGrupos: yup.array().default([])
       .of(yup.number().positive().integer(), 'error type')
       .min(1, 'Seleccione al menos una materia'),
-    cantidad_est: yup.number()
+    cantidad_est: yup.number().default(0)
       .typeError('Ingrese el número de estudiantes')
       .max(500, 'el número de estudiantes debe ser menor a 500')
       .min(20, 'El número de estudiantes debe ser mayor a 20')
       .integer('El número de estudiantes debe ser un número entero'),
-    fecha_reserva: yup.string()
+    fecha_reserva: yup.string().default('')
       .required('Seleccione una fecha valida'),
-    motivo: yup.string()
+    motivo: yup.string().default('')
       .max(200, 'El motivo debe tener como máximo 200 caracteres'),
-    periodos: yup.array()
+    periodos: yup.array().default([])
       .of(yup.string())
       .min(1, 'Seleccione al menos un horario')
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-  } = useForm({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      solicitante: '',
-      tipo_ambiente: '',
-      listaGrupos: [],
-      cantidad_est: 0,
-      fecha_reserva: '',
-      motivo: '',
-      periodos: [],
-    },
+  const { register, handleSubmit, formState: { errors }, setValue, watch, } = useForm({
+    resolver: yupResolver(schema), defaultValues: schema.describe().default
   });
+
+  const resetList = () => {
+    setIsAdmin(false);
+    setValue('listaGrupos', []);
+    setValue('cantidad_est', 0);
+    addedGroupsRef.current?.removeAllAlerts();
+  };
 
   useEffect(() => {
     // recuperar users para el id del solicitante
@@ -115,9 +112,7 @@ const RegistroReservaPage = () => {
           setValue(propiedad, formData[propiedad]);
         });
         setGrupos(formData.SetGrupos);
-        alertRef.current?.removeAllAlerts();
-        setValue('listaGrupos', []);
-        setValue('cantidad_est', 0);
+        resetList();
         formData.listaGrupos.forEach(groupId => {
           addGropsSelected(groupId, formData.SetGrupos);
         });
@@ -179,47 +174,67 @@ const RegistroReservaPage = () => {
     const foundUser = users.find(obj => obj.nombre_usuario === newValue);
     if (foundUser?.id_usuario) {
       axios
-        .get(`${database}/usuarios/${foundUser.id_usuario}/materias-grupos`)
+        // .get(`${database}/usuarios/${foundUser.id_usuario}/materias-grupos`)
+        .post(`${database}/usuarios/materias-grupos-asociados`, {
+          id_solicitantes: [foundUser.id_usuario, ...watch('asociados')]
+        })
         .then((response) => {
-          const userGroups = response.data['materia-grupo'].map(group => ({
+          console.log(response.data);
+          const userGroups = response.data.map(group => ({
+            ...group,
             value: group.id_aux_grupo,
-            title: `${group.nombre_materia} - ${group.nombre_grupo}`,
-            inscritos: group.cantidad_est
+            title: `${group.nombre_materia} - ${group.nombre_grupo}`
           }));
-          alertRef.current?.removeAllAlerts();
           setGrupos(userGroups);
           if (foundUser.tipo_usuario === 'ADMINISTRADOR') {
             setIsAdmin(true);
             setValue('listaGrupos', [userGroups[0]?.value]);
-            setValue('cantidad_est', userGroups[0]?.inscritos);
+            setValue('cantidad_est', userGroups[0]?.cantidad_est);
+            addedGroupsRef.current?.removeAllAlerts();
           } else {
-            setIsAdmin(false);
-            setValue('listaGrupos', []);
-            setValue('cantidad_est', 0);
+            resetList();
           }
         })
         .catch((error) => {
-          setIsAdmin(false);
-          setValue('listaGrupos', []);
-          setValue('cantidad_est', 0);
+          resetList();
           console.error('Error al obtener las materias y grupos:', error);
         });
-    }
+    } else { resetList(); }
   };
 
   const removeGropsSelected = (group) => {
     const groupsFiltered = watch('listaGrupos')?.filter(obj => obj !== group.value);
     setValue('listaGrupos', groupsFiltered);
-    setValue('cantidad_est', watch('cantidad_est') - group.inscritos);
+    setValue('cantidad_est', watch('cantidad_est') - group.cantidad_est);
   };
 
   const addGropsSelected = (newValue, _grupos = grupos) => {
     const group = _grupos.find(group => group.value === parseInt(newValue));
     if (group && !watch('listaGrupos').includes(group.value)) {
-      alertRef.current.addAlert(alerts[watch('listaGrupos').length % 8], group.title, () => removeGropsSelected(group));
+      addedGroupsRef.current.addAlert(alerts[watch('listaGrupos').length % 8], group.title, () => removeGropsSelected(group));
       setValue('listaGrupos', [...watch('listaGrupos'), group.value]);
-      setValue('cantidad_est', watch('cantidad_est') + group.inscritos);
+      setValue('cantidad_est', watch('cantidad_est') + group.cantidad_est);
     }
+    return new String();
+  };
+
+  const removeAssociatesSelected = (associate) => {
+    console.log(watch('asociados'));
+    const associatesFiltered = watch('asociados')?.filter(obj => obj !== associate.id_usuario);
+    setValue('asociados', associatesFiltered);
+  };
+
+  const addAssociatesSelected = (newValue) => {
+    console.log(watch('asociados'));
+    grupos.map(group => { console.log(group); });
+    // axios
+    // .get(`${database}/materias/usuarios-materia/${foundUser.id_usuario}`);
+    const associate = users.find(user => user.id_usuario === parseInt(newValue));
+    if (associate && !watch('asociados').includes(associate.id_usuario)) {
+      addedAssociatesRef.current.addAlert(alerts[watch('asociados').length % 8], associate.nombre_usuario, () => removeAssociatesSelected(associate));
+      setValue('asociados', [...watch('asociados'), associate.id_usuario]);
+    }
+
     return new String();
   };
 
@@ -248,7 +263,6 @@ const RegistroReservaPage = () => {
   };
 
   return (
-
     <Form
       title='Formulario de reserva'
       className='needs-validation'
@@ -256,7 +270,7 @@ const RegistroReservaPage = () => {
       onClickCancel={() => {
         confirmationModal({
           body: (<>
-            <Icon className="iconAlert" icon="charm:circle-cross" style={{ color: '#FF3B20',  height: '90px', width: '90px' }} />
+            <Icon className="iconAlert" icon="charm:circle-cross" style={{ color: '#FF3B20', height: '90px', width: '90px' }} />
             <div className="pt-md-3">
               ¿Estás seguro que desea <br /> cancelar el registro de <br /> reserva?
             </div>
@@ -285,6 +299,33 @@ const RegistroReservaPage = () => {
       />
 
       {!isAdmin && (<>
+        <CheckboxInput
+          label='Agregar asociados'
+          value={addAssociates}
+          handleChange={() => setAddAssociates(prev => !prev)}
+        />
+
+        {addAssociates && (<>
+          <Select
+            label='Nombre de asociado'
+            name='asociados'
+            placeholder='Seleccionar un usuario'
+            options={users.filter(user => !watch('solicitante').includes(user.nombre_usuario)).map(user => ({
+              value: user.id_usuario,
+              title: user.nombre_usuario
+            }))}
+            // options={grupos.filter(group => !watch('listaGrupos')?.includes(group.value))}
+            handleChange={addAssociatesSelected}
+            error={watch('asociados').length < 1 && errors.asociados?.message}
+          />
+
+          <div className="input-component" style={{ display: watch('asociados').length > 0 ? 'block' : 'none' }}>
+            <label className="form-label fw-bold">Lista de asociados añadidos</label>
+
+            <AlertContainer ref={addedAssociatesRef} />
+          </div>
+        </>)}
+
         <Select
           label={<>Materias y grupos <span className="text-danger ms-1">*</span></>}
           name='listaGrupos'
@@ -297,7 +338,7 @@ const RegistroReservaPage = () => {
         <div className="input-component" style={{ display: watch('listaGrupos').length > 0 ? 'block' : 'none' }}>
           <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
 
-          <AlertContainer ref={alertRef} />
+          <AlertContainer ref={addedGroupsRef} />
         </div>
       </>)}
 
