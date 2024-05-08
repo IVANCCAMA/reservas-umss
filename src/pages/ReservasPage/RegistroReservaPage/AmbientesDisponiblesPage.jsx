@@ -15,26 +15,25 @@ const AmbientesDisponibles = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
   const location = useLocation();
   const formData = location.state;
+  // console.log(formData);
   const { confirmationModal, errorModal, successModal } = useModal();
 
   const confirmSelect = (amb) => {
     // show modal confirm
     confirmationModal({
-      body: (
-        <>
-          <div className="position-absolute">
-            <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
-          </div>
-          <div>
-            Confirmar reserva <br />
-            Aula: {amb.nombre_ambiente} <br />
-            Capacidad: {amb.capacidad_ambiente} <br />
-            Tipo: {amb.tipo_ambiente} <br />
-            Fecha: {amb.fecha} <br />
-            Hora: {amb.hora_inicio?.slice(0, 5)} - {amb.hora_fin?.slice(0, 5)} <br />
-          </div>
-        </>
-      ),
+      body: (<>
+        <div className="position-absolute">
+          <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+        </div>
+        <div>
+          Confirmar reserva <br />
+          Aula: {amb.nombre_ambiente} <br />
+          Capacidad: {amb.capacidad_ambiente} <br />
+          Tipo: {amb.tipo_ambiente} <br />
+          Fecha: {amb.fecha} <br />
+          Hora: {amb.hora_inicio?.slice(0, 5)} - {amb.hora_fin?.slice(0, 5)} <br />
+        </div>
+      </>),
       // click acept modal confirm
       onClickYes: () => {
         // register new reserva
@@ -49,20 +48,12 @@ const AmbientesDisponibles = () => {
             // success
             console.log(response.data);
             successModal({
-              body: (
-                <>
-                  <div>
-                    {/* <img src={iconoExito} /> */}
-                    <Icon icon="gg:check-o"  style={{color: '#0fa958'}} />
-                    <Icon icon="fa-regular:check-circle"  style={{color: '#0fa958'}} />
-                  </div>
-                  <div className="pt-md-3">
-                    Registro de reserva
-                    <br />
-                    exitoso
-                  </div>
-                </>
-              ),
+              body: (<>
+                {/* <img src={iconoExito} /> */}
+                <Icon icon="gg:check-o" style={{ color: '#0fa958' }} />
+                <Icon icon="fa-regular:check-circle" style={{ color: '#0fa958' }} />
+                <div className="pt-md-3">Registro de reserva<br />exitoso</div>
+              </>),
               // redirect
               onClickTo: '/reservas/listaReservas',
             });
@@ -75,18 +66,10 @@ const AmbientesDisponibles = () => {
               id_disponible: amb.id_disponible,
             });
             errorModal({
-              body: (
-                <>
-                  <div>
-                    <img src={iconoError} />
-                  </div>
-                  <div className="pt-md-3">
-                    Error al registrar
-                    <br />
-                    Intente de nnuevo
-                  </div>
-                </>
-              ),
+              body: (<>
+                <img src={iconoError} />
+                <div className="pt-md-3">Error al registrar<br />Intente de nnuevo</div>
+              </>),
             });
           });
       },
@@ -105,9 +88,7 @@ const AmbientesDisponibles = () => {
         <button
           type="button"
           className="btn btn-success boton-style w-auto text-center me-md-3 rounded"
-          onClick={() => {
-            confirmSelect(amb);
-          }}
+          onClick={() => { confirmSelect(amb); }}
         >
           Seleccionar
         </button>
@@ -126,7 +107,7 @@ const AmbientesDisponibles = () => {
             type="button"
             className="btn btn-primary boton-style w-auto text-center me-md-3 rounded"
             onClick={() => {
-              navigate('/reservas/reservarAmbiente');
+              navigate('/reservas/reservarAmbiente', {state: {...formData}});
             }}
           >
             Volver al formulario

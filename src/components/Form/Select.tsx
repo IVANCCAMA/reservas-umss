@@ -14,6 +14,9 @@ interface SelectProps {
   handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleFocus?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleBlur?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
+  afterChange?: (newValue: string | readonly string[] | number | undefined) => void;
+  afterFocus?: (newValue: string | readonly string[] | number | undefined) => void;
+  afterBlur?: (newValue: string | readonly string[] | number | undefined) => void;
   required?: boolean;
   multiple?: boolean;
   defaultValue?: string;
@@ -33,6 +36,9 @@ const Select = React.forwardRef<
   handleChange = () => { },
   handleFocus = () => { },
   handleBlur = () => { },
+  afterChange = () => { },
+  afterFocus = () => { },
+  afterBlur = () => { },
   required = false,
   multiple = false,
   defaultValue = undefined,
@@ -56,12 +62,14 @@ const Select = React.forwardRef<
           e.target.value = newValue;
         }
         onChange(e);
+        afterChange(e.target.value);
       }}
       onFocus={(e) => {
         const newValue = handleFocus(e.target.value);
         if (newValue) {
           e.target.value = newValue;
         }
+        afterFocus(e.target.value);
       }}
       onBlur={(e) => {
         const newValue = handleBlur(e.target.value);
@@ -69,6 +77,7 @@ const Select = React.forwardRef<
           e.target.value = newValue;
         }
         onBlur(e);
+        afterBlur(e.target.value);
       }}
     >
       {placeholder && (

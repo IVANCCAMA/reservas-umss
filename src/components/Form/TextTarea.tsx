@@ -7,6 +7,9 @@ interface TextTareaProps {
   handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleFocus?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleBlur?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
+  afterChange?: (newValue: string | readonly string[] | number | undefined) => void;
+  afterFocus?: (newValue: string | readonly string[] | number | undefined) => void;
+  afterBlur?: (newValue: string | readonly string[] | number | undefined) => void;
   required?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -27,6 +30,9 @@ const TextTarea = React.forwardRef<
   handleChange = () => { },
   handleFocus = () => { },
   handleBlur = () => { },
+  afterChange = () => { },
+  afterFocus = () => { },
+  afterBlur = () => { },
   required = false,
   minLength = 0,
   maxLength = 100,
@@ -52,12 +58,14 @@ const TextTarea = React.forwardRef<
           e.target.value = newValue;
         }
         onChange(e);
+        afterChange(e.target.value);
       }}
       onFocus={(e) => {
         const newValue = handleFocus(e.target.value);
         if (newValue) {
           e.target.value = newValue;
         }
+        afterFocus(e.target.value);
       }}
       onBlur={(e) => {
         const newValue = handleBlur(e.target.value);
@@ -65,6 +73,7 @@ const TextTarea = React.forwardRef<
           e.target.value = newValue;
         }
         onBlur(e);
+        afterBlur(e.target.value);
       }}
       minLength={minLength || undefined}
       maxLength={maxLength || undefined}
