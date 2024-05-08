@@ -12,6 +12,7 @@ import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/Listad
 import ModalProvider from './components/Bootstrap/ModalContext';
 import EditarAmbientePage from './pages/AmbientesPage/EditarAmbientePage/EditarAmbientePage';
 import BootstrapUI from './components/Bootstrap';
+import ListadoAperturasPage from './pages/AperturasPage/ListadoAperturasPage/ListadoAperturasPage';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
 
                 <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
                 <Route path="/ambientes/listaAmbientes/editar/:id_ambiente" element={<EditarAmbientePage />}/>
+                <Route path="/aperturas/listaAperturas" element={<ListadoAperturasPage />} />
               </Routes>
             </div>
           </div>
