@@ -7,6 +7,9 @@ interface NumberInputProps {
   handleChange?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleFocus?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
   handleBlur?: (newValue: string | readonly string[] | number | undefined) => string | undefined;
+  afterChange?: (newValue: string | readonly string[] | number | undefined) => void;
+  afterFocus?: (newValue: string | readonly string[] | number | undefined) => void;
+  afterBlur?: (newValue: string | readonly string[] | number | undefined) => void;
   required?: boolean;
   minNumber?: number;
   maxNumber?: number;
@@ -28,6 +31,9 @@ const NumberInput = React.forwardRef<
   handleChange = () => { },
   handleFocus = () => { },
   handleBlur = () => { },
+  afterChange = () => { },
+  afterFocus = () => { },
+  afterBlur = () => { },
   required = false,
   minNumber = 0,
   maxNumber = 500,
@@ -54,12 +60,14 @@ const NumberInput = React.forwardRef<
           e.target.value = newValue;
         }
         onChange(e);
+        afterChange(e.target.value);
       }}
       onFocus={(e) => {
         const newValue = handleFocus(e.target.value);
         if (newValue) {
           e.target.value = newValue;
         }
+        afterFocus(e.target.value);
       }}
       onBlur={(e) => {
         const newValue = handleBlur(e.target.value);
@@ -67,6 +75,7 @@ const NumberInput = React.forwardRef<
           e.target.value = newValue;
         }
         onBlur(e);
+        afterBlur(e.target.value);
       }}
       min={minNumber || undefined}
       max={maxNumber || undefined}
