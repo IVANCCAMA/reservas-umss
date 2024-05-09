@@ -36,7 +36,8 @@ const authSlice = createSlice({
     /* console.log('intentado extraReducers', builder); */
     builder.addCase(loginRequest.fulfilled, (state, action) => {
       /* console.log('intentadooooo', action); */
-      action.payload.token = '123qweasdTokenDefault';
+      /* Simulación de token */
+      action.payload.token = crypto.randomUUID();
       if (action.payload.usuarios && action.payload.token) {
         /* console.log('extraReducers>>>', action.payload.usuarios); */
         state.usuarios = action.payload.usuarios;
