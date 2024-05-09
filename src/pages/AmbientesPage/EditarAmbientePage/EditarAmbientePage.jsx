@@ -161,6 +161,7 @@ const EditarAmbientePage = () => {
                   <div className="pt-md-3">Cambios guardados con éxito</div>
                 </>
               ),
+              onClickTo: '/ambientes/listaAmbientes',
             });
           } else {
             errorModal({ content: errorModalContent });
@@ -205,14 +206,14 @@ const EditarAmbientePage = () => {
               {ambiente.tipo ? (
                 <select
                   className="form-select"
-                  value={ambiente.tipo || ''}
+                  //value={ambiente.tipo}
                   onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
                   {...register('tipo')}
                 >
                   <option value="">Seleccione el tipo de ambiente</option>
-                  <option value="aula comun">Aula común</option>
-                  <option value="auditorio">Auditorio</option>
-                  <option value="laboratorio">Laboratorio</option>
+                  <option value="aula comun" selected={ambiente.tipo === "aula comun"}>Aula común</option>
+                  <option value="auditorio" selected={ambiente.tipo === "auditorio"}>Auditorio</option>
+                  <option value="laboratorio" selected={ambiente.tipo === "laboratorio"}>Laboratorio</option>
                 </select>
               ) : (
                 ''
@@ -326,18 +327,6 @@ const EditarAmbientePage = () => {
                   id={`proyector`}
                   defaultChecked={ambiente.proyector}
                   {...register('proyector')}
-                />
-              </div>
-              <div className="col-md">
-                <label className="form-check-label me-md-2 fw-bold" htmlFor={`disponible`}>
-                  Disponiblidad de ambiente
-                </label>
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id={`disponible`}
-                  defaultChecked={ambiente.disponible}
-                  {...register('disponible')}
                 />
               </div>
             </div>
@@ -457,7 +446,7 @@ const EditarAmbientePage = () => {
                         </div>
                       </>
                     ),
-                    onClickYesTo: '/',
+                    onClickYesTo: '/ambientes/listaAmbientes',
                   });
                 }}
                 disabled={isSubmitting}
