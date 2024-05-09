@@ -2,6 +2,8 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import logo from '../../assets/Images/logoReserBit.png';
+import { decrement, increment } from '../../redux/features/counter/counterSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const LoginPage = () => {
   const schema = yup.object({
@@ -59,6 +61,9 @@ const LoginPage = () => {
     }
   };
 
+  const count = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
   return (
     <div className="container login">
       <div className="row justify-content-center align-items-center py-md-5">
@@ -100,6 +105,19 @@ const LoginPage = () => {
               </button>
             </form>
           </div>
+        </div>
+      </div>
+
+      {/* Contador */}
+      <div>
+        <div>
+          <button aria-label="Increment value" onClick={() => dispatch(increment())}>
+            Increment
+          </button>
+          <span>{count}</span>
+          <button aria-label="Decrement value" onClick={() => dispatch(decrement())}>
+            Decrement
+          </button>
         </div>
       </div>
     </div>
