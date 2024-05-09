@@ -2,8 +2,6 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import logo from '../../assets/Images/logoReserBit.png';
-import { decrement, increment } from '../../redux/features/counter/counterSlice';
-import { useDispatch, useSelector } from 'react-redux';
 import { loginRequest } from '../../redux/features/auth/auth-slice';
 import { useAppDispatch, useAppSelector } from '../../redux/app/hooks.js';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +29,7 @@ const LoginPage = () => {
   //hooks
   let navigate = useNavigate();
   //redux
+  /* const isLoggedIn = useAppSelector((state) => state.auth.token); */
   const isLoggedIn = useAppSelector((state) => state.auth.token);
   const dispatch = useAppDispatch();
   // effects
@@ -56,8 +55,6 @@ const LoginPage = () => {
       console.log('Error en inico de sesion', error);
     }
   };
-
-  const count = useSelector((state) => state.counter.value);
 
   return (
     <div className="container login">
@@ -100,19 +97,6 @@ const LoginPage = () => {
               </button>
             </form>
           </div>
-        </div>
-      </div>
-
-      {/* Contador */}
-      <div>
-        <div>
-          <button aria-label="Increment value" onClick={() => dispatch(increment())}>
-            Increment
-          </button>
-          <span>{count}</span>
-          <button aria-label="Decrement value" onClick={() => dispatch(decrement())}>
-            Decrement
-          </button>
         </div>
       </div>
     </div>

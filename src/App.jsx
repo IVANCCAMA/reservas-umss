@@ -11,6 +11,7 @@ import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/A
 import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
 import BootstrapUI from './components/Bootstrap';
 import LoginPage from './pages/LoginPage/LoginPage';
+import Boot from './redux/boot.js';
 
 function App() {
   return (
@@ -53,5 +54,9 @@ function App() {
     </BrowserRouter>
   );
 }
+
+Boot()
+  .then(() => App())
+  .catch((error) => console.log(error));
 
 export default App;
