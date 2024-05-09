@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authLogin } from '../../../services/Auth/Auth.service.js';
-import { storageGet, storageDelete, storageSave } from '../../../services/Storage/Storage.js';
+import { storageDelete, storageGet, storageSave } from '../../Storage/Storage.js';
 
 export const loginRequest = createAsyncThunk('auth/loginRequest', async (userLoginAttempt) => {
   const response = await authLogin(userLoginAttempt);
@@ -17,7 +17,7 @@ const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     checkAuthorization(state) {
-      const token = storageGet('token');
+      /* const token = storageGet('token'); */
       const user = storageGet('user');
       if (token && user) {
         state.user = user;
