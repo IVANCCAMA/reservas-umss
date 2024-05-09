@@ -29,7 +29,6 @@ const LoginPage = () => {
   //hooks
   let navigate = useNavigate();
   //redux
-  /* const isLoggedIn = useAppSelector((state) => state.auth.token); */
   const isLoggedIn = useAppSelector((state) => state.auth.token);
   const dispatch = useAppDispatch();
   // effects
@@ -50,7 +49,6 @@ const LoginPage = () => {
     console.log(user);
     try {
       dispatch(loginRequest(user));
-      console.log('Estado', dispatch(loginRequest(user)));
     } catch (error) {
       console.log('Error en inico de sesion', error);
     }

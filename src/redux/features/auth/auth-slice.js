@@ -4,13 +4,13 @@ import { storageDelete, storageGet, storageSave } from '../../Storage/Storage.js
 
 export const loginRequest = createAsyncThunk('auth/loginRequest', async (userLoginAttempt) => {
   const response = await authLogin(userLoginAttempt);
-  console.log('Logeando...', response);
+  /* console.log('Logeando...', response.data); */
   return response.data;
 });
 
 const initialState = {
-  /* token: null, */
-  user: null,
+  token: null,
+  usuarios: null,
 };
 
 const authSlice = createSlice({
@@ -18,28 +18,31 @@ const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     checkAuthorization(state) {
-      /* const token = storageGet('token'); */
-      const user = storageGet('user');
-      if (/* token && */ user) {
-        state.user = user;
-        /* state.token = token; */
+      const token = storageGet('token');
+      const usuarios = storageGet('usuarios');
+      if (token && usuarios) {
+        state.usuarios = usuarios;
+        state.token = token;
       }
     },
     logout(state) {
-      state.user = null;
-      /* state.token = null; */
-      storageDelete('user');
-      /* storageDelete('token'); */
+      state.usuarios = null;
+      state.token = null;
+      storageDelete('usuarios');
+      storageDelete('token');
     },
   },
   extraReducers: (builder) => {
-    console.log('intentado gurdar en localStorage');
+    /* console.log('intentado extraReducers', builder); */
     builder.addCase(loginRequest.fulfilled, (state, action) => {
-      if (action.payload.user/*  && action.payload.token */) {
-        state.user = action.payload.user;
-        /* state.token = action.payload.token; */
-        storageSave('user', action.payload.user);
-        /* storageSave('token', action.payload.token); */
+      /* console.log('intentadooooo', action); */
+      action.payload.token = '123qweasdTokenDefault';
+      if (action.payload.usuarios && action.payload.token) {
+        /* console.log('extraReducers>>>', action.payload.usuarios); */
+        state.usuarios = action.payload.usuarios;
+        state.token = action.payload.token;
+        storageSave('usuarios', action.payload.usuarios);
+        storageSave('token', action.payload.token);
       }
     });
   },

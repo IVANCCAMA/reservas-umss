@@ -6,12 +6,12 @@ const authLogin = async (userLoginAttempt) => {
   return await axios.post(`${baseURL}/usuarios/validar-usuario`, userLoginAttempt);
 };
 const authLogout = () => {
-  storageDelete('user');
+  storageDelete('usuarios');
   /* storageDelete('token'); */
 };
 
 const authCurrentUser = () => {
-  return { ...storageGet('user'), token: storageGet('token') };
+  return { ...storageGet('usuarios'), token: storageGet('token') };
 };
 
 export { authLogin, authLogout, authCurrentUser };

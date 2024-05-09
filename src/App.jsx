@@ -10,6 +10,7 @@ import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/Regist
 import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
 import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
 import BootstrapUI from './components/Bootstrap';
+
 import LoginPage from './pages/LoginPage/LoginPage';
 import Boot from './redux/boot.js';
 
