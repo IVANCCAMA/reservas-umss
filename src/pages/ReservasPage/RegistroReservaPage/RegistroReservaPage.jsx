@@ -71,7 +71,8 @@ const RegistroReservaPage = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      solicitante: '',
+      id_periodo: 2,
+      solicitante: 'CARLA SALAZAR SERRUDO',
       tipo_ambiente: '',
       listaGrupos: [],
       cantidad_est: 0,
@@ -85,9 +86,11 @@ const RegistroReservaPage = () => {
   useEffect(() => {
     // recuperar fechas max min
     axios
-      .get(`${database}/aperturas/2`)
+      .get(`${database}/aperturas/15`)
       .then((response) => {
         setMaxDate(response.data.apertura_fin);
+        console.log('ejecutandooo');
+        handleSolicitanteChange();
       })
       .catch((error) => {
         console.error('Error al obtener la apertura 2:', error);
@@ -120,7 +123,7 @@ const RegistroReservaPage = () => {
                   fecha_reserva: filteredData.fecha_reserva,
                   motivo: filteredData.motivo,
                   listaGrupos: filteredData.listaGrupos,
-                  id_apertura: 2,
+                  id_apertura: 15,
                   cantidad_total: filteredData.cantidad_est,
                   ambienteDisp: response.data,
                 },
@@ -211,7 +214,7 @@ const RegistroReservaPage = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const handleSolicitanteChange = (event) => {
-    const nombreSolicitante = event.target.value;
+    const nombreSolicitante = 'CARLA SALAZAR SERRUDO';
     const user = users.find((user) => user.nombre_usuario === nombreSolicitante);
     if (user) {
       setSelectedUser(user);
@@ -315,8 +318,9 @@ const RegistroReservaPage = () => {
               {selectedGroups.map((group, index) => (
                 <div
                   key={index}
-                  className={`mb-1 px-3 py-1 alert alert-${selectedAlerts[group.id_aux_grupo]
-                    } alert-dismissible fade show`}
+                  className={`mb-1 px-3 py-1 alert alert-${
+                    selectedAlerts[group.id_aux_grupo]
+                  } alert-dismissible fade show`}
                 >
                   {group.nombre_materia} - {group.nombre_grupo}
                   <button
@@ -452,7 +456,7 @@ const RegistroReservaPage = () => {
             </div>
 
             <div className="d-flex justify-content-center">
-              <button type="submit" className="btn btn-success me-md-5" style={{ width: "86px" }}>
+              <button type="submit" className="btn btn-success me-md-5" style={{ width: '86px' }}>
                 Enviar
               </button>
               <button
@@ -482,7 +486,7 @@ const RegistroReservaPage = () => {
 
         {/* Enviando... */}
         {sending && (
-          <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
+          <div className="position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse">
             <div className="d-flex justify-content-md-end pb-4 pe-3">
               <div className="alert alert-primary py-1 d-flex align-items-center" role="alert">
                 <img src={iconInfo} alt="info" className="iconAlert" />
@@ -496,7 +500,7 @@ const RegistroReservaPage = () => {
         )}
         {/* Error al enviar */}
         {error && (
-          <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
+          <div className="position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse">
             <div className="d-flex justify-content-md-end pb-4 pe-3">
               <div className="alert alert-danger py-1 d-flex align-items-center" role="alert">
                 <img src={iconoError} alt="info" className="iconAlert" />
@@ -507,7 +511,7 @@ const RegistroReservaPage = () => {
         )}
         {/* Enviado correctamente */}
         {success && (
-          <div className='position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse'>
+          <div className="position-fixed col-md-10 vh-100 pb-5 d-flex flex-column-reverse">
             <div className="d-flex justify-content-md-end pb-4 pe-3">
               <div className="alert alert-success py-1 d-flex align-items-center" role="alert">
                 <img src={iconoExito} alt="info" className="iconAlert" />
