@@ -27,12 +27,12 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar-container">
-      <div className="flex-shrink-0 sidebar-menu">
-        <ul className="nav nav-pills mt-md-4">
+      <div className="d-flex flex-column flex-shrink-0 p-2 h-100">
+        <ul className="nav nav-pills flex-column mb-sm-auto mb-0 w-100">
           {btns.map((btn, index) => (
             <li key={`nav-item-${index}`} className="nav-item w-100">
               <button
-                className="btn btn-toggle d-inline-flex w-100 d-flex  align-items-center collapsed justify-content-between"
+                className="btn btn-toggle d-inline-flex w-100 d-flex align-items-center collapsed justify-content-between"
                 data-bs-toggle="collapse"
                 data-bs-target={`#${btn.name}-collapse`}
                 aria-expanded="false"
@@ -41,7 +41,7 @@ const Sidebar = () => {
                   <Icon icon={btn.icon} width="45" height="45" style={{ color: '#215f88' }} />
                   <span className="ms-2">{btn.name}</span>
                 </div>
-                <div>
+                <span>
                   <Icon
                     className="fas fa-angle-down rotate-icon"
                     icon="iconamoon:arrow-down-2"
@@ -49,7 +49,7 @@ const Sidebar = () => {
                     height="35"
                     style={{ color: '5C5B5B' }}
                   />
-                </div>
+                </span>
               </button>
 
               <div className="collapse ms-5" id={`${btn.name}-collapse`}>
@@ -69,6 +69,19 @@ const Sidebar = () => {
             </li>
           ))}
         </ul>
+        <div className="sidebar-footer d-flex align-items-center pb-1">
+          <Link to={'/logout'} className="btn">
+            <span className="me-md-2">
+              <Icon
+                icon="solar:logout-2-outline"
+                width="30"
+                height="30"
+                style={{ color: '#5C5B5B' }}
+              />
+            </span>
+            Cerrar sesión
+          </Link>
+        </div>
       </div>
     </div>
   );
