@@ -9,14 +9,10 @@ import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/Reg
 import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/RegistroReservaPage';
 import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
 import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
-import ModalProvider from './components/Bootstrap/ModalContext';
 import EditarAmbientePage from './pages/AmbientesPage/EditarAmbientePage/EditarAmbientePage';
 import BootstrapUI from './components/Bootstrap';
 import ListadoAperturasPage from './pages/AperturasPage/ListadoAperturasPage/ListadoAperturasPage';
-// =======
 import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPage';
-import ListadoAperturaPage from './pages/AperturasPage/ListadoAperturaPage/ListadoAperturaPage';
-import BootstrapUI from './components/Bootstrap';
 import NotificationProvider from './components/Bootstrap/NotificationContext';
 
 function App() {
@@ -40,26 +36,19 @@ function App() {
                   <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
                   <Route
                     path="/ambientes/listaAmbientes/fichaAmbiente/:id_ambiente"
-                    element={<FichaInformacionAmbientePage />}
-                  />
+                    element={<FichaInformacionAmbientePage />}/>
+                  <Route
+                    path="/ambientes/listaAmbientes/editar/:id_ambiente"
+                    element={<EditarAmbientePage />} />
 
                   <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
 
                   <Route path="/reservas/reservarAmbiente" element={<RegistroReservaPage />} />
-
-                  <Route
-                    path="/reservas/reservarAmbiente/ambientesDisponibles"
-                    element={<AmbientesDisponiblesPage />}
-                  />
-                      
-                <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
-                <Route path="/ambientes/listaAmbientes/editar/:id_ambiente" element={<EditarAmbientePage />}/>
-                <Route path="/aperturas/listaAperturas" element={<ListadoAperturasPage />} />
-                  
+                  <Route path="/reservas/ambientesDisponibles" element={<AmbientesDisponiblesPage />}/>
                   <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
 
                   <Route path='/aperturas/registrarApertura' element={<RegistroAperturaPage />} />
-                  <Route path='/aperturas/listaAperturas' element={<ListadoAperturaPage />} />
+                  <Route path="/aperturas/listaAperturas" element={<ListadoAperturasPage />} />
                 </Routes>
               </div>
             </NotificationProvider>
