@@ -1,5 +1,8 @@
 import { Icon } from '@iconify/react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../redux/app/hooks.js';
+import { logout } from '../../../redux/features/auth/auth-slice.js';
+
 const Sidebar = () => {
   const btns = [
     {
@@ -24,6 +27,20 @@ const Sidebar = () => {
       ],
     },
   ];
+  // Redux
+  const dispatch = useAppDispatch();
+  const isLoggedIn = useAppSelector((state) => state.auth.token);
+  const location = useLocation();
+
+  // init
+  /* let isActive = '';
+  if (to === location.pathname) {
+    isActive = 'active';
+  } */
+  /* 
+  if (typeof jsx !== 'undefined') {
+    return <li className="nav-item">{jsx}</li>;
+  } */
 
   return (
     <div className="sidebar-container">
@@ -70,7 +87,12 @@ const Sidebar = () => {
           ))}
         </ul>
         <div className="sidebar-footer d-flex align-items-center pb-1">
-          <Link to={'/logout'} className="btn">
+          <button
+            className="btn"
+            onClick={() => {
+              dispatch(logout());
+            }}
+          >
             <span className="me-md-2">
               <Icon
                 icon="solar:logout-2-outline"
@@ -80,7 +102,7 @@ const Sidebar = () => {
               />
             </span>
             Cerrar sesión
-          </Link>
+          </button>
         </div>
       </div>
     </div>
