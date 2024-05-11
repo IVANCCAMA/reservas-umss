@@ -14,6 +14,7 @@ import BootstrapUI from './components/Bootstrap';
 import ListadoAperturasPage from './pages/AperturasPage/ListadoAperturasPage/ListadoAperturasPage';
 import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPAge';
 import NotificationProvider from './components/Bootstrap/NotificationContext';
+import PageNotFound from './pages/PageNotFound/PageNotFound';
 
 
 function App() {
@@ -52,6 +53,10 @@ function App() {
                 <Route path="/ambientes/listaAmbientes/editar/:id_ambiente" element={<EditarAmbientePage />}/>
                 <Route path="/aperturas/listaAperturas" element={<ListadoAperturasPage />} />
                 <Route path='/aperturas/registrarApertura' element={<RegistroAperturaPage />} />
+                
+                
+                {/* Esta ruta debe ir al final de las demás */}
+                <Route path='*' element= {< PageNotFound />} />
               </Routes>
             </div>
             </NotificationProvider>
