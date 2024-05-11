@@ -13,6 +13,7 @@ import BootstrapUI from './components/Bootstrap';
 
 import LoginPage from './pages/LoginPage/LoginPage';
 import Boot from './redux/boot.js';
+import PrivateRoute from './services/PrivateRoute/PrivateRoute.jsx';
 
 function App() {
   return (
@@ -22,31 +23,76 @@ function App() {
           {/* header */}
           <div className="row m-0 justify-content-center">
             <Navbar />
-            <div className="col-md-2 p-0 pt-5">
-              <Sidebar />
-            </div>
+            <PrivateRoute>
+              <div className="col-md-2 p-0 pt-5">
+                <Sidebar />
+              </div>
+            </PrivateRoute>
             <div className="col-md-10 pt-md-5 p-0 main-content">
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/" index element={<HomePage />} />
-
-                <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
-                <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
+                <Route path="/" element={<LoginPage />} />
+                <Route
+                  path="/home"
+                  index
+                  element={
+                    <PrivateRoute>
+                      <HomePage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/ambientes/registrarAmbiente"
+                  element={
+                    <PrivateRoute>
+                      <RegistroAmbientePage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/ambientes/listaAmbientes"
+                  element={
+                    <PrivateRoute>
+                      <ListadoAmbientesPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path="/ambientes/listaAmbientes/fichaAmbiente/:id_ambiente"
                   element={<FichaInformacionAmbientePage />}
                 />
-
-                <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
-
-                <Route path="/reservas/reservarAmbiente" element={<RegistroReservaPage />} />
-
+                <Route
+                  path="/materias/listaMaterias"
+                  element={
+                    <PrivateRoute>
+                      <ListadoMateriasPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/reservas/reservarAmbiente"
+                  element={
+                    <PrivateRoute>
+                      <RegistroReservaPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path="/reservas/reservarAmbiente/ambientesDisponibles"
-                  element={<AmbientesDisponiblesPage />}
+                  element={
+                    <PrivateRoute>
+                      <AmbientesDisponiblesPage />
+                    </PrivateRoute>
+                  }
                 />
-
-                <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
+                <Route
+                  path="/reservas/listaReservas"
+                  element={
+                    <PrivateRoute>
+                      <ListadoReservasPage />
+                    </PrivateRoute>
+                  }
+                />
               </Routes>
             </div>
           </div>

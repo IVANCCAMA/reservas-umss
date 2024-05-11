@@ -16,7 +16,7 @@ const Navbar = () => {
         zIndex: 1,
       }}
     >
-      <Link to={'/'}>
+      <Link to={'/home'}>
         <img
           className="img-fluid object-fit-cover"
           src={logo}

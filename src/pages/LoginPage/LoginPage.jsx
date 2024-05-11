@@ -35,7 +35,7 @@ const LoginPage = () => {
   useEffect(() => {
     if (isLoggedIn) {
       console.log('Logeado, navegando a inicio');
-      navigate('/');
+      navigate('/home');
     }
   }, [isLoggedIn, navigate]);
 
@@ -58,67 +58,69 @@ const LoginPage = () => {
 
   return (
     <div className="container login">
-      <div className="row justify-content-center align-items-center py-md-5">
-        <div className="col-md-5">
-          {authError && (
-            <div className="alert alert-danger p-2 d-flex align-items-center" role="alert">
-              <img
-                className="me-md-2"
-                src={iconoError}
-                alt="icono de error"
-                style={{
-                  width: 20,
-                  height: 20,
-                }}
-              />
-              <div>Codigo SIS o contraseña invalido</div>
+      {!isLoggedIn && (
+        <div className="row justify-content-center align-items-center py-md-5">
+          <div className="col-md-5">
+            {authError && (
+              <div className="alert alert-danger p-2 d-flex align-items-center" role="alert">
+                <img
+                  className="me-md-2"
+                  src={iconoError}
+                  alt="icono de error"
+                  style={{
+                    width: 20,
+                    height: 20,
+                  }}
+                />
+                <div>Codigo SIS o contraseña invalido</div>
+              </div>
+            )}
+            <div className="text-center pb-md-2">
+              <img className="img-fluid object-fit-cover" src={logo} alt="logo" />
             </div>
-          )}
-          <div className="text-center pb-md-2">
-            <img className="img-fluid object-fit-cover" src={logo} alt="logo" />
-          </div>
-          <div className="p-md-4 bg-login border border-2 rounded-3">
-            <p className="fw-bold text-center fs-4">Inicio de sesión</p>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="input-component">
-                <label className="form-label">
-                  Código SIS<span className="text-danger ms-1 fw-bold">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  autoComplete="username"
-                  placeholder="Escribe tu código sis"
-                  {...register('codsiss')}
-                />
-                {errors.codsiss && <span className="text-danger">{errors.codsiss.message}</span>}
-              </div>
-              <div className="input-component">
-                <label className="form-label">
-                  Contraseña<span className="text-danger ms-1 fw-bold">*</span>
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  autoComplete="current-password"
-                  placeholder="Escribe tu contraseña"
-                  {...register('contrasenia_usuario')}
-                />
-                {errors.contrasenia_usuario && (
-                  <span className="text-danger">{errors.contrasenia_usuario.message}</span>
-                )}
-              </div>
-              <button
-                type="submit"
-                className="btn btn-primary pt-md-2 w-100"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Enviando...' : 'Iniciar sesión'}
-              </button>
-            </form>
+            <div className="p-md-4 bg-login border border-2 rounded-3">
+              <p className="fw-bold text-center fs-4">Inicio de sesión</p>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="input-component">
+                  <label className="form-label">
+                    Código SIS<span className="text-danger ms-1 fw-bold">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    autoComplete="username"
+                    placeholder="Escribe tu código sis"
+                    {...register('codsiss')}
+                  />
+                  {errors.codsiss && <span className="text-danger">{errors.codsiss.message}</span>}
+                </div>
+                <div className="input-component">
+                  <label className="form-label">
+                    Contraseña<span className="text-danger ms-1 fw-bold">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    autoComplete="current-password"
+                    placeholder="Escribe tu contraseña"
+                    {...register('contrasenia_usuario')}
+                  />
+                  {errors.contrasenia_usuario && (
+                    <span className="text-danger">{errors.contrasenia_usuario.message}</span>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className="btn btn-primary pt-md-2 w-100"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Enviando...' : 'Iniciar sesión'}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
