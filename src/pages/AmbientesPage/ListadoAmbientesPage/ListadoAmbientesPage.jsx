@@ -25,7 +25,7 @@ const ListadoAmbientesPage = () => {
               Disponibilidad: amb.disponible ? 'HABILITADO' : 'DESHABILITADO',
               Tipo: amb.tipo.toUpperCase(),
               Proyector: amb.proyector ? 'SI' : 'NO',
-              'Editar': (
+              Editar: (
                 <div className="boton-editar  text-center me-md-3 rounded">
                   <Link
                     to={'/ambientes/listaAmbientes/editar/' + amb.id_ambiente}
@@ -37,7 +37,7 @@ const ListadoAmbientesPage = () => {
                   </Link>
                 </div>
               ),
-              
+
               'Ver más': (
                 <div className="boton-style  text-center me-md-3 rounded">
                   <Link
@@ -50,7 +50,6 @@ const ListadoAmbientesPage = () => {
                   </Link>
                 </div>
               ),
-              
             };
           }),
         );
@@ -64,7 +63,6 @@ const ListadoAmbientesPage = () => {
   useEffect(() => {
     loadAmbientes();
   }, []);
-
 
   return (
     <div className="container-fluid listado-ambientes p-md-5">

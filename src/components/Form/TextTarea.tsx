@@ -22,65 +22,72 @@ interface TextTareaProps {
 const TextTarea = React.forwardRef<
   HTMLTextAreaElement,
   TextTareaProps & ReturnType<UseFormRegister<any>>
->(({
-  name,
-  label,
-  onChange = () => { },
-  onBlur = () => { },
-  handleChange = () => { },
-  handleFocus = () => { },
-  handleBlur = () => { },
-  afterChange = () => { },
-  afterFocus = () => { },
-  afterBlur = () => { },
-  required = false,
-  minLength = 0,
-  maxLength = 100,
-  placeholder = '',
-  autoComplete = '',
-  textarea = 0,
-  error = undefined
-}, ref) => (
-  <div className='input-component'>
-    <label htmlFor={name} className='form-label fw-bold'>{label}</label>
+>(
+  (
+    {
+      name,
+      label,
+      onChange = () => {},
+      onBlur = () => {},
+      handleChange = () => {},
+      handleFocus = () => {},
+      handleBlur = () => {},
+      afterChange = () => {},
+      afterFocus = () => {},
+      afterBlur = () => {},
+      required = false,
+      minLength = 0,
+      maxLength = 100,
+      placeholder = '',
+      autoComplete = '',
+      textarea = 0,
+      error = undefined,
+    },
+    ref,
+  ) => (
+    <div className="input-component">
+      <label htmlFor={name} className="form-label fw-bold">
+        {label}
+      </label>
 
-    <textarea
-      ref={ref}
-      required={required}
-      autoComplete={autoComplete || undefined}
-      id={name}
-      name={name}
-      rows={textarea}
-      className='form-control'
-      onChange={(e) => {
-        const newValue = handleChange(e.target.value);
-        if (newValue) {
-          e.target.value = newValue;
-        }
-        onChange(e);
-        afterChange(e.target.value);
-      }}
-      onFocus={(e) => {
-        const newValue = handleFocus(e.target.value);
-        if (newValue) {
-          e.target.value = newValue;
-        }
-        afterFocus(e.target.value);
-      }}
-      onBlur={(e) => {
-        const newValue = handleBlur(e.target.value);
-        if (newValue) {
-          e.target.value = newValue;
-        }
-        onBlur(e);
-        afterBlur(e.target.value);
-      }}
-      minLength={minLength || undefined}
-      maxLength={maxLength || undefined}
-      placeholder={placeholder || undefined}
-    />
-    {error && (<span className="text-danger">{error}</span>)}
-  </div>
-))
+      <textarea
+        ref={ref}
+        required={required}
+        autoComplete={autoComplete || undefined}
+        id={name}
+        name={name}
+        rows={textarea}
+        className="form-control"
+        onChange={(e) => {
+          const newValue = handleChange(e.target.value);
+          if (newValue) {
+            e.target.value = newValue;
+          }
+          onChange(e);
+          afterChange(e.target.value);
+        }}
+        onFocus={(e) => {
+          const newValue = handleFocus(e.target.value);
+          if (newValue) {
+            e.target.value = newValue;
+          }
+          afterFocus(e.target.value);
+        }}
+        onBlur={(e) => {
+          const newValue = handleBlur(e.target.value);
+          if (newValue) {
+            e.target.value = newValue;
+          }
+          onBlur(e);
+          afterBlur(e.target.value);
+        }}
+        minLength={minLength || undefined}
+        maxLength={maxLength || undefined}
+        placeholder={placeholder || undefined}
+      />
+      {error && <span className="text-danger">{error}</span>}
+    </div>
+  ),
+);
 
 export default TextTarea;

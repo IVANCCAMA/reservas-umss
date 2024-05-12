@@ -4,7 +4,7 @@ function Alert({ style, body, onClose }) {
   const alertRef = useRef(null);
 
   const handleCloseClick = () => {
-   onClose?.();
+    onClose?.();
     try {
       const bsAlert = new window.bootstrap.Alert(alertRef.current);
       bsAlert.close();
@@ -14,7 +14,11 @@ function Alert({ style, body, onClose }) {
   };
 
   return (
-    <div ref={alertRef} className={`mb-1 px-3 py-1 alert alert-${style} alert-dismissible fade show`} role="alert">
+    <div
+      ref={alertRef}
+      className={`mb-1 px-3 py-1 alert alert-${style} alert-dismissible fade show`}
+      role="alert"
+    >
       {body}
       <button
         type="button"

@@ -1,4 +1,4 @@
-const ModalForm = ({ id, body, handleConfirm = () => { }, imgIcon, btnColor }) => {
+const ModalForm = ({ id, body, handleConfirm = () => {}, imgIcon, btnColor }) => {
   return (
     <div
       className="modal fade"

@@ -38,11 +38,17 @@ export const ModalProvider = ({ children }) => {
       ref: modalRef,
       body: body,
       button1: button1,
-      button2: button2 ? button2 : undefined
+      button2: button2 ? button2 : undefined,
     });
   };
 
-  const createModal = (body, button1, onClickButton1To = '', button2 = undefined, onClickButton2To = '') => {
+  const createModal = (
+    body,
+    button1,
+    onClickButton1To = '',
+    button2 = undefined,
+    onClickButton2To = '',
+  ) => {
     return {
       body: body,
       button1: {
@@ -53,18 +59,20 @@ export const ModalProvider = ({ children }) => {
           }
           setModal(null);
           if (onClickButton1To) navigate(onClickButton1To);
-        }
+        },
       },
-      button2: button2 ? {
-        ...button2,
-        onClick: () => {
-          if (button2.onClick) {
-            button2.onClick();
+      button2: button2
+        ? {
+            ...button2,
+            onClick: () => {
+              if (button2.onClick) {
+                button2.onClick();
+              }
+              setModal(null);
+              if (onClickButton2To) navigate(onClickButton2To);
+            },
           }
-          setModal(null);
-          if (onClickButton2To) navigate(onClickButton2To);
-        }
-      } : undefined
+        : undefined,
     };
   };
 
@@ -78,16 +86,22 @@ export const ModalProvider = ({ children }) => {
    * @param {Function} [props.onClickYes] - Function to execute when "Yes" button is clicked (optional).
    * @param {Function} [props.onClickNo] - Function to execute when "No" button is clicked (optional).
    */
-  const confirmationModal = ({ body, onClickYesTo = '', onClickNoTo = '', onClickYes = () => { }, onClickNo = () => { } }) => {
+  const confirmationModal = ({
+    body,
+    onClickYesTo = '',
+    onClickNoTo = '',
+    onClickYes = () => {},
+    onClickNo = () => {},
+  }) => {
     const button1 = {
       style: 'success',
       body: <p className="mx-4 my-auto">Si</p>,
-      onClick: onClickYes
+      onClick: onClickYes,
     };
     const button2 = {
       style: 'danger',
       body: <p className="mx-4 my-auto">No</p>,
-      onClick: onClickNo
+      onClick: onClickNo,
     };
     newModal(createModal(body, button1, onClickYesTo, button2, onClickNoTo));
   };
@@ -100,11 +114,11 @@ export const ModalProvider = ({ children }) => {
    * @param {string} [props.onClickTo] - URL to redirect when the button is clicked (optional).
    * @param {Function} [props.onClick] - Function to execute when the button is clicked (optional).
    */
-  const errorModal = ({ body, onClickTo = '', onClick = () => { } }) => {
+  const errorModal = ({ body, onClickTo = '', onClick = () => {} }) => {
     const button1 = {
       style: 'danger',
       body: <p className="mx-4 my-auto">Aceptar</p>,
-      onClick: onClick
+      onClick: onClick,
     };
     newModal(createModal(body, button1, onClickTo));
   };
@@ -117,11 +131,11 @@ export const ModalProvider = ({ children }) => {
    * @param {string} [props.onClickTo] - URL to redirect when the button is clicked (optional).
    * @param {Function} [props.onClick] - Function to execute when the button is clicked (optional).
    */
-  const successModal = ({ body, onClickTo = '', onClick = () => { } }) => {
+  const successModal = ({ body, onClickTo = '', onClick = () => {} }) => {
     const button1 = {
       style: 'success',
       body: <p className="mx-4 my-auto">Aceptar</p>,
-      onClick: onClick
+      onClick: onClick,
     };
     newModal(createModal(body, button1, onClickTo));
   };

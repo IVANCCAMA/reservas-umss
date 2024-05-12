@@ -24,7 +24,7 @@ const EditarAmbientePage = () => {
         .then((response) => {
           setAmbiente(response.data);
           console.log('Ambiente:', response.data);
-          setValue('computadora', response.data.computadora)
+          setValue('computadora', response.data.computadora);
         })
         .catch((error) => {
           console.error('Error al obtener los datos del ambiente:', error);
@@ -117,15 +117,14 @@ const EditarAmbientePage = () => {
     setValue,
   } = useForm({
     resolver: yupResolver(schema),
-    
   });
-  console.log(errors)
+  console.log(errors);
   const removeAccents = (str) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   };
 
   // logic api
-  
+
   const onSubmit = (data) => {
     const filteredDia = Object.fromEntries(
       // eslint-disable-next-line no-unused-vars
@@ -134,7 +133,8 @@ const EditarAmbientePage = () => {
       ),
     );
     const filteredData = {
-      ...data, id_ambiente:id_ambiente,
+      ...data,
+      id_ambiente: id_ambiente,
       tipo: removeAccents(data.tipo.toLowerCase()),
       computadora: data.computadora === '' ? 0 : data.computadora,
       dia: Object.fromEntries(
@@ -145,32 +145,31 @@ const EditarAmbientePage = () => {
       ),
     };
 
-    console.log('filteredDAta', filteredData)
+    console.log('filteredDAta', filteredData);
 
     axios
-        .post(`${baseURL}/ambientes/editar-completo`, filteredData)
-        .then((response) => {
-          console.log('response', response)
-          if (response.status === 200) {
-            successModal({
-              body: (
-                <>
-                  <div>
-                    <img src={iconoExito} />
-                  </div>
-                  <div className="pt-md-3">Cambios guardados con éxito</div>
-                </>
-              ),
-              onClickTo: '/ambientes/listaAmbientes',
-            });
-          } else {
-            errorModal({ content: errorModalContent });
-          }
-        })
-        .catch((error) => {
-          console.error('Error al obtener los ambiente disponibles: ',error);
-          
-        })
+      .post(`${baseURL}/ambientes/editar-completo`, filteredData)
+      .then((response) => {
+        console.log('response', response);
+        if (response.status === 200) {
+          successModal({
+            body: (
+              <>
+                <div>
+                  <img src={iconoExito} />
+                </div>
+                <div className="pt-md-3">Cambios guardados con éxito</div>
+              </>
+            ),
+            onClickTo: '/ambientes/listaAmbientes',
+          });
+        } else {
+          errorModal({ content: errorModalContent });
+        }
+      })
+      .catch((error) => {
+        console.error('Error al obtener los ambiente disponibles: ', error);
+      });
   };
 
   return (
@@ -178,7 +177,7 @@ const EditarAmbientePage = () => {
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
           <h2 className="text-md-center">Editar ambiente</h2>
-          <form className="forms" onSubmit={handleSubmit(onSubmit)} >
+          <form className="forms" onSubmit={handleSubmit(onSubmit)}>
             <div className="my-3">
               <label className="form-label fw-bold">
                 Nombre de ambiente
@@ -211,9 +210,15 @@ const EditarAmbientePage = () => {
                   {...register('tipo')}
                 >
                   <option value="">Seleccione el tipo de ambiente</option>
-                  <option value="aula comun" selected={ambiente.tipo === "aula comun"}>Aula común</option>
-                  <option value="auditorio" selected={ambiente.tipo === "auditorio"}>Auditorio</option>
-                  <option value="laboratorio" selected={ambiente.tipo === "laboratorio"}>Laboratorio</option>
+                  <option value="aula comun" selected={ambiente.tipo === 'aula comun'}>
+                    Aula común
+                  </option>
+                  <option value="auditorio" selected={ambiente.tipo === 'auditorio'}>
+                    Auditorio
+                  </option>
+                  <option value="laboratorio" selected={ambiente.tipo === 'laboratorio'}>
+                    Laboratorio
+                  </option>
                 </select>
               ) : (
                 ''
@@ -292,7 +297,9 @@ const EditarAmbientePage = () => {
                     placeholder="Cap. de minima"
                     {...register('porcentaje_max')}
                   />
-                ) : ('')}
+                ) : (
+                  ''
+                )}
                 {errors.porcentaje_max && (
                   <span className="text-danger">{errors.porcentaje_max.message}</span>
                 )}

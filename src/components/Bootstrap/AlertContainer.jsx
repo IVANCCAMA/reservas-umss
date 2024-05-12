@@ -6,14 +6,11 @@ const AlertContainer = React.forwardRef((props, ref) => {
 
   const addAlert = (style, body, onClose) => {
     const key = new Date().getTime();
-    setAlerts(currentAlerts => [
-      ...currentAlerts,
-      { key, style, body, onClose }
-    ]);
+    setAlerts((currentAlerts) => [...currentAlerts, { key, style, body, onClose }]);
   };
 
-  const removeAlert = key => {
-    setAlerts(currentAlerts => currentAlerts.filter(alert => alert.key !== key));
+  const removeAlert = (key) => {
+    setAlerts((currentAlerts) => currentAlerts.filter((alert) => alert.key !== key));
   };
 
   const removeAllAlerts = () => {
@@ -23,12 +20,12 @@ const AlertContainer = React.forwardRef((props, ref) => {
   // Expose methods through ref
   useImperativeHandle(ref, () => ({
     addAlert,
-    removeAllAlerts
+    removeAllAlerts,
   }));
 
   return (
     <>
-      {alerts.map(alert => (
+      {alerts.map((alert) => (
         <Alert
           key={alert.key}
           style={alert.style}

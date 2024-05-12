@@ -12,7 +12,7 @@ import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 export const ButtonModal = ({ outline = false, style, body, onClick }) => {
   return (
     <button
-      type='button'
+      type="button"
       className={`btn btn${outline ? '-outline' : ''}-${style}`}
       onClick={onClick}
       data-bs-dismiss="modal"
@@ -40,11 +40,11 @@ const Modal = forwardRef((props, ref) => {
       if (modalRef.current) {
         const bsModal = new bootstrap.Modal(modalRef.current, {
           backdrop: 'static',
-          keyboard: false
+          keyboard: false,
         });
         bsModal.show();
       }
-    }
+    },
   }));
 
   return (
@@ -57,14 +57,14 @@ const Modal = forwardRef((props, ref) => {
       aria-labelledby="modalLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog modal-dialog-centered" style={{width: '350px'}}>
+      <div className="modal-dialog modal-dialog-centered" style={{ width: '350px' }}>
         <div className="modal-content pt-md-3">
-          <div className="modal-body text-center">
-            {body}
-          </div>
-          <div className={`modal-footer justify-content-${(button1 && button2) ? 'between' : 'center'}`}>
-            { button1 && <ButtonModal {...button1} />}
-            { button2 && <ButtonModal {...button2} />}
+          <div className="modal-body text-center">{body}</div>
+          <div
+            className={`modal-footer justify-content-${button1 && button2 ? 'between' : 'center'}`}
+          >
+            {button1 && <ButtonModal {...button1} />}
+            {button2 && <ButtonModal {...button2} />}
           </div>
         </div>
       </div>
