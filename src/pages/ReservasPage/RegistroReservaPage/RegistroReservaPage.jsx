@@ -29,7 +29,7 @@ const RegistroReservaPage = () => {
   // aux
   const [users, setUsers] = useState([]);
   const [datalistSolicitante, setDatalistSolicitante] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(user.tipo_usuario === 'ADMINISTRADOR');
   const [tiposAmbiente, setTiposAmbiente] = useState([]);
   const [addAssociates, setAddAssociates] = useState(false);
   const [associatesIds, setAssociatesIds] = useState([]);
@@ -88,7 +88,7 @@ const RegistroReservaPage = () => {
   });
 
   const resetList = () => {
-    setIsAdmin(false);
+    /* setIsAdmin(false); */
     setValue('listaGrupos', []);
     setValue('cantidad_est', 0);
     addedGroupsRef.current?.removeAllAlerts();
@@ -249,7 +249,7 @@ const RegistroReservaPage = () => {
         .then(({ data }) => {
           setGrupos(data);
           if (foundUser.tipo_usuario === 'ADMINISTRADOR') {
-            setIsAdmin(true);
+            /* setIsAdmin(true); */
             setValue('listaGrupos', [data[0]?.id_aux_grupo]);
             setValue('cantidad_est', data[0]?.cantidad_est);
             addedGroupsRef.current?.removeAllAlerts();
