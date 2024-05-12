@@ -49,7 +49,13 @@ const Navbar = () => {
         {isLoggedIn && (
           <div className="d-flex align-items-center">
             <div className="me-2 nombreUsuario nav-item nav-link">{user.nombre_usuario}</div>
-            <Icon icon="ph:user-circle-light" width="45" height="45" style={{ color: '#215F88' }} />
+            <img
+              src={user.foto_usuario}
+              width="45"
+              height="45"
+              style={{ color: '#215F88' }}
+              className="rounded-circle"
+            />
           </div>
         )}
       </div>
