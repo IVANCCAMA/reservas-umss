@@ -42,7 +42,7 @@ const RegistroReservaPage = () => {
   const schema = yup.object().shape({
     solicitante: yup
       .string()
-      .default(user.nombre_usuario)
+      .default(user.tipo_usuario !== 'ADMINISTRADOR' ? user.nombre_usuario : '')
       .required('Ingrese un nombre de un usuario')
       .max(40, 'El nombre debe tener como máximo 40 caracteres'),
     tipo_ambiente: yup.string().default('').required('Seleccione una categoria'),
@@ -88,7 +88,7 @@ const RegistroReservaPage = () => {
   });
 
   const resetList = () => {
-    /* setIsAdmin(false); */
+    setIsAdmin(false);
     setValue('listaGrupos', []);
     setValue('cantidad_est', 0);
     addedGroupsRef.current?.removeAllAlerts();
@@ -249,7 +249,7 @@ const RegistroReservaPage = () => {
         .then(({ data }) => {
           setGrupos(data);
           if (foundUser.tipo_usuario === 'ADMINISTRADOR') {
-            /* setIsAdmin(true); */
+            setIsAdmin(true);
             setValue('listaGrupos', [data[0]?.id_aux_grupo]);
             setValue('cantidad_est', data[0]?.cantidad_est);
             addedGroupsRef.current?.removeAllAlerts();
