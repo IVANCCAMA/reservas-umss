@@ -23,7 +23,7 @@ function App() {
           {/* header */}
           <div className="row m-0 justify-content-center">
             <Navbar />
-            <PrivateRoute>
+            <PrivateRoute forTypeUser={'ALL'}>
               <div className="col-md-2 p-0 pt-5">
                 <Sidebar />
               </div>
@@ -36,7 +36,7 @@ function App() {
                   path="/home"
                   index
                   element={
-                    <PrivateRoute>
+                    <PrivateRoute forTypeUser={'ALL'}>
                       <HomePage />
                     </PrivateRoute>
                   }
@@ -44,7 +44,7 @@ function App() {
                 <Route
                   path="/ambientes/registrarAmbiente"
                   element={
-                    <PrivateRoute>
+                    <PrivateRoute forTypeUser={'ADMINISTRADOR'}>
                       <RegistroAmbientePage />
                     </PrivateRoute>
                   }
@@ -52,19 +52,23 @@ function App() {
                 <Route
                   path="/ambientes/listaAmbientes"
                   element={
-                    <PrivateRoute>
+                    <PrivateRoute forTypeUser={'ALL'}>
                       <ListadoAmbientesPage />
                     </PrivateRoute>
                   }
                 />
                 <Route
                   path="/ambientes/listaAmbientes/fichaAmbiente/:id_ambiente"
-                  element={<FichaInformacionAmbientePage />}
+                  element={
+                    <PrivateRoute forTypeUser={'ALL'}>
+                      <FichaInformacionAmbientePage />
+                    </PrivateRoute>
+                  }
                 />
                 <Route
                   path="/materias/listaMaterias"
                   element={
-                    <PrivateRoute>
+                    <PrivateRoute forTypeUser={'ALL'}>
                       <ListadoMateriasPage />
                     </PrivateRoute>
                   }
@@ -72,7 +76,7 @@ function App() {
                 <Route
                   path="/reservas/reservarAmbiente"
                   element={
-                    <PrivateRoute>
+                    <PrivateRoute forTypeUser={'ALL'}>
                       <RegistroReservaPage />
                     </PrivateRoute>
                   }
@@ -80,7 +84,7 @@ function App() {
                 <Route
                   path="/reservas/reservarAmbiente/ambientesDisponibles"
                   element={
-                    <PrivateRoute>
+                    <PrivateRoute forTypeUser={'ALL'}>
                       <AmbientesDisponiblesPage />
                     </PrivateRoute>
                   }
@@ -88,11 +92,12 @@ function App() {
                 <Route
                   path="/reservas/listaReservas"
                   element={
-                    <PrivateRoute>
+                    <PrivateRoute forTypeUser={'ALL'}>
                       <ListadoReservasPage />
                     </PrivateRoute>
                   }
                 />
+                <Route path="*" element={<div>Page Not Found</div>} />
               </Routes>
             </div>
           </div>
