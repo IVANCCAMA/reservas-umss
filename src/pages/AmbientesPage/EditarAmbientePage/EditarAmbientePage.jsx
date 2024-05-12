@@ -21,7 +21,6 @@ const EditarAmbientePage = () => {
     const loadAmbiente = (id) => {
       axios
         .get(`${baseURL}/disponibles/ambiente/${id}`)
-        //.post(`${baseURL}/ambientes/editar-completo`)
         .then((response) => {
           setAmbiente(response.data);
           console.log('Ambiente:', response.data);
@@ -116,7 +115,6 @@ const EditarAmbientePage = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
-    //watch
   } = useForm({
     resolver: yupResolver(schema),
     
@@ -152,54 +150,27 @@ const EditarAmbientePage = () => {
     axios
         .post(`${baseURL}/ambientes/editar-completo`, filteredData)
         .then((response) => {
-          console.log(response)
-          successModal({
-            body: (
-              <>
-                <div>
-                  <img src={iconoExito} />
-                </div>
-                <div className="pt-md-3">Cambios guardados con éxito</div>
-              </>
-            ),
-          });
+          console.log('response', response)
+          if (response.status === 200) {
+            successModal({
+              body: (
+                <>
+                  <div>
+                    <img src={iconoExito} />
+                  </div>
+                  <div className="pt-md-3">Cambios guardados con éxito</div>
+                </>
+              ),
+              onClickTo: '/ambientes/listaAmbientes',
+            });
+          } else {
+            errorModal({ content: errorModalContent });
+          }
         })
         .catch((error) => {
           console.error('Error al obtener los ambiente disponibles: ',error);
           
         })
-    /* try {
-      console.log('Datos inicial', data);
-      const dataSend = { ...filteredData, id_ambiente}
-      
-
-      
-      console.log('Datos enviados', filteredData);
-
-      //const response = axios.post(`${baseURL}/ambientes/editar-completo`, dataSend);
-
-      //console.log('Respuesta del servidor', response.data);
-
-      if (response.status === 201) {
-        successModal({
-          content: (
-            <>
-              <div>
-                <img src={iconoExito} />
-              </div>
-              <div className="pt-md-3">Cambios guardados con éxito</div>
-            </>
-          ),
-        });
-
-        // eslint-disable-next-line no-unused-vars
-      } else {
-        errorModal({ content: errorModalContent });
-      }
-    } catch (error) {
-      console.log(error);
-      errorModal({ content: errorModalContent });
-    }  */
   };
 
   return (
@@ -235,14 +206,14 @@ const EditarAmbientePage = () => {
               {ambiente.tipo ? (
                 <select
                   className="form-select"
-                  value={ambiente.tipo || ''}
+                  //value={ambiente.tipo}
                   onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
                   {...register('tipo')}
                 >
                   <option value="">Seleccione el tipo de ambiente</option>
-                  <option value="aula comun">Aula común</option>
-                  <option value="auditorio">Auditorio</option>
-                  <option value="laboratorio">Laboratorio</option>
+                  <option value="aula comun" selected={ambiente.tipo === "aula comun"}>Aula común</option>
+                  <option value="auditorio" selected={ambiente.tipo === "auditorio"}>Auditorio</option>
+                  <option value="laboratorio" selected={ambiente.tipo === "laboratorio"}>Laboratorio</option>
                 </select>
               ) : (
                 ''
@@ -337,7 +308,6 @@ const EditarAmbientePage = () => {
                   type="number"
                   className="form-control"
                   placeholder="Escriba el número de computadoras"
-                  //defaultValue={ambiente.computadora === undefined? 0: ambiente.computadora}
                   {...register('computadora')}
                 />
                 {errors.computadora && (
@@ -357,18 +327,6 @@ const EditarAmbientePage = () => {
                   id={`proyector`}
                   defaultChecked={ambiente.proyector}
                   {...register('proyector')}
-                />
-              </div>
-              <div className="col-md">
-                <label className="form-check-label me-md-2 fw-bold" htmlFor={`disponible`}>
-                  Disponiblidad de ambiente
-                </label>
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id={`disponible`}
-                  defaultChecked={ambiente.disponible}
-                  {...register('disponible')}
                 />
               </div>
             </div>
@@ -488,7 +446,7 @@ const EditarAmbientePage = () => {
                         </div>
                       </>
                     ),
-                    onClickYesTo: '/',
+                    onClickYesTo: '/ambientes/listaAmbientes',
                   });
                 }}
                 disabled={isSubmitting}

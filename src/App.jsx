@@ -13,6 +13,7 @@ import EditarAmbientePage from './pages/AmbientesPage/EditarAmbientePage/EditarA
 import BootstrapUI from './components/Bootstrap';
 import ListadoAperturasPage from './pages/AperturasPage/ListadoAperturasPage/ListadoAperturasPage';
 import NotificationProvider from './components/Bootstrap/NotificationContext';
+import PageNotFound from './pages/PageNotFound/PageNotFound';
 
 import LoginPage from './pages/LoginPage/LoginPage';
 import Boot from './redux/boot.js';
@@ -127,7 +128,7 @@ function App() {
                     }
                   />
 
-                  <Route path="*" element={<div>Page Not Found</div>} />
+                  <Route path="*" element={<PageNotFound />} />
                 </Routes>
               </div>
             </NotificationProvider>
