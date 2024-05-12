@@ -32,16 +32,6 @@ const Sidebar = () => {
   const isLoggedIn = useAppSelector((state) => state.auth.token);
   const location = useLocation();
 
-  // init
-  /* let isActive = '';
-  if (to === location.pathname) {
-    isActive = 'active';
-  } */
-  /* 
-  if (typeof jsx !== 'undefined') {
-    return <li className="nav-item">{jsx}</li>;
-  } */
-
   return (
     <div className="sidebar-container">
       <div className="d-flex flex-column flex-shrink-0 p-2 h-100">

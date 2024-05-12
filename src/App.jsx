@@ -28,7 +28,7 @@ function App() {
                 <Sidebar />
               </div>
             </PrivateRoute>
-            <div className="col-md-10 pt-md-5 p-0 main-content">
+            <div className="col-md-10 pt-5 p-0 main-content">
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/" element={<LoginPage />} />

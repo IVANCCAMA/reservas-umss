@@ -59,20 +59,35 @@ const LoginPage = () => {
   return (
     <div className="container login">
       {!isLoggedIn && (
-        <div className="row justify-content-center align-items-center py-md-5">
-          <div className="col-md-5">
+        <div
+          className={`row justify-content-center align-items-center ${
+            authError ? 'py-md-3' : 'py-md-5'
+          }`}
+        >
+          <div className="col-lg-5">
             {authError && (
-              <div className="alert alert-danger p-2 d-flex align-items-center" role="alert">
+              <div
+                className="alert alert-danger p-2 d-flex align-items-center alert-dismissible fade show"
+                role="alert"
+              >
                 <img
-                  className="me-md-2"
+                  className="me-md-2 h-auto"
                   src={iconoError}
                   alt="icono de error"
                   style={{
-                    width: 20,
-                    height: 20,
+                    width: 25,
+                    height: 25,
                   }}
                 />
-                <div>Codigo SIS o contraseña invalido</div>
+                <div className="h-auto">Codigo SIS o contraseña invalido</div>
+                <button
+                  type="button"
+                  className="btn-close h-auto"
+                  aria-label="Close"
+                  onClick={() => {
+                    setAuthError(false);
+                  }}
+                ></button>
               </div>
             )}
             <div className="text-center pb-md-2">
