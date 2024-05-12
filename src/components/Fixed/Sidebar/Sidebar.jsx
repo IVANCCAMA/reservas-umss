@@ -36,8 +36,8 @@ const Sidebar = () => {
       name: 'Aperturas',
       icon: 'carbon:gui-management',
       subs: [
-        { to: '/reservas/reservarAmbiente', name: 'Aperturar sistema' },
-        { to: '/reservas/listaReservas', name: 'Lista de aperturas' },
+        { to: '/aperturas/registrarApertura', name: 'Aperturar sistema' },
+        { to: '/aperturas/listaAperturas', name: 'Lista de aperturas' },
       ],
       forTypeUser: 'ADMINISTRADOR',
       isViewProtected: true,
