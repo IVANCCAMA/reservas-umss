@@ -87,7 +87,7 @@ function App() {
                     }
                   />
                   <Route
-                    path="/reservas/reservarAmbiente/ambientesDisponibles"
+                    path="/reservas/ambientesDisponibles"
                     element={
                       <PrivateRoute forTypeUser={'ALL'}>
                         <AmbientesDisponiblesPage />
