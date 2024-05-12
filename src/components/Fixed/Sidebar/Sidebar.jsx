@@ -1,9 +1,6 @@
-import { useAppSelector } from '../../../redux/app/hooks.js';
 import SidebarOption from './SidebarOption.jsx';
 
 const Sidebar = () => {
-  const isAdmin = useAppSelector((state) => state.auth.usuarios.tipo_usuario) === 'ADMINISTRADOR';
-
   const btns = [
     {
       name: 'Ambientes',
@@ -12,15 +9,17 @@ const Sidebar = () => {
         { to: '/ambientes/registrarAmbiente', name: 'Registrar ambiente' },
         { to: '/ambientes/listaAmbientes', name: 'Lista de ambientes' },
       ],
-      showForAdmin: isAdmin,
+      forTypeUser: 'ADMINISTRADOR',
       to: '/ambientes/listaAmbientes',
+      isViewProtected: false,
     },
     {
       name: 'Materias',
       icon: 'ph:book',
       subs: [{ to: '/materias/listaMaterias', name: 'Lista de materias' }],
-      showForAdmin: isAdmin,
+      forTypeUser: 'ADMINISTRADOR',
       to: '/materias/listaMaterias',
+      isViewProtected: false,
     },
     {
       name: 'Reservas',
@@ -29,7 +28,19 @@ const Sidebar = () => {
         { to: '/reservas/reservarAmbiente', name: 'Reservar ambiente' },
         { to: '/reservas/listaReservas', name: 'Lista de reservas' },
       ],
-      showForAdmin: true,
+      viewSubs: true,
+      forTypeUser: 'ADMINISTRADOR',
+      isViewProtected: false,
+    },
+    {
+      name: 'Aperturas',
+      icon: 'carbon:gui-management',
+      subs: [
+        { to: '/reservas/reservarAmbiente', name: 'Aperturar sistema' },
+        { to: '/reservas/listaReservas', name: 'Lista de aperturas' },
+      ],
+      forTypeUser: 'ADMINISTRADOR',
+      isViewProtected: true,
     },
   ];
 
@@ -45,7 +56,9 @@ const Sidebar = () => {
               icon={btn.icon}
               subOptions={btn.subs}
               to={btn.to}
-              showForAdmin={btn.showForAdmin}
+              forTypeUser={btn.forTypeUser}
+              viewSubs={btn.viewSubs}
+              isViewProtected={btn.isViewProtected}
             />
           ))}
         </ul>
