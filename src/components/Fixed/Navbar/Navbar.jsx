@@ -7,6 +7,7 @@ import { useAppSelector } from '../../../redux/app/hooks';
 
 const Navbar = () => {
   const isLoggedIn = useAppSelector((state) => state.auth.token);
+  const user = useAppSelector((state) => state.auth.usuarios);
 
   return (
     <div
@@ -47,7 +48,7 @@ const Navbar = () => {
         </div>
         {isLoggedIn && (
           <div className="d-flex align-items-center">
-            <div className="me-2 nombreUsuario nav-item nav-link">User name</div>
+            <div className="me-2 nombreUsuario nav-item nav-link">{user.nombre_usuario}</div>
             <Icon icon="ph:user-circle-light" width="45" height="45" style={{ color: '#215F88' }} />
           </div>
         )}
