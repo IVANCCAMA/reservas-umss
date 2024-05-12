@@ -55,12 +55,16 @@ h1 {
       padding-right: 0;
     }
   }
-}
 
-/* .container-md {
-  max-width: 1920px;
+  .header-navbar {
+    .contacto,
+    .sobreNosotros,
+    .nombreUsuario {
+      // ocultar elementos
+      display: none;
+    }
+  }
 }
- */
 
 .registro-ambientes {
   .form-check-input {
@@ -90,9 +94,9 @@ h1 {
 }
 
 .btn-danger {
-  background: #FF0000;
+  background: #ff0000;
   --bs-btn-hover-bg: #df1717;
-  --bs-btn-border-color: #FF0000;
+  --bs-btn-border-color: #ff0000;
 }
 
 .iconAlert {
@@ -103,7 +107,7 @@ h1 {
   width: 80px;
 }
 
-.Fecha  {
+.Fecha {
   min-width: 110px;
 }
 
@@ -112,9 +116,23 @@ h1 {
 }
 
 .Min-Capacidad-Max {
-  min-width: 185px
+  min-width: 185px;
 }
 
 .Materia {
-  min-width: 150px
+  min-width: 150px;
+}
+
+.login {
+  .bg-login {
+    background: #e1f4ff;
+  }
+  img {
+    width: 180px;
+    height: auto;
+  }
+
+  .btn-primary {
+    --bs-btn-bg: #0691f6;
+  }
 }
