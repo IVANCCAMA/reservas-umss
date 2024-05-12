@@ -55,12 +55,16 @@ h1 {
       padding-right: 0;
     }
   }
-}
 
-/* .container-md {
-  max-width: 1920px;
+  .header-navbar {
+    .contacto,
+    .sobreNosotros,
+    .nombreUsuario {
+      // ocultar elementos
+      display: none;
+    }
+  }
 }
- */
 
 .registro-ambientes {
   .form-check-input {
