@@ -141,7 +141,6 @@ const RegistroAmbientePage = () => {
   // logic api
   const onSubmit = async (data) => {
     try {
-      console.log('Datos inicial', data);
       const filteredDia = Object.fromEntries(
         // eslint-disable-next-line no-unused-vars
         Object.entries(data.dia).filter(([key, value]) =>
@@ -161,11 +160,7 @@ const RegistroAmbientePage = () => {
         ),
       };
 
-      console.log('Datos enviados', filteredData);
-
       const response = await axios.post(`${baseURL}/ambientes/completo`, filteredData);
-
-      console.log(response);
 
       if (response.status === 201) {
         successModal({

@@ -34,7 +34,6 @@ const LoginPage = () => {
   // effects
   useEffect(() => {
     if (isLoggedIn) {
-      console.log('Logeado, navegando a inicio');
       navigate('/home');
     }
   }, [isLoggedIn, navigate]);

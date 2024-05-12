@@ -25,7 +25,6 @@ function App() {
     <BrowserRouter>
       <BootstrapUI>
         <div className="App container-fluid p-0 position-relative">
-          {/* header */}
           <div className="row m-0 justify-content-center">
             <Navbar />
             <PrivateRoute forTypeUser={'ALL'}>

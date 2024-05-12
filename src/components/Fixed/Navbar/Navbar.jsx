@@ -1,8 +1,5 @@
-/* import { Link } from "react-router-dom";
- */
 import { Link } from 'react-router-dom';
 import logo from '../../../assets/Images/logoReserBit.png';
-import { Icon } from '@iconify/react/dist/iconify.js';
 import { useAppSelector } from '../../../redux/app/hooks';
 
 const Navbar = () => {

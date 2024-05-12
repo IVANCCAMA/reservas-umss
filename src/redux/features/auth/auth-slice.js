@@ -4,7 +4,6 @@ import { storageDelete, storageGet, storageSave } from '../../Storage/Storage.js
 
 export const loginRequest = createAsyncThunk('auth/loginRequest', async (userLoginAttempt) => {
   const response = await authLogin(userLoginAttempt);
-  /* console.log('Logeando...', response.data); */
   return response.data;
 });
 
@@ -33,13 +32,10 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    /* console.log('intentado extraReducers', builder); */
     builder.addCase(loginRequest.fulfilled, (state, action) => {
-      /* console.log('intentadooooo', action); */
       /* Simulación de token */
       action.payload.token = crypto.randomUUID();
       if (action.payload.usuarios && action.payload.token) {
-        /* console.log('extraReducers>>>', action.payload.usuarios); */
         state.usuarios = action.payload.usuarios;
         state.token = action.payload.token;
         storageSave('usuarios', action.payload.usuarios);

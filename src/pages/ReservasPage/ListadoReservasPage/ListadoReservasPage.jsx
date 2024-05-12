@@ -21,7 +21,6 @@ const ListadoMateriasPage = () => {
     axios
       .get(`${baseURL}/reservas/lista_reservas`)
       .then((response) => {
-        console.log(response);
         setReservas(
           response.data.map((reserv) => {
             return {
