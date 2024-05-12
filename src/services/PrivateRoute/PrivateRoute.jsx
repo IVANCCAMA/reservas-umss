@@ -1,6 +1,7 @@
 import { useAppSelector } from '../../redux/app/hooks.js';
 import { Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import PageNotFound from '../../pages/PageNotFound/PageNotFound.jsx';
 
 const PrivateRoute = ({ children, forTypeUser }) => {
   const isLoggedIn = useAppSelector((state) => state.auth.token);
@@ -19,7 +20,7 @@ const PrivateRoute = ({ children, forTypeUser }) => {
       return children;
     }
   }
-  return <div>Page Not Found</div>;
+  return <PageNotFound />;
 };
 PrivateRoute.propTypes = {
   children: PropTypes.node,
