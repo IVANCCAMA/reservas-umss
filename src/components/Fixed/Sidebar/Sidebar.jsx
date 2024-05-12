@@ -83,7 +83,7 @@ const Sidebar = () => {
               dispatch(logout());
             }}
           >
-            <span className="me-md-2">
+            <span className="me-2">
               <Icon
                 icon="solar:logout-2-outline"
                 width="30"
