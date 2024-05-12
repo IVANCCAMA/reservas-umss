@@ -9,14 +9,15 @@ import RegistroAmbientePage from './pages/AmbientesPage/RegistroAmbientePage/Reg
 import RegistroReservaPage from './pages/ReservasPage/RegistroReservaPage/RegistroReservaPage';
 import AmbientesDisponiblesPage from './pages/ReservasPage/RegistroReservaPage/AmbientesDisponiblesPage';
 import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/ListadoReservasPage';
-import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPAge';
-import ListadoAperturaPage from './pages/AperturasPage/ListadoAperturaPage/ListadoAperturaPage';
+import EditarAmbientePage from './pages/AmbientesPage/EditarAmbientePage/EditarAmbientePage';
 import BootstrapUI from './components/Bootstrap';
+import ListadoAperturasPage from './pages/AperturasPage/ListadoAperturasPage/ListadoAperturasPage';
 import NotificationProvider from './components/Bootstrap/NotificationContext';
 
 import LoginPage from './pages/LoginPage/LoginPage';
 import Boot from './redux/boot.js';
-import PrivateRoute from './services/PrivateRoute/PrivateRoute.jsx';
+import PrivateRoute from './services/PrivateRoute/PrivateRoute';
+import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPage.jsx';
 
 function App() {
   return (
@@ -101,6 +102,31 @@ function App() {
                       </PrivateRoute>
                     }
                   />
+                  <Route
+                    path="/ambientes/listaAmbientes/editar/:id_ambiente"
+                    element={
+                      <PrivateRoute forTypeUser={'ADMINISTRADOR'}>
+                        <EditarAmbientePage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/aperturas/registrarApertura"
+                    element={
+                      <PrivateRoute forTypeUser={'ADMINISTRADOR'}>
+                        <RegistroAperturaPage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/aperturas/listaAperturas"
+                    element={
+                      <PrivateRoute forTypeUser={'ADMINISTRADOR'}>
+                        <ListadoAperturasPage />
+                      </PrivateRoute>
+                    }
+                  />
+
                   <Route path="*" element={<div>Page Not Found</div>} />
                 </Routes>
               </div>

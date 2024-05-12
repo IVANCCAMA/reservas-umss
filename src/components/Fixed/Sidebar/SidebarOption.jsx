@@ -83,15 +83,15 @@ const SidebarOption = ({ index, option, subOptions, icon, showForAdmin, to }) =>
   } else {
     return (
       <li key={index} className="nav-item w-100">
-        <Link
-          to={to}
-          className="btn d-inline-flex w-100 d-flex align-items-center collapsed justify-content-between "
-        >
-          <div>
-            <Icon icon={icon} width="45" height="45" style={{ color: '#215f88' }} />
-            <span className="ms-2">{option}</span>
-          </div>
-        </Link>
+          <Link
+            to={to}
+            className="btn d-inline-flex w-100 d-flex align-items-center collapsed justify-content-between "
+          >
+            <div>
+              <Icon icon={icon} width="45" height="45" style={{ color: '#215f88' }} />
+              <span className="ms-2">{option}</span>
+            </div>
+          </Link>
       </li>
     );
   }

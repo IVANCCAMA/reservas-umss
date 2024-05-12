@@ -7,7 +7,6 @@ import Pagination from '../../../components/Pagination/Pagination';
 import { useModal } from '../../../components/Bootstrap/ModalContext';
 import { Icon } from '@iconify/react';
 import iconoError from '../../../assets/Images/iconoError.png';
-import iconoExito from '../../../assets/Images/iconoExito.png';
 
 const AmbientesDisponibles = () => {
   const navigate = useNavigate();
@@ -17,7 +16,7 @@ const AmbientesDisponibles = () => {
   const formData = location.state;
   // console.log(formData);
   const { confirmationModal, errorModal, successModal } = useModal();
-
+  console.log(formData);
   const confirmSelect = (amb) => {
     // show modal confirm
     confirmationModal({
@@ -39,9 +38,12 @@ const AmbientesDisponibles = () => {
         // register new reserva
         axios
           .post(`${database}/reservas/crear/`, {
-            ...formData,
-            listaGrupos: formData.listaGrupos.map((group) => parseInt(group, 10)),
             id_disponible: amb.id_disponible,
+            fecha_reserva: formData.fecha_reserva,
+            motivo: formData.motivo,
+            listaGrupos: formData.listaGrupos,
+            id_apertura: formData.apertura.id,
+            cantidad_total: formData.cantidad_est
           })
           .then((response) => {
             console.log('enviado', formData);
@@ -49,9 +51,7 @@ const AmbientesDisponibles = () => {
             console.log(response.data);
             successModal({
               body: (<>
-                {/* <img src={iconoExito} /> */}
-                <Icon icon="gg:check-o" style={{ color: '#0fa958' }} />
-                <Icon icon="fa-regular:check-circle" style={{ color: '#0fa958' }} />
+                <Icon icon="gg:check-o" style={{ color: '#0fa958', height: '90px', width: '90px' }} />
                 <div className="pt-md-3">Registro de reserva<br />exitoso</div>
               </>),
               // redirect
@@ -60,11 +60,6 @@ const AmbientesDisponibles = () => {
           })
           .catch((error) => {
             console.error('Error al registrar reserva:', error);
-            console.log({
-              ...formData,
-              listaGrupos: formData.listaGrupos.map((group) => parseInt(group, 10)),
-              id_disponible: amb.id_disponible,
-            });
             errorModal({
               body: (<>
                 <img src={iconoError} />
@@ -107,7 +102,7 @@ const AmbientesDisponibles = () => {
             type="button"
             className="btn btn-primary boton-style w-auto text-center me-md-3 rounded"
             onClick={() => {
-              navigate('/reservas/reservarAmbiente', {state: {...formData}});
+              navigate('/reservas/reservarAmbiente', { state: { ...formData } });
             }}
           >
             Volver al formulario
