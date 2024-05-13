@@ -113,7 +113,7 @@ function App() {
                   <Route
                     path="/aperturas/registrarApertura"
                     element={
-                      <PrivateRoute forTypeUser={'ADMINISTRADOR'}>
+                      <PrivateRoute>
                         <RegistroAperturaPage />
                       </PrivateRoute>
                     }
