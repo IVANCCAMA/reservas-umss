@@ -90,7 +90,7 @@ const horarios = [
     ],
   },
   {
-    nombre: 'Miércoles',
+    nombre: 'Miercoles',
     periodos: [
       {
         id: 1,

@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
 
-function BootstrapAlert({ type, body, onClose }) {
+function Alert({ style, body, onClose }) {
   const alertRef = useRef(null);
 
   const handleCloseClick = () => {
-   onClose?.();
+    onClose?.();
     try {
       const bsAlert = new window.bootstrap.Alert(alertRef.current);
       bsAlert.close();
@@ -14,7 +14,11 @@ function BootstrapAlert({ type, body, onClose }) {
   };
 
   return (
-    <div ref={alertRef} className={`mb-1 px-3 py-1 alert alert-${type} alert-dismissible fade show`} role="alert">
+    <div
+      ref={alertRef}
+      className={`mb-1 px-3 py-1 alert alert-${style} alert-dismissible fade show`}
+      role="alert"
+    >
       {body}
       <button
         type="button"
@@ -26,4 +30,4 @@ function BootstrapAlert({ type, body, onClose }) {
   );
 }
 
-export default BootstrapAlert;
+export default Alert;

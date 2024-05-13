@@ -28,7 +28,7 @@ const RegistroAmbientePage = () => {
     loadAmbientes();
   }, []);
 
-  const errorModalContent = (
+  const errorModalBody = (
     <>
       <div>
         <img src={iconoError} />
@@ -141,7 +141,6 @@ const RegistroAmbientePage = () => {
   // logic api
   const onSubmit = async (data) => {
     try {
-      console.log('Datos inicial', data);
       const filteredDia = Object.fromEntries(
         // eslint-disable-next-line no-unused-vars
         Object.entries(data.dia).filter(([key, value]) =>
@@ -161,15 +160,11 @@ const RegistroAmbientePage = () => {
         ),
       };
 
-      console.log('Datos enviados', filteredData);
-
       const response = await axios.post(`${baseURL}/ambientes/completo`, filteredData);
-
-      console.log(response);
 
       if (response.status === 201) {
         successModal({
-          content: (
+          body: (
             <>
               <div>
                 <img src={iconoExito} />
@@ -200,11 +195,11 @@ const RegistroAmbientePage = () => {
           });
         });
       } else {
-        errorModal({ content: errorModalContent });
+        errorModal({ body: errorModalBody });
       }
     } catch (error) {
       console.log(error);
-      errorModal({ content: errorModalContent });
+      errorModal({ body: errorModalBody });
     }
   };
 
@@ -215,8 +210,9 @@ const RegistroAmbientePage = () => {
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
           <h2 className="text-md-center">Registrar ambientes</h2>
+
           <form className="forms" onSubmit={handleSubmit(onSubmit)} noValidate>
-            <div className="my-3">
+            <div className="input-component">
               <label className="form-label fw-bold">
                 Nombre de ambiente
                 <span className="text-danger ms-1">*</span>
@@ -232,7 +228,7 @@ const RegistroAmbientePage = () => {
                 <span className="text-danger">{errors.nombre_ambiente.message}</span>
               )}
             </div>
-            <div className="my-3">
+            <div className="input-component">
               <label className="form-label fw-bold">
                 Tipo de ambiente <span className="text-danger ms-1">*</span>
               </label>
@@ -248,7 +244,7 @@ const RegistroAmbientePage = () => {
               </select>
               {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
-            <div className="my-3">
+            <div className="input-component">
               <label className="form-label fw-bold">
                 Ubicación
                 <span>
@@ -271,7 +267,7 @@ const RegistroAmbientePage = () => {
               />
             </div>
             <div className="row">
-              <div className="my-3 col-md-6">
+              <div className="input-component col-md-6">
                 <label className="form-label fw-bold">
                   Capacidad de estudiantes <span className="text-danger ms-1">*</span>
                 </label>
@@ -285,7 +281,7 @@ const RegistroAmbientePage = () => {
                   <span className="text-danger">{errors.capacidad.message}</span>
                 )}
               </div>
-              <div className="my-3 col-md-3">
+              <div className="input-component col-md-3">
                 <label className="form-label fw-bold">
                   Min (%)<span className="text-danger ms-1">*</span>
                 </label>
@@ -300,7 +296,7 @@ const RegistroAmbientePage = () => {
                   <span className="text-danger">{errors.porcentaje_min.message}</span>
                 )}
               </div>
-              <div className="my-3 col-md-3">
+              <div className="input-component col-md-3">
                 <label className="form-label fw-bold">
                   Max (%)<span className="text-danger ms-1">*</span>
                 </label>
@@ -318,7 +314,7 @@ const RegistroAmbientePage = () => {
             </div>
 
             {tipoAmbiente === 'Laboratorio' && (
-              <div className="my-3">
+              <div className="input-component">
                 <label className="form-label fw-bold">
                   Nº Computadoras <span className="text-danger ms-1">*</span>
                 </label>
@@ -360,7 +356,7 @@ const RegistroAmbientePage = () => {
             </div>
 
             {/* Horarios */}
-            <div className="my-3">
+            <div className="input-component">
               <label className="form-label fw-bold">
                 Días y horarios disponibles <span className="text-danger ms-1">*</span>
               </label>
@@ -453,7 +449,7 @@ const RegistroAmbientePage = () => {
                 type="button"
                 onClick={() => {
                   confirmationModal({
-                    content: (
+                    body: (
                       <>
                         <div>
                           <img src={iconoError} />

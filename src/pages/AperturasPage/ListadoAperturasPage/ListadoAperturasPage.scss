@@ -1,0 +1,18 @@
+.listado-aperturas {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+}
+
+.pagination {
+  --bs-link-color: #215f88;
+  a {
+    font-weight: 300;
+  }
+  --bs-border-radius: 0;
+  .page-item {
+    color: #215f88;
+    .active {
+      background-color: #215f88;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-const ModalForm = ({ id, content, handleConfirm = () => { }, imgIcon, btnColor }) => {
+const ModalForm = ({ id, body, handleConfirm = () => {}, imgIcon, btnColor }) => {
   return (
     <div
       className="modal fade"
@@ -17,7 +17,7 @@ const ModalForm = ({ id, content, handleConfirm = () => { }, imgIcon, btnColor }
                 <img src={imgIcon} alt="icono mensaje" />
               </div>
             )}
-            <div className="py-md-3">{content}</div>
+            <div className="py-md-3">{body}</div>
             <div className="d-flex justify-content-center">
               <button
                 type="button"

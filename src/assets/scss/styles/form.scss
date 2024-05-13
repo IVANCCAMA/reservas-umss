@@ -1,0 +1,49 @@
+.form-component {
+  > * {
+    margin-top: 1rem;
+  }
+
+  @keyframes show {
+    from {
+      height: 0;
+      transform: scale(0);
+      // margin-top: 0 !important;
+    }
+
+    to {
+      height: auto;
+      transform: scale(1);
+      margin-top: 1rem !important;
+    }
+  }
+
+  @keyframes hidden {
+    from {
+      height: auto;
+      transform: scale(1);
+      // margin-top: 1rem !important;
+    }
+
+    to {
+      height: 0;
+      transform: scale(0);
+      margin-top: 0 !important;
+    }
+  }
+
+  .component-animation {
+    margin-top: 0 !important;
+    animation: hidden 0.5s forwards;
+  }
+
+  .component-animation.show {
+    margin-top: 1rem !important;
+    animation: show 0.5s forwards;
+  }
+}
+
+.input-component {
+  /* background-color: azure; */
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}

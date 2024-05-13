@@ -3,12 +3,16 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
+import { useAppSelector } from '../../../redux/app/hooks';
 
 const ListadoMateriasPage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
 
   const [pageNumber, setPageNumber] = useState(1);
   const [reservas, setReservas] = useState([{}]);
+
+  //redux
+  const user = useAppSelector((state) => state.auth.usuarios);
 
   // >>> FUTURO : FILTROS <<<
   // obtener valores de un key
@@ -18,20 +22,24 @@ const ListadoMateriasPage = () => {
   // const keyUnicos = [...new Set(materiasKey)];
 
   const loadMaterias = () => {
+    let apiUsuario = '/lista_reservas';
+    if (user.tipo_usuario !== 'ADMINISTRADOR') {
+      apiUsuario = `/reserva-usuario/${user.id_usuario}`;
+    }
+
     axios
-      .get(`${baseURL}/reservas/lista_reservas`)
+      .get(`${baseURL}/reservas${apiUsuario}`)
       .then((response) => {
-        console.log(response);
         setReservas(
           response.data.map((reserv) => {
             return {
               Solicitante: reserv.nombre_usuario,
               Fecha: reserv.fecha_reserva.slice(0, 10),
               Horario: `${reserv.hora_inicio.slice(0, 5)} - ${reserv.hora_fin.slice(0, 5)}`,
-              "Materia - Grupo": reserv.nombre_materia,
-              Cantidad: reserv.cantidad_est, 
+              'Materia - Grupo': reserv.nombre_materia,
+              Cantidad: reserv.cantidad_est,
               Ambiente: reserv.nombre_ambiente,
-              "Min-Capacidad-Max": reserv.min_cap_max,
+              'Min-Capacidad-Max': reserv.min_cap_max,
             };
           }),
         );

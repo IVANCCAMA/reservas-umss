@@ -7,7 +7,6 @@ import Pagination from '../../../components/Pagination/Pagination';
 import { useModal } from '../../../components/Bootstrap/ModalContext';
 import { Icon } from '@iconify/react';
 import iconoError from '../../../assets/Images/iconoError.png';
-import iconoExito from '../../../assets/Images/iconoExito.png';
 
 const AmbientesDisponibles = () => {
   const navigate = useNavigate();
@@ -20,7 +19,7 @@ const AmbientesDisponibles = () => {
   const confirmSelect = (amb) => {
     // show modal confirm
     confirmationModal({
-      content: (
+      body: (
         <>
           <div className="position-absolute">
             <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
@@ -40,20 +39,22 @@ const AmbientesDisponibles = () => {
         // register new reserva
         axios
           .post(`${database}/reservas/crear/`, {
-            ...formData,
-            listaGrupos: formData.listaGrupos.map((group) => parseInt(group, 10)),
             id_disponible: amb.id_disponible,
+            fecha_reserva: formData.fecha_reserva,
+            motivo: formData.motivo,
+            listaGrupos: formData.listaGrupos,
+            id_apertura: formData.apertura.id,
+            cantidad_total: formData.cantidad_est,
           })
           .then((response) => {
-            console.log('enviado', formData);
             // success
-            console.log(response.data);
             successModal({
-              content: (
+              body: (
                 <>
-                  <div>
-                    <img src={iconoExito} />
-                  </div>
+                  <Icon
+                    icon="gg:check-o"
+                    style={{ color: '#0fa958', height: '90px', width: '90px' }}
+                  />
                   <div className="pt-md-3">
                     Registro de reserva
                     <br />
@@ -66,13 +67,11 @@ const AmbientesDisponibles = () => {
             });
           })
           .catch((error) => {
-            console.error('Error al obtener las materias y grupos:', error);
+            console.error('Error al registrar reserva:', error);
             errorModal({
-              content: (
+              body: (
                 <>
-                  <div>
-                    <img src={iconoError} />
-                  </div>
+                  <img src={iconoError} />
                   <div className="pt-md-3">
                     Error al registrar
                     <br />
@@ -119,7 +118,7 @@ const AmbientesDisponibles = () => {
             type="button"
             className="btn btn-primary boton-style w-auto text-center me-md-3 rounded"
             onClick={() => {
-              navigate('/reservas/reservarAmbiente');
+              navigate('/reservas/reservarAmbiente', { state: { ...formData } });
             }}
           >
             Volver al formulario
