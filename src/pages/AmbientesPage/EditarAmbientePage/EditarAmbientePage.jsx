@@ -23,7 +23,6 @@ const EditarAmbientePage = () => {
         .get(`${baseURL}/disponibles/ambiente/${id}`)
         .then((response) => {
           setAmbiente(response.data);
-          console.log('Ambiente:', response.data);
           setValue('computadora', response.data.computadora);
         })
         .catch((error) => {
@@ -118,7 +117,6 @@ const EditarAmbientePage = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  console.log(errors);
   const removeAccents = (str) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   };
@@ -145,12 +143,9 @@ const EditarAmbientePage = () => {
       ),
     };
 
-    console.log('filteredDAta', filteredData);
-
     axios
       .post(`${baseURL}/ambientes/editar-completo`, filteredData)
       .then((response) => {
-        console.log('response', response);
         if (response.status === 200) {
           successModal({
             body: (
@@ -205,20 +200,14 @@ const EditarAmbientePage = () => {
               {ambiente.tipo ? (
                 <select
                   className="form-select"
-                  //value={ambiente.tipo}
+                  defaultValue={ambiente.tipo}
                   onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
                   {...register('tipo')}
                 >
                   <option value="">Seleccione el tipo de ambiente</option>
-                  <option value="aula comun" selected={ambiente.tipo === 'aula comun'}>
-                    Aula común
-                  </option>
-                  <option value="auditorio" selected={ambiente.tipo === 'auditorio'}>
-                    Auditorio
-                  </option>
-                  <option value="laboratorio" selected={ambiente.tipo === 'laboratorio'}>
-                    Laboratorio
-                  </option>
+                  <option value="aula comun">Aula común</option>
+                  <option value="auditorio">Auditorio</option>
+                  <option value="laboratorio">Laboratorio</option>
                 </select>
               ) : (
                 ''
@@ -242,6 +231,7 @@ const EditarAmbientePage = () => {
                 rows={2}
                 maxLength={350}
                 type="text"
+                placeholder="Escriba la ubicación del ambiente"
                 className="form-control"
                 defaultValue={ambiente.ubicacion || ''}
                 {...register('ubicacion')}
