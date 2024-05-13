@@ -3,12 +3,16 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
+import { useAppSelector } from '../../../redux/app/hooks';
 
 const ListadoMateriasPage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
 
   const [pageNumber, setPageNumber] = useState(1);
   const [reservas, setReservas] = useState([{}]);
+
+  //redux
+  const user = useAppSelector((state) => state.auth.usuarios);
 
   // >>> FUTURO : FILTROS <<<
   // obtener valores de un key
@@ -18,8 +22,13 @@ const ListadoMateriasPage = () => {
   // const keyUnicos = [...new Set(materiasKey)];
 
   const loadMaterias = () => {
+    let apiUsuario = '/lista_reservas';
+    if (user.tipo_usuario !== 'ADMINISTRADOR') {
+      apiUsuario = `/reserva-usuario/${user.id_usuario}`;
+    }
+
     axios
-      .get(`${baseURL}/reservas/lista_reservas`)
+      .get(`${baseURL}/reservas${apiUsuario}`)
       .then((response) => {
         setReservas(
           response.data.map((reserv) => {
