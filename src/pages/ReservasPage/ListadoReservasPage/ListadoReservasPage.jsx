@@ -12,7 +12,7 @@ const ListadoMateriasPage = () => {
   const [reservas, setReservas] = useState([{}]);
 
   //redux
-  const user = useAppSelector((state) => state.auth.usuarios);
+  const user = useAppSelector((state) => state.auth.usuario);
 
   // >>> FUTURO : FILTROS <<<
   // obtener valores de un key

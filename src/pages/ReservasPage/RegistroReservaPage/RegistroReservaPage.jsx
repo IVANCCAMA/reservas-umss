@@ -18,7 +18,7 @@ import { Icon } from '@iconify/react';
 import { useAppSelector } from '../../../redux/app/hooks';
 
 const RegistroReservaPage = () => {
-  const user = useAppSelector((state) => state.auth.usuarios);
+  const user = useAppSelector((state) => state.auth.usuario);
   const database = 'https://backendtis-production.up.railway.app/api';
   const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
 

@@ -30,6 +30,11 @@ const LoginPage = () => {
   let navigate = useNavigate();
   //redux
   const isLoggedIn = useAppSelector((state) => state.auth.token);
+  /*   console.log('token >>', isLoggedIn); */
+
+  const user = useAppSelector((state) => state.auth.usuario);
+  /* console.log('user >>', user); */
+
   const dispatch = useAppDispatch();
   // effects
   useEffect(() => {
