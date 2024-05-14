@@ -17,6 +17,11 @@ const ListadoMateriasPage = () => {
   // const keyUnicos = [...new Set(materiasKey)];
 
   const loadMaterias = () => {
+    /* let apiUsuario = '/grupos/tablamaterias';
+    if (user.tipo_usuario !== 'ADMINISTRADOR') {
+      apiUsuario = `/reserva-usuario/${user.id_usuario}`;
+    } */
+
     axios
       .get(`${baseURL}/grupos/tablamaterias`)
       .then((response) => {

@@ -42,6 +42,7 @@ const TextInput = React.forwardRef<
       autoComplete = undefined,
       datalist = undefined,
       error = undefined,
+      disabled = false,
     },
     ref,
   ) => (
@@ -57,6 +58,7 @@ const TextInput = React.forwardRef<
         id={name}
         name={name}
         list={`datalist-${name}`}
+        disabled={disabled}
         className="form-control"
         onChange={(e) => {
           const newValue = handleChange(e.target.value);
