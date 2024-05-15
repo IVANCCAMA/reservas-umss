@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
 import Modal, { ButtonModal } from './Modal';
 import { useNavigate } from 'react-router-dom';
-import iconoError from '../../assets/Images/iconoError.png';
-import iconoExito from '../../assets/Images/iconoExito.png';
 
 // Crea el contexto sin tipo definido y con valor inicial undefined
 const ModalContext = createContext(undefined);
@@ -48,20 +46,20 @@ export const ModalProvider = ({ children }) => {
       button1: {
         ...button1,
         onClick: () => {
+          setModal(null);
           if (button1.onClick) {
             button1.onClick();
           }
-          setModal(null);
           if (onClickButton1To) navigate(onClickButton1To);
         }
       },
       button2: button2 ? {
         ...button2,
         onClick: () => {
+          setModal(null);
           if (button2.onClick) {
             button2.onClick();
           }
-          setModal(null);
           if (onClickButton2To) navigate(onClickButton2To);
         }
       } : undefined
