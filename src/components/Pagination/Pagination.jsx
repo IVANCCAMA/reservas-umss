@@ -14,10 +14,7 @@ export default function Pagination({ pageNumber, setPageNumber, lastPage }) {
       <ul className="pagination justify-content-md-end p-md-0 flex-wrap">
         {pageNumber == 1 ? null : (
           <li className="page-item">
-            <button
-              className="page-link"
-              onClick={() => setPageNumber(pageNumber - 1)}
-            >
+            <button className="page-link" onClick={() => setPageNumber(pageNumber - 1)}>
               Anterior
             </button>
           </li>
@@ -45,10 +42,7 @@ export default function Pagination({ pageNumber, setPageNumber, lastPage }) {
                 key={`page-item-${index}`}
                 className={`page-item${pageNumber == page.num && ' active'}`}
               >
-                <button
-                  className="page-link"
-                  onClick={() => setPageNumber(page.num)}
-                >
+                <button className="page-link" onClick={() => setPageNumber(page.num)}>
                   {`${page.text}`}
                 </button>
               </li>
@@ -72,10 +66,7 @@ export default function Pagination({ pageNumber, setPageNumber, lastPage }) {
 
         {pageNumber < lastPage && (
           <li className="page-item">
-            <button
-              className="page-link"
-              onClick={() => setPageNumber(pageNumber + 1)}
-            >
+            <button className="page-link" onClick={() => setPageNumber(pageNumber + 1)}>
               Siguiente
             </button>
           </li>

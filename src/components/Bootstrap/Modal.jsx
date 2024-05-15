@@ -12,7 +12,7 @@ import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 export const ButtonModal = ({ outline = false, style, body, onClick }) => {
   return (
     <button
-      type='button'
+      type="button"
       className={`btn btn${outline ? '-outline' : ''}-${style}`}
       onClick={onClick}
       data-bs-dismiss="modal"
@@ -44,7 +44,7 @@ const Modal = forwardRef((props, ref) => {
         });
         bsModal.show();
       }
-    }
+    },
   }));
 
   return (

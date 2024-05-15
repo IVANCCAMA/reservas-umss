@@ -1,48 +1,43 @@
 .listado-ambientes {
-    font-family: 'Roboto', sans-serif;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+}
+
+.pagination {
+  --bs-link-color: #215f88;
+  a {
     font-weight: 300;
   }
-  
-  .pagination {
-    --bs-link-color: #215f88;
-    a {
-      font-weight: 300;
-    }
-    --bs-border-radius: 0;
-    .page-item {
-      color: #215f88;
-      .active {
-        background-color: #215f88;
-      }
+  --bs-border-radius: 0;
+  .page-item {
+    color: #215f88;
+    .active {
+      background-color: #215f88;
     }
   }
-  
-  .boton-style {
+}
+
+.boton-style {
+  align-items: center;
+  background-color: #0fa958;
+
+  .boton-icon {
     align-items: center;
-    background-color: #0FA958;
-
-    .boton-icon{
-
-      align-items: center;
-      width: 1.5rem;
-      height: 1.5rem;
-      color: white;
-    }
+    width: 1.5rem;
+    height: 1.5rem;
+    color: white;
   }
+}
 
-  .boton-editar {
+.boton-editar {
+  width: 80px;
+  align-items: center;
+  background-color: #ffca2c;
+
+  .boton-icon {
     align-items: center;
-    background-color: #FFCA2C;
-
-    .boton-icon{
-
-      align-items: center;
-      width: 1.5rem;
-      height: 1.5rem;
-      color: white;
-    }
+    width: 1.5rem;
+    height: 1.5rem;
+    color: white;
   }
-
-  
-
-
+}

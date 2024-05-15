@@ -28,11 +28,18 @@ export const NotificationProvider = ({ children }) => {
    * @param {function} [props.onTimeout=() => {}] - The callback function to be called when the notification times out.
    * @param {function} [props.afterTimeout=() => {}] - The callback function to be called after the notification is closed.
    */
-  const createNotification = ({ style = 'primary', body, disableFullscreen = false, timeout = 2000, onTimeout = () => { }, afterTimeout = () => { } }) => {
+  const createNotification = ({
+    style = 'primary',
+    body,
+    disableFullscreen = false,
+    timeout = 2000,
+    onTimeout = () => {},
+    afterTimeout = () => {},
+  }) => {
     setNotification({
       style,
       disableFullscreen,
-      body
+      body,
     });
 
     setTimeout(() => {
@@ -52,12 +59,24 @@ export const NotificationProvider = ({ children }) => {
    * @param {function} [props.onTimeout=() => {}] - The callback function to be called when the notification times out.
    * @param {function} [props.afterTimeout=() => {}] - The callback function to be called after the notification is closed.
    */
-  const loadNotification = ({ body, disableFullscreen = false, timeout = 2000, onTimeout = () => { }, afterTimeout = () => { } }) => {
-    const messageBody = (<>
-      <Icon className="iconAlert" icon="zondicons:information-outline" style={{ color: '#0D6EFD' }} />
-      <div className="ps-3">{body}</div>
-      <div className="spinner-border spinner-border-sm ms-4" role="status" />
-    </>);
+  const loadNotification = ({
+    body,
+    disableFullscreen = false,
+    timeout = 2000,
+    onTimeout = () => {},
+    afterTimeout = () => {},
+  }) => {
+    const messageBody = (
+      <>
+        <Icon
+          className="iconAlert"
+          icon="zondicons:information-outline"
+          style={{ color: '#0D6EFD' }}
+        />
+        <div className="ps-3">{body}</div>
+        <div className="spinner-border spinner-border-sm ms-4" role="status" />
+      </>
+    );
     createNotification({ body: messageBody, disableFullscreen, timeout, onTimeout, afterTimeout });
   };
 
@@ -71,12 +90,27 @@ export const NotificationProvider = ({ children }) => {
    * @param {function} [props.onTimeout=() => {}] - The callback function to be called when the notification times out.
    * @param {function} [props.afterTimeout=() => {}] - The callback function to be called after the notification is closed.
    */
-  const errorNotification = ({ body, disableFullscreen = false, timeout = 2000, onTimeout = () => { }, afterTimeout = () => { } }) => {
-    const messageBody = (<>
-      <Icon className="iconAlert" icon="charm:circle-cross" style={{ color: '#FF3B20' }} />
-      <div className="ps-3">{body}</div>
-    </>);
-    createNotification({ style: 'danger', body: messageBody, disableFullscreen, timeout, onTimeout, afterTimeout });
+  const errorNotification = ({
+    body,
+    disableFullscreen = false,
+    timeout = 2000,
+    onTimeout = () => {},
+    afterTimeout = () => {},
+  }) => {
+    const messageBody = (
+      <>
+        <Icon className="iconAlert" icon="charm:circle-cross" style={{ color: '#FF3B20' }} />
+        <div className="ps-3">{body}</div>
+      </>
+    );
+    createNotification({
+      style: 'danger',
+      body: messageBody,
+      disableFullscreen,
+      timeout,
+      onTimeout,
+      afterTimeout,
+    });
   };
 
   /**
@@ -89,16 +123,33 @@ export const NotificationProvider = ({ children }) => {
    * @param {function} [props.onTimeout=() => {}] - The callback function to be called when the notification times out.
    * @param {function} [props.afterTimeout=() => {}] - The callback function to be called after the notification is closed.
    */
-  const successNotification = ({ body, disableFullscreen = false, timeout = 2000, onTimeout = () => { }, afterTimeout = () => { } }) => {
-    const messageBody = (<>
-      <Icon className="iconAlert" icon="fa-regular:check-circle" style={{ color: '#0FA958' }} />
-      <span className="fs-6 ps-3">{body}</span>
-    </>);
-    createNotification({ style: 'success', body: messageBody, disableFullscreen, timeout, onTimeout, afterTimeout });
+  const successNotification = ({
+    body,
+    disableFullscreen = false,
+    timeout = 2000,
+    onTimeout = () => {},
+    afterTimeout = () => {},
+  }) => {
+    const messageBody = (
+      <>
+        <Icon className="iconAlert" icon="fa-regular:check-circle" style={{ color: '#0FA958' }} />
+        <span className="fs-6 ps-3">{body}</span>
+      </>
+    );
+    createNotification({
+      style: 'success',
+      body: messageBody,
+      disableFullscreen,
+      timeout,
+      onTimeout,
+      afterTimeout,
+    });
   };
 
   return (
-    <NotificationContext.Provider value={{ createNotification, loadNotification, errorNotification, successNotification }}>
+    <NotificationContext.Provider
+      value={{ createNotification, loadNotification, errorNotification, successNotification }}
+    >
       {notification && <Notification {...notification} />}
       {children}
     </NotificationContext.Provider>

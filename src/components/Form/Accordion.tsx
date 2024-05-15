@@ -22,14 +22,14 @@ interface AccordionProps {
 const Accordion: React.FC<AccordionProps> = ({
   accordionItems,
   id,
-  onChange = () => { },
-  onFocus = () => { },
-  onBlur = () => { }
+  onChange = () => {},
+  onFocus = () => {},
+  onBlur = () => {},
 }) => {
   return (
     <div
       id={id}
-      className='accordion'
+      className="accordion"
       onChange={(e) => onChange(e.target)}
       onFocus={(e) => onFocus(e.target)}
       onBlur={(e) => onBlur(e.target)}
@@ -43,7 +43,8 @@ const Accordion: React.FC<AccordionProps> = ({
               data-bs-toggle="collapse"
               data-bs-target={`#collapse-${id}-${index}`}
               aria-expanded="false"
-              aria-controls={`collapse-${id}-${index}`}>
+              aria-controls={`collapse-${id}-${index}`}
+            >
               {accordionItem.title}
             </button>
           </h2>
@@ -51,10 +52,9 @@ const Accordion: React.FC<AccordionProps> = ({
           <div
             id={`collapse-${id}-${index}`}
             className="accordion-collapse collapse"
-            data-bs-parent={`#${id}`}>
-            <div className="accordion-body">
-              {accordionItem.body}
-            </div>
+            data-bs-parent={`#${id}`}
+          >
+            <div className="accordion-body">{accordionItem.body}</div>
           </div>
         </div>
       ))}

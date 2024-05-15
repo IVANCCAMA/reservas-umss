@@ -1,5 +1,5 @@
-import { Icon } from '@iconify/react';
-import { Link } from 'react-router-dom';
+import SidebarOption from './SidebarOption.jsx';
+
 const Sidebar = () => {
   const btns = [
     {
@@ -9,11 +9,17 @@ const Sidebar = () => {
         { to: '/ambientes/registrarAmbiente', name: 'Registrar ambiente' },
         { to: '/ambientes/listaAmbientes', name: 'Lista de ambientes' },
       ],
+      forTypeUser: 'ADMINISTRADOR',
+      to: '/ambientes/listaAmbientes',
+      isViewProtected: false,
     },
     {
       name: 'Materias',
       icon: 'ph:book',
       subs: [{ to: '/materias/listaMaterias', name: 'Lista de materias' }],
+      forTypeUser: 'ADMINISTRADOR',
+      to: '/materias/listaMaterias',
+      isViewProtected: false,
     },
     {
       name: 'Reservas',
@@ -22,53 +28,43 @@ const Sidebar = () => {
         { to: '/reservas/reservarAmbiente', name: 'Reservar ambiente' },
         { to: '/reservas/listaReservas', name: 'Lista de reservas' },
       ],
+      viewSubs: true,
+      forTypeUser: 'ADMINISTRADOR',
+      isViewProtected: false,
+    },
+    {
+      name: 'Aperturas',
+      icon: 'carbon:gui-management',
+      subs: [
+        { to: '/aperturas/registrarApertura', name: 'Aperturar sistema' },
+        { to: '/aperturas/listaAperturas', name: 'Lista de aperturas' },
+      ],
+      forTypeUser: 'ADMINISTRADOR',
+      isViewProtected: true,
     },
   ];
 
   return (
     <div className="sidebar-container">
-      <div className="flex-shrink-0 sidebar-menu">
-        <ul className="nav nav-pills mt-md-4">
+      <div className="d-flex flex-column flex-shrink-0 p-2 h-100">
+        <ul className="nav nav-pills flex-column mb-sm-auto mb-0 w-100">
           {btns.map((btn, index) => (
-            <li key={`nav-item-${index}`} className="nav-item w-100">
-              <button
-                className="btn btn-toggle d-inline-flex w-100 d-flex  align-items-center collapsed justify-content-between"
-                data-bs-toggle="collapse"
-                data-bs-target={`#${btn.name}-collapse`}
-                aria-expanded="false"
-              >
-                <div>
-                  <Icon icon={btn.icon} width="45" height="45" style={{ color: '#215f88' }} />
-                  <span className="ms-2">{btn.name}</span>
-                </div>
-                <div>
-                  <Icon
-                    className="fas fa-angle-down rotate-icon"
-                    icon="iconamoon:arrow-down-2"
-                    width="35"
-                    height="35"
-                    style={{ color: '5C5B5B' }}
-                  />
-                </div>
-              </button>
-
-              <div className="collapse ms-5" id={`${btn.name}-collapse`}>
-                <ul className="nav nav-pills flex-column mb-auto btn-toggle-nav list-unstyled">
-                  {btn.subs.map((sub, subIndex) => (
-                    <li key={`nav-item-${index}-${subIndex}`}>
-                      <Link
-                        to={sub.to}
-                        className="nav-link link-body-emphasis d-inline-flex text-decoration-none rounded"
-                      >
-                        {sub.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </li>
+            <SidebarOption
+              key={index}
+              index={index}
+              option={btn.name}
+              icon={btn.icon}
+              subOptions={btn.subs}
+              to={btn.to}
+              forTypeUser={btn.forTypeUser}
+              viewSubs={btn.viewSubs}
+              isViewProtected={btn.isViewProtected}
+            />
           ))}
         </ul>
+        <div className="sidebar-footer d-flex align-items-center pb-1">
+          <SidebarOption option={'Cerrar sesión'} to={'/logout'} />
+        </div>
       </div>
     </div>
   );

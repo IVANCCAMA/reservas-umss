@@ -21,11 +21,9 @@ const EditarAmbientePage = () => {
     const loadAmbiente = (id) => {
       axios
         .get(`${baseURL}/disponibles/ambiente/${id}`)
-        //.post(`${baseURL}/ambientes/editar-completo`)
         .then((response) => {
           setAmbiente(response.data);
-          console.log('Ambiente:', response.data);
-          setValue('computadora', response.data.computadora)
+          setValue('computadora', response.data.computadora);
         })
         .catch((error) => {
           console.error('Error al obtener los datos del ambiente:', error);
@@ -116,18 +114,15 @@ const EditarAmbientePage = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
-    //watch
   } = useForm({
     resolver: yupResolver(schema),
-    
   });
-  console.log(errors)
   const removeAccents = (str) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   };
 
   // logic api
-  
+
   const onSubmit = (data) => {
     const filteredDia = Object.fromEntries(
       // eslint-disable-next-line no-unused-vars
@@ -136,7 +131,8 @@ const EditarAmbientePage = () => {
       ),
     );
     const filteredData = {
-      ...data, id_ambiente:id_ambiente,
+      ...data,
+      id_ambiente: id_ambiente,
       tipo: removeAccents(data.tipo.toLowerCase()),
       computadora: data.computadora === '' ? 0 : data.computadora,
       dia: Object.fromEntries(
@@ -147,12 +143,10 @@ const EditarAmbientePage = () => {
       ),
     };
 
-    console.log('filteredDAta', filteredData)
-
     axios
-        .post(`${baseURL}/ambientes/editar-completo`, filteredData)
-        .then((response) => {
-          console.log(response)
+      .post(`${baseURL}/ambientes/editar-completo`, filteredData)
+      .then((response) => {
+        if (response.status === 200) {
           successModal({
             body: (
               <>
@@ -162,44 +156,15 @@ const EditarAmbientePage = () => {
                 <div className="pt-md-3">Cambios guardados con éxito</div>
               </>
             ),
+            onClickTo: '/ambientes/listaAmbientes',
           });
-        })
-        .catch((error) => {
-          console.error('Error al obtener los ambiente disponibles: ',error);
-          
-        })
-    /* try {
-      console.log('Datos inicial', data);
-      const dataSend = { ...filteredData, id_ambiente}
-      
-
-      
-      console.log('Datos enviados', filteredData);
-
-      //const response = axios.post(`${baseURL}/ambientes/editar-completo`, dataSend);
-
-      //console.log('Respuesta del servidor', response.data);
-
-      if (response.status === 201) {
-        successModal({
-          content: (
-            <>
-              <div>
-                <img src={iconoExito} />
-              </div>
-              <div className="pt-md-3">Cambios guardados con éxito</div>
-            </>
-          ),
-        });
-
-        // eslint-disable-next-line no-unused-vars
-      } else {
-        errorModal({ content: errorModalContent });
-      }
-    } catch (error) {
-      console.log(error);
-      errorModal({ content: errorModalContent });
-    }  */
+        } else {
+          errorModal({ content: errorModalContent });
+        }
+      })
+      .catch((error) => {
+        console.error('Error al obtener los ambiente disponibles: ', error);
+      });
   };
 
   return (
@@ -207,7 +172,7 @@ const EditarAmbientePage = () => {
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
           <h2 className="text-md-center">Editar ambiente</h2>
-          <form className="forms" onSubmit={handleSubmit(onSubmit)} >
+          <form className="forms" onSubmit={handleSubmit(onSubmit)}>
             <div className="my-3">
               <label className="form-label fw-bold">
                 Nombre de ambiente
@@ -235,7 +200,7 @@ const EditarAmbientePage = () => {
               {ambiente.tipo ? (
                 <select
                   className="form-select"
-                  value={ambiente.tipo || ''}
+                  defaultValue={ambiente.tipo}
                   onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
                   {...register('tipo')}
                 >
@@ -266,6 +231,7 @@ const EditarAmbientePage = () => {
                 rows={2}
                 maxLength={350}
                 type="text"
+                placeholder="Escriba la ubicación del ambiente"
                 className="form-control"
                 defaultValue={ambiente.ubicacion || ''}
                 {...register('ubicacion')}
@@ -321,7 +287,9 @@ const EditarAmbientePage = () => {
                     placeholder="Cap. de minima"
                     {...register('porcentaje_max')}
                   />
-                ) : ('')}
+                ) : (
+                  ''
+                )}
                 {errors.porcentaje_max && (
                   <span className="text-danger">{errors.porcentaje_max.message}</span>
                 )}
@@ -337,7 +305,6 @@ const EditarAmbientePage = () => {
                   type="number"
                   className="form-control"
                   placeholder="Escriba el número de computadoras"
-                  //defaultValue={ambiente.computadora === undefined? 0: ambiente.computadora}
                   {...register('computadora')}
                 />
                 {errors.computadora && (
@@ -357,18 +324,6 @@ const EditarAmbientePage = () => {
                   id={`proyector`}
                   defaultChecked={ambiente.proyector}
                   {...register('proyector')}
-                />
-              </div>
-              <div className="col-md">
-                <label className="form-check-label me-md-2 fw-bold" htmlFor={`disponible`}>
-                  Disponiblidad de ambiente
-                </label>
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id={`disponible`}
-                  defaultChecked={ambiente.disponible}
-                  {...register('disponible')}
                 />
               </div>
             </div>
@@ -488,7 +443,7 @@ const EditarAmbientePage = () => {
                         </div>
                       </>
                     ),
-                    onClickYesTo: '/',
+                    onClickYesTo: '/ambientes/listaAmbientes',
                   });
                 }}
                 disabled={isSubmitting}

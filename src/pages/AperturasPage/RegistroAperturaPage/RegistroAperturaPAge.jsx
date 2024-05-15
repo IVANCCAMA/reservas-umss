@@ -13,38 +13,60 @@ const RegistroAperturaPage = () => {
   const { loadNotification, errorNotification } = useNotification();
 
   const schema = yup.object().shape({
-    motivo: yup.string().default('')
+    motivo: yup
+      .string()
+      .default('')
       .required('Ingrese el motivo de la apertura del sistema')
       .max(40, 'El motivo debe tener como máximo 40 caracteres'),
-    userType: yup.array().default([])
+    userType: yup
+      .array()
+      .default([])
       .of(yup.string())
       .min(1, 'Seleccione al menos un tipo de usuario'),
-    fechaInicio: yup.date().default('')
+    fechaInicio: yup
+      .date()
+      .default('')
       .typeError('Seleccione una fecha válida')
       .min(new Date(), 'Selecciona una fecha a futuro'),
-    fechaFin: yup.date().default('')
+    fechaFin: yup
+      .date()
+      .default('')
       .typeError('Seleccione una fecha válida')
       .min(yup.ref('fechaInicio'), 'Selecciona una fecha posterior a la fecha de inicio'),
-    horaInicio: yup.string().default('')
+    horaInicio: yup
+      .string()
+      .default('')
       .required('Seleccione una hora válida')
       .matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Debe tener un formato de hora válido (HH:MM)'),
-    horaFin: yup.string().default('')
+    horaFin: yup
+      .string()
+      .default('')
       .required('Seleccione una hora válida')
       .matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Debe tener un formato de hora válido (HH:MM)')
       .test('es-mayor', 'Seleccione una hora posterior a la hora de inicio', function (value) {
         const primerString = this.parent.horaInicio;
         return value > primerString;
       }),
-    reservaInicio: yup.date().default('')
+    reservaInicio: yup
+      .date()
+      .default('')
       .typeError('Seleccione una fecha válida')
       .min(new Date(), 'Selecciona una fecha a futuro'),
-    reservaFin: yup.date().default('')
+    reservaFin: yup
+      .date()
+      .default('')
       .typeError('Seleccione una fecha válida')
       .min(yup.ref('reservaInicio'), 'Selecciona una fecha posterior a la fecha de inicio'),
   });
 
-  const { register, handleSubmit, formState: { errors }, clearErrors } = useForm({
-    resolver: yupResolver(schema), defaultValues: schema.describe().default
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    clearErrors,
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: schema.describe().default,
   });
 
   const onSubmit = (data) => {
@@ -63,29 +85,33 @@ const RegistroAperturaPage = () => {
             reserva_inicio: data.reservaInicio.toISOString().split('T')[0],
             reserva_fin: data.reservaFin.toISOString().split('T')[0],
             esDocente: data.userType.includes('DOCENTE'),
-            esAuxiliar: data.userType.includes('AUXILIAR')
+            esAuxiliar: data.userType.includes('AUXILIAR'),
           })
           .then((response) => {
             console.log(response);
 
             successModal({
-              body: (<>
-                <Icon icon="fa-regular:check-circle" style={{ color: '#0fa958', height: '90px', width: '90px' }} />
-                <div className="pt-md-3">Apertura registrada con éxito</div>
-              </>),
-              onClickTo: '/aperturas/listaAperturas'
+              body: (
+                <>
+                  <Icon
+                    icon="fa-regular:check-circle"
+                    style={{ color: '#0fa958', height: '90px', width: '90px' }}
+                  />
+                  <div className="pt-md-3">Apertura registrada con éxito</div>
+                </>
+              ),
+              onClickTo: '/aperturas/listaAperturas',
             });
           })
           .catch((error) => {
             console.error('Error al obtener los ambiente disponibles: ', error);
             errorNotification({ body: 'Error al enviar, intente de nuevo' });
-          })
-      }
+          });
+      },
     });
   };
 
   return (
-
     <div className="container">
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">

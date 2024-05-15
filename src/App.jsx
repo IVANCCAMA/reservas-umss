@@ -12,43 +12,122 @@ import ListadoReservasPage from './pages/ReservasPage/ListadoReservasPage/Listad
 import EditarAmbientePage from './pages/AmbientesPage/EditarAmbientePage/EditarAmbientePage';
 import BootstrapUI from './components/Bootstrap';
 import ListadoAperturasPage from './pages/AperturasPage/ListadoAperturasPage/ListadoAperturasPage';
-import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPage';
 import NotificationProvider from './components/Bootstrap/NotificationContext';
+import PageNotFound from './pages/PageNotFound/PageNotFound';
+
+import LoginPage from './pages/LoginPage/LoginPage';
+import Boot from './redux/boot.js';
+import PrivateRoute from './services/PrivateRoute/PrivateRoute';
+import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPage.jsx';
 
 function App() {
   return (
     <BrowserRouter>
       <BootstrapUI>
         <div className="App container-fluid p-0 position-relative">
-          {/* header */}
           <div className="row m-0 justify-content-center">
             <Navbar />
-            <div className="col-md-2 p-0 pt-5">
-              <Sidebar />
-            </div>
+            <PrivateRoute forTypeUser={'ALL'}>
+              <div className="col-md-2 p-0 pt-5">
+                <Sidebar />
+              </div>
+            </PrivateRoute>
             <NotificationProvider>
-              <div className="col-md-10 pt-md-5 p-0 main-content">
-
+              <div className="col-md-10 pt-5 p-0 main-content">
                 <Routes>
-                  <Route path="/" index element={<HomePage />} />
-
-                  <Route path="/ambientes/registrarAmbiente" element={<RegistroAmbientePage />} />
-                  <Route path="/ambientes/listaAmbientes" element={<ListadoAmbientesPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/" element={<LoginPage />} />
+                  <Route
+                    path="/home"
+                    index
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <HomePage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/ambientes/registrarAmbiente"
+                    element={
+                      <PrivateRoute forTypeUser={'ADMINISTRADOR'}>
+                        <RegistroAmbientePage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/ambientes/listaAmbientes"
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <ListadoAmbientesPage />
+                      </PrivateRoute>
+                    }
+                  />
                   <Route
                     path="/ambientes/listaAmbientes/fichaAmbiente/:id_ambiente"
-                    element={<FichaInformacionAmbientePage />}/>
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <FichaInformacionAmbientePage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/materias/listaMaterias"
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <ListadoMateriasPage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/reservas/reservarAmbiente"
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <RegistroReservaPage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/reservas/ambientesDisponibles"
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <AmbientesDisponiblesPage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/reservas/listaReservas"
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <ListadoReservasPage />
+                      </PrivateRoute>
+                    }
+                  />
                   <Route
                     path="/ambientes/listaAmbientes/editar/:id_ambiente"
-                    element={<EditarAmbientePage />} />
+                    element={
+                      <PrivateRoute forTypeUser={'ADMINISTRADOR'}>
+                        <EditarAmbientePage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/aperturas/registrarApertura"
+                    element={
+                      <PrivateRoute>
+                        <RegistroAperturaPage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/aperturas/listaAperturas"
+                    element={
+                      <PrivateRoute forTypeUser={'ADMINISTRADOR'}>
+                        <ListadoAperturasPage />
+                      </PrivateRoute>
+                    }
+                  />
 
-                  <Route path="/materias/listaMaterias" element={<ListadoMateriasPage />} />
-
-                  <Route path="/reservas/reservarAmbiente" element={<RegistroReservaPage />} />
-                  <Route path="/reservas/ambientesDisponibles" element={<AmbientesDisponiblesPage />}/>
-                  <Route path="/reservas/listaReservas" element={<ListadoReservasPage />} />
-
-                  <Route path='/aperturas/registrarApertura' element={<RegistroAperturaPage />} />
-                  <Route path="/aperturas/listaAperturas" element={<ListadoAperturasPage />} />
+                  <Route path="*" element={<PageNotFound />} />
                 </Routes>
               </div>
             </NotificationProvider>
@@ -58,5 +137,9 @@ function App() {
     </BrowserRouter>
   );
 }
+
+Boot()
+  .then(() => App())
+  .catch((error) => console.log(error));
 
 export default App;

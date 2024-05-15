@@ -9,8 +9,6 @@ const ListadoAperturasPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [aperturas, setAperturas] = useState([{}]);
 
-  
-
   // logica | api
   const loadAperturas = () => {
     axios
@@ -20,7 +18,7 @@ const ListadoAperturasPage = () => {
           response.data.map((apt) => {
             let colorEstado = '#E92929';
             if (apt.estado === 'VIGENTE') {
-              colorEstado = '#21BF4E'
+              colorEstado = '#21BF4E';
             }
 
             return {
@@ -29,8 +27,11 @@ const ListadoAperturasPage = () => {
               'Periodo de reservas': apt.periodo_reservas,
               Usuario: apt.tipo_usuario,
               Motivo: apt.motivo,
-              'Estado': (
-                <div className="text-center text-white fw-bold me-md-3 rounded" style={{backgroundColor: colorEstado}}>
+              Estado: (
+                <div
+                  className="text-center text-white fw-bold px-2 rounded"
+                  style={{ backgroundColor: colorEstado }}
+                >
                   {apt.estado}
                 </div>
               ),
@@ -47,7 +48,6 @@ const ListadoAperturasPage = () => {
   useEffect(() => {
     loadAperturas();
   }, []);
-
 
   return (
     <div className="container-fluid listado-aperturas p-md-5">

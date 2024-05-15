@@ -11,12 +11,12 @@ const Form: React.FC<FormProps> = ({
   children,
   onSubmit = () => {},
   title = '',
-  onClickCancel = () => { },
+  onClickCancel = () => {},
   ...rest
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleOnSubmit = (e: { preventDefault: () => void; }) => {
+  const handleOnSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsSubmitting(true);
     onSubmit(); // Llama al onSubmit pasado como parte de rest, si existe
