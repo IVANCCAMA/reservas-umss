@@ -24,7 +24,7 @@ const ListadoMateriasPage = () => {
   // grupos/tablamaterias/:id_usuario
 
   const loadMaterias = () => {
-    let apiUsuario = '/grupos/tablamaterias';
+    let apiUsuario = '/grupos/tablamaterias/1';
     if (user.tipo_usuario !== 'ADMINISTRADOR') {
       apiUsuario = `/grupos/tablamaterias/${user.id_usuario}`;
     }
