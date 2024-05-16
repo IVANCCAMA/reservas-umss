@@ -21,7 +21,7 @@ const ListadoMateriasPage = () => {
   // filtro para obtener solo los valores únicos
   // const keyUnicos = [...new Set(materiasKey)];
 
-  const loadMaterias = () => {
+  const loadReservas = () => {
     let apiUsuario = '/lista_reservas';
     if (user.tipo_usuario !== 'ADMINISTRADOR') {
       apiUsuario = `/reserva-usuario/${user.id_usuario}`;
@@ -50,7 +50,7 @@ const ListadoMateriasPage = () => {
   };
 
   useEffect(() => {
-    loadMaterias();
+    loadReservas();
   }, []);
 
   return (
