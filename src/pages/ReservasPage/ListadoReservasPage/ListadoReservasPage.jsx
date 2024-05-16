@@ -33,6 +33,7 @@ const ListadoMateriasPage = () => {
         setReservas(
           response.data.map((reserv) => {
             return {
+              Registro: reserv.registro_reserva,
               Solicitante: reserv.nombre_usuario,
               Fecha: reserv.fecha_reserva.slice(0, 10),
               Horario: `${reserv.hora_inicio.slice(0, 5)} - ${reserv.hora_fin.slice(0, 5)}`,
