@@ -42,7 +42,7 @@ const RegistroReservaPage = () => {
   const schema = yup.object().shape({
     solicitante: yup
       .string()
-      .default(user.tipo_usuario !== 'ADMINISTRADOR' ? user.nombre_usuario : '')
+      .default(user.nombre_usuario)
       .required('Ingrese un nombre de un usuario')
       .max(40, 'El nombre debe tener como máximo 40 caracteres'),
     tipo_ambiente: yup.string().default('').required('Seleccione una categoria'),
@@ -98,7 +98,10 @@ const RegistroReservaPage = () => {
     // recuperar users para el id del solicitante
     axios
       .get(`${database}/usuarios`)
-      .then((response) => setUsers(response.data))
+      .then(({ data }) => {
+        setUsers(data);
+        searchGroupsByApplicant(data);
+      })
       .catch((error) => {
         console.error('Error al obtener los usuarios:', error);
       });
@@ -237,10 +240,9 @@ const RegistroReservaPage = () => {
     return value;
   };
   // resuperar materias y grupos
-  const searchGroupsByApplicant = () => {
-    const foundUser = users.find((obj) => obj.nombre_usuario === watch('solicitante'));
+  const searchGroupsByApplicant = (_users = users) => {
+    const foundUser = _users.find((obj) => obj.nombre_usuario === watch('solicitante'));
     if (foundUser?.id_usuario) {
-      console.log(foundUser);
       axios
         // .get(`${database}/usuarios/${foundUser.id_usuario}/materias-grupos`)
         .post(`${database}/usuarios/materias-grupos-asociados`, {
@@ -358,6 +360,7 @@ const RegistroReservaPage = () => {
     >
       <TextInput
         autoComplete="off"
+        disabled={user.tipo_usuario !== 'ADMINISTRADOR'}
         label="Nombre del solicitante"
         {...register('solicitante')}
         placeholder="Ingrese el nombre del solicitante"
