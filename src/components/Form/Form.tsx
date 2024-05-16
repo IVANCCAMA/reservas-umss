@@ -9,7 +9,7 @@ interface FormProps {
 
 const Form: React.FC<FormProps> = ({
   children,
-  onSubmit,
+  onSubmit = () => {},
   title = '',
   onClickCancel = () => {},
   ...rest
@@ -24,42 +24,31 @@ const Form: React.FC<FormProps> = ({
   };
 
   return (
-    <div className="container">
-      <div className="row py-md-3 justify-content-center">
-        <div className="col-md-8">
-          <form
-            {...{
-              ...rest,
-              className: `${rest.className || ''} form-component`,
-              onSubmit: handleOnSubmit,
-            }}
-          >
-            {title && <h2 className="text-md-center">{title}</h2>}
+    <form {...{ ...rest, className: `${rest.className || ''} form-component`, onSubmit: handleOnSubmit }}>
+      {title && (<h2 className="text-md-center">{title}</h2>)}
 
-            {children}
+      {children}
 
-            <div className="d-flex justify-content-center pt-3">
-              <button
-                type="submit"
-                className="btn btn-success me-md-5"
-                disabled={isSubmitting}
-                style={{ width: '86px' }}
-              >
-                {isSubmitting ? 'Enviando...' : 'Enviar'}
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                disabled={isSubmitting}
-                onClick={onClickCancel}
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
+      <div className="d-flex justify-content-center pt-3">
+        <button
+          type="submit"
+          className="btn btn-success me-md-5"
+          disabled={isSubmitting}
+          style={{ width: "86px" }}
+        >
+          {isSubmitting ? 'Enviando...' : 'Enviar'}
+        </button>
+        <button
+          type="button"
+          className="btn btn-danger"
+          data-bs-dismiss="modal"
+          disabled={isSubmitting}
+          onClick={onClickCancel}
+        >
+          Cancelar
+        </button>
       </div>
-    </div>
+    </form>
   );
 };
 
