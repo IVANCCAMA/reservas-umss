@@ -140,3 +140,11 @@ h1 {
     --bs-btn-bg: #0691f6;
   }
 }
+
+.field-icon {
+  float: right;
+  margin-right: 10px;
+  margin-top: -33px;
+  position: relative;
+  z-index: 2;
+}
