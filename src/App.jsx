@@ -18,7 +18,7 @@ import PageNotFound from './pages/PageNotFound/PageNotFound';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Boot from './redux/boot.js';
 import PrivateRoute from './services/PrivateRoute/PrivateRoute';
-import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPage.jsx';
+import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPage';
 
 function App() {
   return (
