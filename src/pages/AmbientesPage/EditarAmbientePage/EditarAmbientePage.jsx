@@ -95,8 +95,9 @@ const EditarAmbientePage = () => {
       .test('is-required', 'El campo es obligatorio para laboratorios', function (value) {
         //const tipoAmbiente = this.parent.tipo;
         if (watch('tipo') === 'laboratorio') {
-          console.log('haciendo test');
           return typeof value === 'number';
+        } else {
+          setValue('computadora', 0);
         }
         return true;
       }),
@@ -148,7 +149,6 @@ const EditarAmbientePage = () => {
 
   // logic api
   const onSubmit = (data) => {
-    console.log('Datos inicial', data);
     const filteredDia = Object.fromEntries(
       // eslint-disable-next-line no-unused-vars
       Object.entries(data.dia).filter(([key, value]) =>
@@ -168,7 +168,6 @@ const EditarAmbientePage = () => {
         ]),
       ),
     };
-    console.log('Datos enviados', filteredData);
 
     axios
       .post(`${baseURL}/ambientes/editar-completo`, filteredData)
@@ -193,7 +192,6 @@ const EditarAmbientePage = () => {
         console.error('Error al obtener los ambiente disponibles: ', error);
       });
   };
-
   return (
     <div className="container registro-ambientes">
       <div className="row py-md-3 justify-content-center">
@@ -346,7 +344,6 @@ const EditarAmbientePage = () => {
               <label className="form-label fw-bold">
                 Días y horarios disponibles <span className="text-danger ms-1">*</span>
               </label>
-              {/* //////////////// */}
               {horariosFilter.map((horario, index) => {
                 const hasCheckedPeriod = horario.periodos.some((period) => period.checked);
                 return (
