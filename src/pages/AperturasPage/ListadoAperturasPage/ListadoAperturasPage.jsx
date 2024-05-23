@@ -20,6 +20,9 @@ const ListadoAperturasPage = () => {
             if (apt.estado === 'VIGENTE') {
               colorEstado = '#21BF4E';
             }
+            if (apt.estado === 'EN CURSO') {
+              colorEstado = '#FFCA2C';
+            }
 
             return {
               'Inicio de reserva': apt.inicio_apertura,
