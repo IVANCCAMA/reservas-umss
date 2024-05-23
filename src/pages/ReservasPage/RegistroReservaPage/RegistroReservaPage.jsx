@@ -116,6 +116,8 @@ const RegistroReservaPage = () => {
       .get(`${database}/aperturas/apertura-fecha`)
       .then(({ data }) => {
         const currentDateTime = new Date();
+
+        console.log(data, '>>>===', currentDateTime);
         setValue('apertura', {
           id: data[0].id_apertura,
           motivo: data[0].motivo,

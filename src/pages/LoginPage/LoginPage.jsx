@@ -125,7 +125,6 @@ const LoginPage = () => {
                     placeholder="Escribe tu contraseña"
                     {...register('contrasenia_usuario')}
                   />
-                  {/* ${true ? '-slash' : ''} */}
                   <span
                     toggle="#password-field"
                     className={`bi bi-eye${showPassword === 'password' ? '-slash' : ''} field-icon toggle-password`}
