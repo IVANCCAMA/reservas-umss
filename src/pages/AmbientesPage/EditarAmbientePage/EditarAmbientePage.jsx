@@ -224,8 +224,6 @@ const EditarAmbientePage = () => {
               <select
                 className="form-select"
                 placeholder="Seleccione el tipo de ambiente"
-                defaultValue={ambiente.tipo || ''}
-                onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
                 {...register('tipo')}
               >
                 <option value="">Seleccione el tipo de ambiente</option>
@@ -254,7 +252,6 @@ const EditarAmbientePage = () => {
                 type="text"
                 className="form-control"
                 placeholder="Escriba la ubicación del ambiente"
-                defaultValue={ambiente.ubicacion || ''}
                 {...register('ubicacion')}
               />
             </div>
@@ -266,7 +263,6 @@ const EditarAmbientePage = () => {
                 <input
                   type="number"
                   className="form-control"
-                  defaultValue={ambiente.capacidad || ''}
                   placeholder="Escriba la capacidad de estudiantes"
                   {...register('capacidad')}
                 />
@@ -279,7 +275,6 @@ const EditarAmbientePage = () => {
                   Min (%)<span className="text-danger ms-1">*</span>
                 </label>
                 <input
-                  defaultValue={ambiente.porcentaje_min}
                   type="number"
                   className="form-control"
                   placeholder="Cap. maxima"
@@ -294,7 +289,6 @@ const EditarAmbientePage = () => {
                   Max (%)<span className="text-danger ms-1">*</span>
                 </label>
                 <input
-                  defaultValue={ambiente.porcentaje_max}
                   type="number"
                   className="form-control"
                   placeholder="Cap. de minima"
@@ -315,7 +309,6 @@ const EditarAmbientePage = () => {
                   type="number"
                   className="form-control"
                   placeholder="Escriba el número de computadoras"
-                  defaultValue={ambiente.computadora}
                   {...register('computadora')}
                 />
                 {errors.computadora && (
@@ -333,7 +326,6 @@ const EditarAmbientePage = () => {
                   className="form-check-input"
                   type="checkbox"
                   id={`proyector`}
-                  defaultChecked={ambiente.proyector}
                   {...register('proyector')}
                 />
               </div>
@@ -345,7 +337,6 @@ const EditarAmbientePage = () => {
                   className="form-check-input"
                   type="checkbox"
                   id={`disponible`}
-                  defaultChecked={ambiente.disponible}
                   {...register('disponible')}
                 />
               </div>
