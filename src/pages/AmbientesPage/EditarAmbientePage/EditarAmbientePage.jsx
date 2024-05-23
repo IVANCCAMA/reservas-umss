@@ -16,14 +16,39 @@ const EditarAmbientePage = () => {
   const horarios = horariosJSON;
   let { id_ambiente } = useParams();
   const [ambiente, setAmbiente] = useState({});
+  const [horariosFilter, setHorariosFilter] = useState([]);
 
   useEffect(() => {
-    const loadAmbiente = (id) => {
+    const loadAmbiente = (id_ambiente) => {
+      //recuperar datos por el id
       axios
-        .get(`${baseURL}/disponibles/ambiente/${id}`)
+        .get(`${baseURL}/disponibles/ambiente/${id_ambiente}`)
         .then((response) => {
           setAmbiente(response.data);
-          setValue('computadora', response.data.computadora);
+          /// Filtrar los horarios disponibles por día
+          const disponibilidadPorDia = response.data.disponibilidadPorDia;
+
+          const horariosFilter = horarios.map((dia) => {
+            const disponibilidadDia = disponibilidadPorDia.find(
+              (disponibilidad) => disponibilidad.dia.toLowerCase() === dia.nombre.toLowerCase(),
+            );
+
+            const periodosDia = disponibilidadDia
+              ? disponibilidadDia.periodos.map((periodo) => periodo.id_periodo)
+              : [];
+            const selectAll = periodosDia.length === dia.periodos.length;
+
+            return {
+              nombre: dia.nombre,
+              selectAll: selectAll,
+              periodos: dia.periodos.map((periodo) => ({
+                ...periodo,
+                checked: periodosDia.includes(periodo.id),
+              })),
+            };
+          });
+
+          setHorariosFilter(horariosFilter);
         })
         .catch((error) => {
           console.error('Error al obtener los datos del ambiente:', error);
@@ -68,7 +93,7 @@ const EditarAmbientePage = () => {
       .number()
       .integer('El número debe ser un número entero')
       .typeError('El campo es obligatorio, el número debe ser un número entero')
-      //.required('El campo es obligatorio')
+      .required('El campo es obligatorio')
       .min(0, 'El número mínimo es 0')
       .max(250, 'El número máximo es 250')
       .test('is-required', 'El campo es obligatorio para laboratorios', function (value) {
@@ -114,57 +139,66 @@ const EditarAmbientePage = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
+    //watch
   } = useForm({
     resolver: yupResolver(schema),
   });
+
   const removeAccents = (str) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   };
 
   // logic api
+  const onSubmit = async (data) => {
+    try {
+      console.log('Datos inicial', data);
+      const filteredDia = Object.fromEntries(
+        // eslint-disable-next-line no-unused-vars
+        Object.entries(data.dia).filter(([key, value]) =>
+          value.periodos.some((periodo) => periodo.id_periodo !== false),
+        ),
+      );
 
-  const onSubmit = (data) => {
-    const filteredDia = Object.fromEntries(
-      // eslint-disable-next-line no-unused-vars
-      Object.entries(data.dia).filter(([key, value]) =>
-        value.periodos.some((periodo) => periodo.id_periodo !== false),
-      ),
-    );
-    const filteredData = {
-      ...data,
-      id_ambiente: id_ambiente,
-      tipo: removeAccents(data.tipo.toLowerCase()),
-      computadora: data.computadora === '' ? 0 : data.computadora,
-      dia: Object.fromEntries(
-        Object.entries(filteredDia).map(([key, value]) => [
-          removeAccents(key.toLowerCase()),
-          { periodos: value.periodos.filter((periodo) => periodo.id_periodo !== false) },
-        ]),
-      ),
-    };
+      const filteredData = {
+        ...data,
+        tipo: removeAccents(data.tipo.toLowerCase()),
+        computadora: data.computadora === '' ? 0 : data.computadora,
+        dia: Object.fromEntries(
+          Object.entries(filteredDia).map(([key, value]) => [
+            removeAccents(key.toLowerCase()),
+            {
+              periodos: value.periodos.filter((periodo) => periodo.id_periodo !== false),
+            },
+          ]),
+        ),
+      };
 
-    axios
-      .post(`${baseURL}/ambientes/editar-completo`, filteredData)
-      .then((response) => {
-        if (response.status === 200) {
-          successModal({
-            body: (
-              <>
-                <div>
-                  <img src={iconoExito} />
-                </div>
-                <div className="pt-md-3">Cambios guardados con éxito</div>
-              </>
-            ),
-            onClickTo: '/ambientes/listaAmbientes',
-          });
-        } else {
-          errorModal({ content: errorModalContent });
-        }
-      })
-      .catch((error) => {
-        console.error('Error al obtener los ambiente disponibles: ', error);
-      });
+      console.log('Datos enviados', filteredData);
+
+      /* const response = await axios.put(`${baseURL}/ambientes/completo/${id_ambiente}`, data);
+
+      console.log(response);
+
+      if (response.status === 201) {
+        successModal({
+          content: (
+            <>
+              <div>
+                <img src={iconoExito} />
+              </div>
+              <div className="pt-md-3">Ambiente editado con éxito</div>
+            </>
+          ),
+        });
+
+        // eslint-disable-next-line no-unused-vars
+      } else {
+        errorModal({ content: errorModalContent });
+      } */
+    } catch (error) {
+      console.log(error);
+      errorModal({ content: errorModalContent });
+    }
   };
 
   return (
@@ -172,7 +206,7 @@ const EditarAmbientePage = () => {
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
           <h2 className="text-md-center">Editar ambiente</h2>
-          <form className="forms" onSubmit={handleSubmit(onSubmit)}>
+          <form className="forms" onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="my-3">
               <label className="form-label fw-bold">
                 Nombre de ambiente
@@ -187,7 +221,7 @@ const EditarAmbientePage = () => {
                   {...register('nombre_ambiente')}
                 />
               ) : (
-                ''
+                'Cargando'
               )}
               {errors.nombre_ambiente && (
                 <span className="text-danger">{errors.nombre_ambiente.message}</span>
@@ -200,7 +234,7 @@ const EditarAmbientePage = () => {
               {ambiente.tipo ? (
                 <select
                   className="form-select"
-                  defaultValue={ambiente.tipo}
+                  value={ambiente.tipo || ''}
                   onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
                   {...register('tipo')}
                 >
@@ -210,7 +244,7 @@ const EditarAmbientePage = () => {
                   <option value="laboratorio">Laboratorio</option>
                 </select>
               ) : (
-                ''
+                'Cargando'
               )}
               {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
@@ -227,12 +261,13 @@ const EditarAmbientePage = () => {
                   />
                 </span>
               </label>
+              {console.log(ambiente)}
               <textarea
                 rows={2}
                 maxLength={350}
                 type="text"
-                placeholder="Escriba la ubicación del ambiente"
                 className="form-control"
+                placeholder="Escriba la ubicación del ambiente"
                 defaultValue={ambiente.ubicacion || ''}
                 {...register('ubicacion')}
               />
@@ -250,7 +285,7 @@ const EditarAmbientePage = () => {
                     {...register('capacidad')}
                   />
                 ) : (
-                  ''
+                  'Cargando'
                 )}
                 {errors.capacidad && (
                   <span className="text-danger">{errors.capacidad.message}</span>
@@ -269,7 +304,7 @@ const EditarAmbientePage = () => {
                     {...register('porcentaje_min')}
                   />
                 ) : (
-                  ''
+                  'Cargando'
                 )}
                 {errors.porcentaje_min && (
                   <span className="text-danger">{errors.porcentaje_min.message}</span>
@@ -288,7 +323,7 @@ const EditarAmbientePage = () => {
                     {...register('porcentaje_max')}
                   />
                 ) : (
-                  ''
+                  'Cargando'
                 )}
                 {errors.porcentaje_max && (
                   <span className="text-danger">{errors.porcentaje_max.message}</span>
@@ -305,6 +340,7 @@ const EditarAmbientePage = () => {
                   type="number"
                   className="form-control"
                   placeholder="Escriba el número de computadoras"
+                  defaultValue={ambiente.computadora}
                   {...register('computadora')}
                 />
                 {errors.computadora && (
@@ -326,6 +362,18 @@ const EditarAmbientePage = () => {
                   {...register('proyector')}
                 />
               </div>
+              <div className="col-md">
+                <label className="form-check-label me-md-2 fw-bold" htmlFor={`disponible`}>
+                  Disponiblidad de ambiente
+                </label>
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id={`disponible`}
+                  defaultChecked={ambiente.disponible}
+                  {...register('disponible')}
+                />
+              </div>
             </div>
 
             {/* Horarios */}
@@ -333,12 +381,8 @@ const EditarAmbientePage = () => {
               <label className="form-label fw-bold">
                 Días y horarios disponibles <span className="text-danger ms-1">*</span>
               </label>
-              {horarios.map((horario, index) => {
-                const dia = ambiente.disponibilidadPorDia?.find(
-                  (dia) => dia.dia.toUpperCase() === horario.nombre.toUpperCase(),
-                );
-                const selectAll = horario?.periodos.length === dia?.periodos.length;
-                setValue(`selectAll_${index}`, selectAll ? true : false);
+              {/* //////////////// */}
+              {horariosFilter.map((horario, index) => {
                 return (
                   <div key={index}>
                     <button
@@ -351,13 +395,10 @@ const EditarAmbientePage = () => {
                     >
                       {horario.nombre}
                     </button>
-                    <div
-                      className={`collapse horarios${dia?.periodos?.length > 0 ? ' show' : ''}`}
-                      id={`collapse${horario.nombre}`}
-                    >
+                    <div className="collapse horarios" id={`collapse${horario.nombre}`}>
                       <div className="card card-body">
                         <div className="d-flex flex-md-row justify-content-between">
-                          <p className="ms-3 fw-bold">Periodos</p>
+                          <p className="ms-3 fw-bolds">Periodos</p>
                           <div className="d-flex text-center">
                             <div>
                               <label className="form-check-label" htmlFor={`selectAll_${index}`}>
@@ -368,6 +409,7 @@ const EditarAmbientePage = () => {
                               <input
                                 className="form-check-input ms-md-2 me-3"
                                 type="checkbox"
+                                id={`selectAll_${index}`}
                                 {...register(`selectAll_${index}`)}
                                 onChange={(e) => {
                                   const checked = e.target.checked;
@@ -379,6 +421,7 @@ const EditarAmbientePage = () => {
                                     );
                                   });
                                 }}
+                                defaultChecked={horario.selectAll}
                               />
                             </div>
                           </div>
@@ -386,10 +429,6 @@ const EditarAmbientePage = () => {
                         <div className="row row-cols-2 row-cols-lg-3 g-2 g-lg-2">
                           {horario.periodos.map((periodo, subIndex) => {
                             const fieldName = `dia.${horario.nombre}.periodos[${subIndex}].id_periodo`;
-                            const per = dia?.periodos.find((per) => per.id_periodo === periodo.id);
-                            if (per) {
-                              setValue(fieldName, periodo.id);
-                            }
                             return (
                               <div className="col d-flex justify-content-around" key={subIndex}>
                                 <div>
@@ -404,6 +443,7 @@ const EditarAmbientePage = () => {
                                     type="checkbox"
                                     id={`periodo_${index}_${subIndex}`}
                                     value={periodo.id}
+                                    defaultChecked={periodo.checked}
                                     {...register(fieldName)}
                                   />
                                 </div>
@@ -433,7 +473,7 @@ const EditarAmbientePage = () => {
                 type="button"
                 onClick={() => {
                   confirmationModal({
-                    body: (
+                    content: (
                       <>
                         <div>
                           <img src={iconoError} />
@@ -443,7 +483,7 @@ const EditarAmbientePage = () => {
                         </div>
                       </>
                     ),
-                    onClickYesTo: '/ambientes/listaAmbientes',
+                    onClickYesTo: '/',
                   });
                 }}
                 disabled={isSubmitting}
