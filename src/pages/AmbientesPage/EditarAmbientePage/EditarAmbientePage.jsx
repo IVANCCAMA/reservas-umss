@@ -383,6 +383,10 @@ const EditarAmbientePage = () => {
               </label>
               {/* //////////////// */}
               {horariosFilter.map((horario, index) => {
+                console.log(horario);
+
+                const hasCheckedPeriod = horario.periodos.some((period) => period.checked);
+
                 return (
                   <div key={index}>
                     <button
@@ -395,7 +399,10 @@ const EditarAmbientePage = () => {
                     >
                       {horario.nombre}
                     </button>
-                    <div className="collapse horarios" id={`collapse${horario.nombre}`}>
+                    <div
+                      className={`collapse horarios${hasCheckedPeriod ? ' show' : ''}`}
+                      id={`collapse${horario.nombre}`}
+                    >
                       <div className="card card-body">
                         <div className="d-flex flex-md-row justify-content-between">
                           <p className="ms-3 fw-bolds">Periodos</p>
