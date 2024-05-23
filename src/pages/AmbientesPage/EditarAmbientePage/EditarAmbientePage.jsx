@@ -149,56 +149,51 @@ const EditarAmbientePage = () => {
   };
 
   // logic api
-  const onSubmit = async (data) => {
-    try {
-      console.log('Datos inicial', data);
-      const filteredDia = Object.fromEntries(
-        // eslint-disable-next-line no-unused-vars
-        Object.entries(data.dia).filter(([key, value]) =>
-          value.periodos.some((periodo) => periodo.id_periodo !== false),
-        ),
-      );
+  const onSubmit = (data) => {
+    console.log('Datos inicial', data);
+    const filteredDia = Object.fromEntries(
+      // eslint-disable-next-line no-unused-vars
+      Object.entries(data.dia).filter(([key, value]) =>
+        value.periodos.some((periodo) => periodo.id_periodo !== false),
+      ),
+    );
 
-      const filteredData = {
-        ...data,
-        tipo: removeAccents(data.tipo.toLowerCase()),
-        computadora: data.computadora === '' ? 0 : data.computadora,
-        dia: Object.fromEntries(
-          Object.entries(filteredDia).map(([key, value]) => [
-            removeAccents(key.toLowerCase()),
-            {
-              periodos: value.periodos.filter((periodo) => periodo.id_periodo !== false),
-            },
-          ]),
-        ),
-      };
+    const filteredData = {
+      ...data,
+      id_ambiente: id_ambiente,
+      tipo: removeAccents(data.tipo.toLowerCase()),
+      computadora: data.computadora === '' ? 0 : data.computadora,
+      dia: Object.fromEntries(
+        Object.entries(filteredDia).map(([key, value]) => [
+          removeAccents(key.toLowerCase()),
+          { periodos: value.periodos.filter((periodo) => periodo.id_periodo !== false) },
+        ]),
+      ),
+    };
+    console.log('Datos enviados', filteredData);
 
-      console.log('Datos enviados', filteredData);
-
-      /* const response = await axios.put(`${baseURL}/ambientes/completo/${id_ambiente}`, data);
-
-      console.log(response);
-
-      if (response.status === 201) {
-        successModal({
-          content: (
-            <>
-              <div>
-                <img src={iconoExito} />
-              </div>
-              <div className="pt-md-3">Ambiente editado con éxito</div>
-            </>
-          ),
-        });
-
-        // eslint-disable-next-line no-unused-vars
-      } else {
-        errorModal({ content: errorModalContent });
-      } */
-    } catch (error) {
-      console.log(error);
-      errorModal({ content: errorModalContent });
-    }
+    axios
+      .post(`${baseURL}/ambientes/editar-completo`, filteredData)
+      .then((response) => {
+        if (response.status === 200) {
+          successModal({
+            body: (
+              <>
+                <div>
+                  <img src={iconoExito} />
+                </div>
+                <div className="pt-md-3">Cambios guardados con éxito</div>
+              </>
+            ),
+            onClickTo: '/ambientes/listaAmbientes',
+          });
+        } else {
+          errorModal({ content: errorModalContent });
+        }
+      })
+      .catch((error) => {
+        console.error('Error al obtener los ambiente disponibles: ', error);
+      });
   };
 
   return (
@@ -261,7 +256,6 @@ const EditarAmbientePage = () => {
                   />
                 </span>
               </label>
-              {console.log(ambiente)}
               <textarea
                 rows={2}
                 maxLength={350}
@@ -383,8 +377,6 @@ const EditarAmbientePage = () => {
               </label>
               {/* //////////////// */}
               {horariosFilter.map((horario, index) => {
-                console.log(horario);
-
                 const hasCheckedPeriod = horario.periodos.some((period) => period.checked);
 
                 return (
