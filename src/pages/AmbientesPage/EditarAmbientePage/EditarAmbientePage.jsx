@@ -207,17 +207,14 @@ const EditarAmbientePage = () => {
                 Nombre de ambiente
                 <span className="text-danger ms-1">*</span>
               </label>
-              {ambiente.nombre_ambiente ? (
-                <input
-                  type="text"
-                  maxLength={25}
-                  className="form-control"
-                  defaultValue={ambiente.nombre_ambiente || ''}
-                  {...register('nombre_ambiente')}
-                />
-              ) : (
-                'Cargando'
-              )}
+              <input
+                type="text"
+                maxLength={25}
+                className="form-control"
+                defaultValue={ambiente.nombre_ambiente || ''}
+                placeholder="Escriba el nombre del ambiente"
+                {...register('nombre_ambiente')}
+              />
               {errors.nombre_ambiente && (
                 <span className="text-danger">{errors.nombre_ambiente.message}</span>
               )}
@@ -276,6 +273,7 @@ const EditarAmbientePage = () => {
                     type="number"
                     className="form-control"
                     defaultValue={ambiente.capacidad || ''}
+                    placeholder="Escriba la capacidad de estudiantes"
                     {...register('capacidad')}
                   />
                 ) : (
