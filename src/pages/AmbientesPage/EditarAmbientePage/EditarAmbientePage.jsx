@@ -199,7 +199,7 @@ const EditarAmbientePage = () => {
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
           <h2 className="text-md-center">Editar ambiente</h2>
-          <form className="forms" onSubmit={handleSubmit(onSubmit)}>
+          <form className="forms" onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="my-3">
               <label className="form-label fw-bold">
                 Nombre de ambiente
