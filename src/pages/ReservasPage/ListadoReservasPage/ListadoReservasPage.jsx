@@ -55,7 +55,7 @@ const ListadoMateriasPage = () => {
   }, []);
 
   return (
-    <div className="container-fluid listado-ambientes p-md-5 vh-100">
+    <div className="container-fluid listado-ambientes p-md-5">
       <>
         <h2 className="text-start">Lista de reservas</h2>
 
@@ -68,7 +68,6 @@ const ListadoMateriasPage = () => {
           lastPage={Math.max(Math.floor((reservas.length - 1) / 10) + 1, 1)}
         />
       </>
-
       {/* <>
         <div className="d-flex justify-content-center align-items-center vh-100 overflow-auto">
           <div className="spinner-border" role="status">
