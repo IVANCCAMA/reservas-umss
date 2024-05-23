@@ -93,7 +93,8 @@ const AmbientesDisponibles = () => {
       Estado: amb.estado,
       Tipo: amb.tipo_ambiente.toUpperCase(),
       Periodo: `${amb.hora_inicio?.slice(0, 5)} - ${amb.hora_fin?.slice(0, 5)}`,
-      Accion: (
+      Fecha: amb.fecha,
+      Acción: (
         <button
           type="button"
           className="btn btn-success boton-style w-auto text-center me-md-3 rounded"

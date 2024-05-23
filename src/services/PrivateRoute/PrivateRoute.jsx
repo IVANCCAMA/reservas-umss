@@ -5,7 +5,7 @@ import PageNotFound from '../../pages/PageNotFound/PageNotFound.jsx';
 
 const PrivateRoute = ({ children, forTypeUser }) => {
   const isLoggedIn = useAppSelector((state) => state.auth.token);
-  const user = useAppSelector((state) => state.auth.usuarios);
+  const user = useAppSelector((state) => state.auth.usuario);
 
   if (!isLoggedIn) {
     return <Navigate to={'/'} replace />;

@@ -111,6 +111,10 @@ h1 {
   min-width: 110px;
 }
 
+.Registro {
+  min-width: 110px;
+}
+
 .Horario {
   min-width: 120px;
 }
@@ -135,4 +139,12 @@ h1 {
   .btn-primary {
     --bs-btn-bg: #0691f6;
   }
+}
+
+.field-icon {
+  float: right;
+  margin-right: 10px;
+  margin-top: -33px;
+  position: relative;
+  z-index: 2;
 }

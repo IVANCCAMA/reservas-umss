@@ -9,7 +9,7 @@ export const loginRequest = createAsyncThunk('auth/loginRequest', async (userLog
 
 const initialState = {
   token: null,
-  usuarios: null,
+  usuario: null,
 };
 
 const authSlice = createSlice({
@@ -18,27 +18,29 @@ const authSlice = createSlice({
   reducers: {
     checkAuthorization(state) {
       const token = storageGet('token');
-      const usuarios = storageGet('usuarios');
-      if (token && usuarios) {
-        state.usuarios = usuarios;
+      const usuario = storageGet('usuario');
+      if (token && usuario) {
+        state.usuario = usuario;
         state.token = token;
       }
     },
     logout(state) {
-      state.usuarios = null;
+      state.usuario = null;
       state.token = null;
-      storageDelete('usuarios');
+      storageDelete('usuario');
       storageDelete('token');
     },
   },
   extraReducers: (builder) => {
     builder.addCase(loginRequest.fulfilled, (state, action) => {
+      console.log(state, action);
       /* Simulación de token */
       action.payload.token = crypto.randomUUID();
-      if (action.payload.usuarios && action.payload.token) {
-        state.usuarios = action.payload.usuarios;
+
+      if (action.payload.usuario && action.payload.token) {
+        state.usuario = action.payload.usuario;
         state.token = action.payload.token;
-        storageSave('usuarios', action.payload.usuarios);
+        storageSave('usuario', action.payload.usuario);
         storageSave('token', action.payload.token);
       }
     });

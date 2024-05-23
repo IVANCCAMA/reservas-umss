@@ -3,6 +3,7 @@ import './ListadoMateriasPage.scss';
 import axios from 'axios';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
+import { useAppDispatch, useAppSelector } from '../../../redux/app/hooks.js';
 
 const ListadoMateriasPage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
@@ -10,15 +11,26 @@ const ListadoMateriasPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [materias, setMaterias] = useState([{}]);
 
+  // redux
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.usuario);
+
   // >>> FUTURO : FILTROS <<<
   // obtener valores de un key
   // const materiasKey = materias.map(mat => mat.Nivel);
   // filtro para obtener solo los valores únicos
   // const keyUnicos = [...new Set(materiasKey)];
 
+  // grupos/tablamaterias/:id_usuario
+
   const loadMaterias = () => {
+    let apiUsuario = '/grupos/tablamaterias/1';
+    if (user.tipo_usuario !== 'ADMINISTRADOR') {
+      apiUsuario = `/grupos/tablamaterias/${user.id_usuario}`;
+    }
+
     axios
-      .get(`${baseURL}/grupos/tablamaterias`)
+      .get(`${baseURL}${apiUsuario}`)
       .then((response) => {
         setMaterias(
           response.data.map((mat) => {

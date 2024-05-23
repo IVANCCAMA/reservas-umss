@@ -9,7 +9,7 @@ import { useAppSelector } from '../../../redux/app/hooks';
 
 const ListadoAmbientesPage = () => {
   // redux
-  const user = useAppSelector((state) => state.auth.usuarios);
+  const user = useAppSelector((state) => state.auth.usuario);
 
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
   // estados

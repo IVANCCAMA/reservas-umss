@@ -116,60 +116,84 @@ const RegistroAperturaPage = () => {
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
           <Form
-            title='Apertura del sistema'
-            className='needs-validation'
+            title="Apertura del sistema"
+            className="needs-validation"
             onSubmit={handleSubmit(onSubmit)}
             onClickCancel={() => {
               confirmationModal({
-                body: (<>
-                  <Icon className="iconAlert" icon="charm:circle-cross" style={{ color: '#FF3B20', height: '90px', width: '90px' }} />
-                  <div className="pt-md-3">
-                    ¿Estás seguro que desea <br /> cancelar el registro de <br /> apertura?
-                  </div>
-                </>),
+                body: (
+                  <>
+                    <Icon
+                      className="iconAlert"
+                      icon="charm:circle-cross"
+                      style={{ color: '#FF3B20', height: '90px', width: '90px' }}
+                    />
+                    <div className="pt-md-3">
+                      ¿Estás seguro que desea <br /> cancelar el registro de <br /> apertura?
+                    </div>
+                  </>
+                ),
                 onClickYesTo: '/',
               });
             }}
           >
             <TextInput
-              autoComplete='off'
-              label={<>Motivo de apertura <span className="text-danger ms-1">*</span></>}
+              autoComplete="off"
+              label={
+                <>
+                  Motivo de apertura <span className="text-danger ms-1">*</span>
+                </>
+              }
               {...register('motivo')}
-              placeholder='Escriba el motivo de apertura'
+              placeholder="Escriba el motivo de apertura"
               error={errors.motivo?.message}
               handleChange={(newValue) => newValue.toUpperCase()}
             />
 
-            <div className='input-component d-flex'>
-              <label className='form-label fw-bold col-md-6 mb-0'>
+            <div className="input-component d-flex">
+              <label className="form-label fw-bold col-md-6 mb-0">
                 Tipo de usuario <span className="text-danger ms-1">*</span>
               </label>
 
               <div className="d-flex col-md-6">
                 <div className="col-md-6 d-flex justify-content-center  align-content-center">
-                  <CheckboxInput label='Docente' value={'DOCENTE'} {...register('userType')} />
+                  <CheckboxInput label="Docente" value={'DOCENTE'} {...register('userType')} />
                 </div>
                 <div className="col-md-6 d-flex justify-content-center">
-                  <CheckboxInput label='Auxiliar' value={'AUXILIAR'} {...register('userType')} />
+                  <CheckboxInput label="Auxiliar" value={'AUXILIAR'} {...register('userType')} />
                 </div>
               </div>
             </div>
-            {errors.userType ? <span className="text-danger">{errors.userType.message}</span> : <></>}
+            {errors.userType ? (
+              <span className="text-danger">{errors.userType.message}</span>
+            ) : (
+              <></>
+            )}
 
-            <h5 className='fw-bold'>Periodo de apertura del sistema</h5>
+            <h5 className="fw-bold">Periodo de apertura del sistema</h5>
 
             <div className="row row-cols6">
               <div className="col-md-6">
                 <DateInput
-                  label={<>Fecha de inicio <span className="text-danger ms-1">*</span></>}
+                  label={
+                    <>
+                      Fecha de inicio <span className="text-danger ms-1">*</span>
+                    </>
+                  }
                   {...register('fechaInicio')}
                   error={errors.fechaInicio?.message}
-                  afterChange={() => { clearErrors('fechaFin') }}
+                  afterChange={() => {
+                    clearErrors('fechaFin');
+                  }}
                 />
               </div>
               <div className="col-md-6">
                 <DateInput
-                  label={<>Fecha fin <span className="text-danger ms-1">*</span></>}
+                  label={
+                    <>
+                      Fecha fin <span className="text-danger ms-1">*</span>
+                    </>
+                  }
                   {...register('fechaFin')}
                   error={errors.fechaFin?.message}
                 />
@@ -179,35 +203,55 @@ const RegistroAperturaPage = () => {
             <div className="row row-cols6">
               <div className="col-md-6">
                 <TimeInput
-                  label={<>Hora de inicio <span className="text-danger ms-1">*</span></>}
+                  label={
+                    <>
+                      Hora de inicio <span className="text-danger ms-1">*</span>
+                    </>
+                  }
                   {...register('horaInicio')}
                   error={errors.horaInicio?.message}
-                  afterChange={() => { clearErrors('horaFin') }}
+                  afterChange={() => {
+                    clearErrors('horaFin');
+                  }}
                 />
               </div>
               <div className="col-md-6">
                 <TimeInput
-                  label={<>Hora fin <span className="text-danger ms-1">*</span></>}
+                  label={
+                    <>
+                      Hora fin <span className="text-danger ms-1">*</span>
+                    </>
+                  }
                   {...register('horaFin')}
                   error={errors.horaFin?.message}
                 />
               </div>
             </div>
 
-            <h5 className='fw-bold'>Periodo de reservas</h5>
+            <h5 className="fw-bold">Periodo de reservas</h5>
 
             <div className="row row-cols6">
               <div className="col-md-6">
                 <DateInput
-                  label={<>Fecha de inicio <span className="text-danger ms-1">*</span></>}
+                  label={
+                    <>
+                      Fecha de inicio <span className="text-danger ms-1">*</span>
+                    </>
+                  }
                   {...register('reservaInicio')}
                   error={errors.reservaInicio?.message}
-                  afterChange={() => { clearErrors('reservaFin') }}
+                  afterChange={() => {
+                    clearErrors('reservaFin');
+                  }}
                 />
               </div>
               <div className="col-md-6">
                 <DateInput
-                  label={<>Fecha fin <span className="text-danger ms-1">*</span></>}
+                  label={
+                    <>
+                      Fecha fin <span className="text-danger ms-1">*</span>
+                    </>
+                  }
                   {...register('reservaFin')}
                   error={errors.reservaFin?.message}
                 />

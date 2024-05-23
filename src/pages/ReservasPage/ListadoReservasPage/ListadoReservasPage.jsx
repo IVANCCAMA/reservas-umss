@@ -12,7 +12,7 @@ const ListadoMateriasPage = () => {
   const [reservas, setReservas] = useState([{}]);
 
   //redux
-  const user = useAppSelector((state) => state.auth.usuarios);
+  const user = useAppSelector((state) => state.auth.usuario);
 
   // >>> FUTURO : FILTROS <<<
   // obtener valores de un key
@@ -21,7 +21,7 @@ const ListadoMateriasPage = () => {
   // filtro para obtener solo los valores únicos
   // const keyUnicos = [...new Set(materiasKey)];
 
-  const loadMaterias = () => {
+  const loadReservas = () => {
     let apiUsuario = '/lista_reservas';
     if (user.tipo_usuario !== 'ADMINISTRADOR') {
       apiUsuario = `/reserva-usuario/${user.id_usuario}`;
@@ -33,6 +33,7 @@ const ListadoMateriasPage = () => {
         setReservas(
           response.data.map((reserv) => {
             return {
+              Registro: reserv.registro_reserva,
               Solicitante: reserv.nombre_usuario,
               Fecha: reserv.fecha_reserva.slice(0, 10),
               Horario: `${reserv.hora_inicio.slice(0, 5)} - ${reserv.hora_fin.slice(0, 5)}`,
@@ -50,7 +51,7 @@ const ListadoMateriasPage = () => {
   };
 
   useEffect(() => {
-    loadMaterias();
+    loadReservas();
   }, []);
 
   return (

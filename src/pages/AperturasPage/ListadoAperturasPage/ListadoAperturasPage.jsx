@@ -20,11 +20,14 @@ const ListadoAperturasPage = () => {
             if (apt.estado === 'VIGENTE') {
               colorEstado = '#21BF4E';
             }
+            if (apt.estado === 'EN CURSO') {
+              colorEstado = '#FFCA2C';
+            }
 
             return {
-              'Inicio de apertura': apt.inicio_apertura,
-              'Fin de apertura': apt.fin_apertura,
-              'Periodo de reservas': apt.periodo_reservas,
+              'Inicio de reserva': apt.inicio_apertura,
+              'Fin de reserva': apt.fin_apertura,
+              'Periodo de examenes': apt.periodo_reservas,
               Usuario: apt.tipo_usuario,
               Motivo: apt.motivo,
               Estado: (
