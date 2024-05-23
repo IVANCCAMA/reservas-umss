@@ -27,7 +27,7 @@ const ListadoAperturasPage = () => {
             return {
               'Inicio de reserva': apt.inicio_apertura,
               'Fin de reserva': apt.fin_apertura,
-              'Periodo de examenes': apt.periodo_reservas,
+              'Periodo de exámenes': apt.periodo_reservas,
               Usuario: apt.tipo_usuario,
               Motivo: apt.motivo,
               Estado: (

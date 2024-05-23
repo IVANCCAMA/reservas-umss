@@ -170,14 +170,14 @@ const RegistroAperturaPage = () => {
               <></>
             )}
 
-            <h5 className="fw-bold">Periodo de apertura del sistema</h5>
+            <h5 className="fw-bold">Periodo de reservas</h5>
 
             <div className="row row-cols6">
               <div className="col-md-6">
                 <DateInput
                   label={
                     <>
-                      Fecha de inicio <span className="text-danger ms-1">*</span>
+                      Fecha inicio <span className="text-danger ms-1">*</span>
                     </>
                   }
                   {...register('fechaInicio')}
@@ -205,7 +205,7 @@ const RegistroAperturaPage = () => {
                 <TimeInput
                   label={
                     <>
-                      Hora de inicio <span className="text-danger ms-1">*</span>
+                      Hora inicio <span className="text-danger ms-1">*</span>
                     </>
                   }
                   {...register('horaInicio')}
@@ -228,7 +228,7 @@ const RegistroAperturaPage = () => {
               </div>
             </div>
 
-            <h5 className="fw-bold">Periodo de reservas</h5>
+            <h5 className="fw-bold">Periodo de exámenes</h5>
 
             <div className="row row-cols6">
               <div className="col-md-6">
