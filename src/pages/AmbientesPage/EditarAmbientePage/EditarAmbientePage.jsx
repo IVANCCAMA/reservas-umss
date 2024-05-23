@@ -15,7 +15,6 @@ const EditarAmbientePage = () => {
   const { confirmationModal, errorModal, successModal } = useModal();
   const horarios = horariosJSON;
   let { id_ambiente } = useParams();
-  const [ambiente, setAmbiente] = useState({});
   const [horariosFilter, setHorariosFilter] = useState([]);
 
   useEffect(() => {
@@ -95,7 +94,8 @@ const EditarAmbientePage = () => {
       .max(250, 'El número máximo es 250')
       .test('is-required', 'El campo es obligatorio para laboratorios', function (value) {
         //const tipoAmbiente = this.parent.tipo;
-        if (ambiente.tipo === 'laboratorio') {
+        if (watch('tipo') === 'laboratorio') {
+          console.log('haciendo test');
           return typeof value === 'number';
         }
         return true;
@@ -137,7 +137,7 @@ const EditarAmbientePage = () => {
     formState: { errors, isSubmitting },
     setValue,
     reset,
-    //watch
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -209,7 +209,6 @@ const EditarAmbientePage = () => {
                 type="text"
                 maxLength={25}
                 className="form-control"
-                defaultValue={ambiente.nombre_ambiente || ''}
                 placeholder="Escriba el nombre del ambiente"
                 {...register('nombre_ambiente')}
               />
@@ -300,7 +299,7 @@ const EditarAmbientePage = () => {
               </div>
             </div>
 
-            {ambiente.tipo === 'laboratorio' && (
+            {watch('tipo') === 'laboratorio' && (
               <div className="my-3">
                 <label className="form-label fw-bold">
                   Nº Computadoras <span className="text-danger ms-1">*</span>
@@ -350,7 +349,6 @@ const EditarAmbientePage = () => {
               {/* //////////////// */}
               {horariosFilter.map((horario, index) => {
                 const hasCheckedPeriod = horario.periodos.some((period) => period.checked);
-
                 return (
                   <div key={index}>
                     <button
