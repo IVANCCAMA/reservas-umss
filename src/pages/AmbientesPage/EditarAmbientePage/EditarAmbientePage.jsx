@@ -472,7 +472,7 @@ const EditarAmbientePage = () => {
                 type="button"
                 onClick={() => {
                   confirmationModal({
-                    content: (
+                    body: (
                       <>
                         <div>
                           <img src={iconoError} />
@@ -482,7 +482,7 @@ const EditarAmbientePage = () => {
                         </div>
                       </>
                     ),
-                    onClickYesTo: '/',
+                    onClickYesTo: '/ambientes/listaAmbientes',
                   });
                 }}
                 disabled={isSubmitting}
