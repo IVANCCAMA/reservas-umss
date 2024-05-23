@@ -20,19 +20,16 @@ const EditarAmbientePage = () => {
 
   useEffect(() => {
     const loadAmbiente = (id_ambiente) => {
-      //recuperar datos por el id
       axios
         .get(`${baseURL}/disponibles/ambiente/${id_ambiente}`)
         .then((response) => {
-          setAmbiente(response.data);
+          reset(response.data);
           /// Filtrar los horarios disponibles por día
           const disponibilidadPorDia = response.data.disponibilidadPorDia;
-
           const horariosFilter = horarios.map((dia) => {
             const disponibilidadDia = disponibilidadPorDia.find(
               (disponibilidad) => disponibilidad.dia.toLowerCase() === dia.nombre.toLowerCase(),
             );
-
             const periodosDia = disponibilidadDia
               ? disponibilidadDia.periodos.map((periodo) => periodo.id_periodo)
               : [];
@@ -139,6 +136,7 @@ const EditarAmbientePage = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
+    reset,
     //watch
   } = useForm({
     resolver: yupResolver(schema),
@@ -201,7 +199,7 @@ const EditarAmbientePage = () => {
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
           <h2 className="text-md-center">Editar ambiente</h2>
-          <form className="forms" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <form className="forms" onSubmit={handleSubmit(onSubmit)}>
             <div className="my-3">
               <label className="form-label fw-bold">
                 Nombre de ambiente
@@ -223,21 +221,18 @@ const EditarAmbientePage = () => {
               <label className="form-label fw-bold">
                 Tipo de ambiente <span className="text-danger ms-1">*</span>
               </label>
-              {ambiente.tipo ? (
-                <select
-                  className="form-select"
-                  value={ambiente.tipo || ''}
-                  onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
-                  {...register('tipo')}
-                >
-                  <option value="">Seleccione el tipo de ambiente</option>
-                  <option value="aula comun">Aula común</option>
-                  <option value="auditorio">Auditorio</option>
-                  <option value="laboratorio">Laboratorio</option>
-                </select>
-              ) : (
-                'Cargando'
-              )}
+              <select
+                className="form-select"
+                placeholder="Seleccione el tipo de ambiente"
+                defaultValue={ambiente.tipo || ''}
+                onChange={(e) => setAmbiente({ ...ambiente, tipo: e.target.value })}
+                {...register('tipo')}
+              >
+                <option value="">Seleccione el tipo de ambiente</option>
+                <option value="aula comun">Aula común</option>
+                <option value="auditorio">Auditorio</option>
+                <option value="laboratorio">Laboratorio</option>
+              </select>
               {errors.tipo && <span className="text-danger">Seleccione una categoria</span>}
             </div>
             <div className="my-3">
@@ -268,17 +263,13 @@ const EditarAmbientePage = () => {
                 <label className="form-label fw-bold">
                   Capacidad de estudiantes <span className="text-danger ms-1">*</span>
                 </label>
-                {ambiente.capacidad ? (
-                  <input
-                    type="number"
-                    className="form-control"
-                    defaultValue={ambiente.capacidad || ''}
-                    placeholder="Escriba la capacidad de estudiantes"
-                    {...register('capacidad')}
-                  />
-                ) : (
-                  'Cargando'
-                )}
+                <input
+                  type="number"
+                  className="form-control"
+                  defaultValue={ambiente.capacidad || ''}
+                  placeholder="Escriba la capacidad de estudiantes"
+                  {...register('capacidad')}
+                />
                 {errors.capacidad && (
                   <span className="text-danger">{errors.capacidad.message}</span>
                 )}
@@ -287,17 +278,13 @@ const EditarAmbientePage = () => {
                 <label className="form-label fw-bold">
                   Min (%)<span className="text-danger ms-1">*</span>
                 </label>
-                {ambiente.porcentaje_min ? (
-                  <input
-                    defaultValue={ambiente.porcentaje_min}
-                    type="number"
-                    className="form-control"
-                    placeholder="Cap. maxima"
-                    {...register('porcentaje_min')}
-                  />
-                ) : (
-                  'Cargando'
-                )}
+                <input
+                  defaultValue={ambiente.porcentaje_min}
+                  type="number"
+                  className="form-control"
+                  placeholder="Cap. maxima"
+                  {...register('porcentaje_min')}
+                />
                 {errors.porcentaje_min && (
                   <span className="text-danger">{errors.porcentaje_min.message}</span>
                 )}
@@ -306,17 +293,13 @@ const EditarAmbientePage = () => {
                 <label className="form-label fw-bold">
                   Max (%)<span className="text-danger ms-1">*</span>
                 </label>
-                {ambiente.porcentaje_max ? (
-                  <input
-                    defaultValue={ambiente.porcentaje_max}
-                    type="number"
-                    className="form-control"
-                    placeholder="Cap. de minima"
-                    {...register('porcentaje_max')}
-                  />
-                ) : (
-                  'Cargando'
-                )}
+                <input
+                  defaultValue={ambiente.porcentaje_max}
+                  type="number"
+                  className="form-control"
+                  placeholder="Cap. de minima"
+                  {...register('porcentaje_max')}
+                />
                 {errors.porcentaje_max && (
                   <span className="text-danger">{errors.porcentaje_max.message}</span>
                 )}
