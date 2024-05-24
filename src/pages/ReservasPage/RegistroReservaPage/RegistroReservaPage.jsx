@@ -234,7 +234,7 @@ const RegistroReservaPage = () => {
     } else {
       setDatalistSolicitante(undefined);
     }
-    return value;
+    return new String(value);
   };
   // resuperar materias y grupos
   const searchGroupsByApplicant = () => {
