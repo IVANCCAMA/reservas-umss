@@ -4,7 +4,7 @@ import { useAppSelector } from '../../../redux/app/hooks';
 
 const Navbar = () => {
   const isLoggedIn = useAppSelector((state) => state.auth.token);
-  const user = useAppSelector((state) => state.auth.usuarios);
+  const user = useAppSelector((state) => state.auth.usuario);
 
   return (
     <div

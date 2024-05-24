@@ -29,7 +29,7 @@ const SidebarOption = ({
 }) => {
   // redux
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.auth.usuarios);
+  const user = useAppSelector((state) => state.auth.usuario);
 
   if (to === '/logout') {
     return (

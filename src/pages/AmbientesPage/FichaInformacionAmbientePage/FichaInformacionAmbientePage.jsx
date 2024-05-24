@@ -119,7 +119,7 @@ const FichaInformacionAmbientePage = () => {
                 <div className="accordion-item">
                   <h2 className="accordion-header">
                     <button
-                      className="accordion-button collapsed"
+                      className="accordion-button"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target={`#collapseTwo${index}`}
@@ -131,7 +131,7 @@ const FichaInformacionAmbientePage = () => {
                   </h2>
                   <div
                     id={`collapseTwo${index}`}
-                    className="accordion-collapse collapse"
+                    className="accordion-collapse collapse show"
                     aria-labelledby={`headingTwo${index}`}
                     data-bs-parent="#accordionExample"
                   >

@@ -18,7 +18,7 @@ import PageNotFound from './pages/PageNotFound/PageNotFound';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Boot from './redux/boot.js';
 import PrivateRoute from './services/PrivateRoute/PrivateRoute';
-import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPAge.jsx';
+import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPages.jsx';
 
 function App() {
   return (
@@ -113,7 +113,7 @@ function App() {
                   <Route
                     path="/aperturas/registrarApertura"
                     element={
-                      <PrivateRoute>
+                      <PrivateRoute forTypeUser={'ADMINISTRADOR'}>
                         <RegistroAperturaPage />
                       </PrivateRoute>
                     }
