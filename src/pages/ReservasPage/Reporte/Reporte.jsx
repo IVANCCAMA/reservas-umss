@@ -23,7 +23,7 @@ const Reporte = ({ label, icon, data, fechaIni = '01-05-24', fechaFin = '26-05-2
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      doc.text(`FECHAS: ${fechaIni} - ${fechaFin}`, 13, 37);
+      doc.text(`FECHA REPORTE: Del ${fechaIni} al ${fechaFin}`, 13, 39);
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
@@ -42,7 +42,7 @@ const Reporte = ({ label, icon, data, fechaIni = '01-05-24', fechaFin = '26-05-2
       doc.text('ZONA/BARRIO: UMSS', 150, 19);
       doc.text(' COCHABAMBA', 156, 24);
 
-      const startY = 40;
+      const startY = 45;
 
       const columns = [
         '#',
@@ -91,7 +91,7 @@ const Reporte = ({ label, icon, data, fechaIni = '01-05-24', fechaFin = '26-05-2
         const currentDateTime = new Date().toLocaleString();
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
-        doc.text(`Fecha y Hora de descarga: ${currentDateTime}`, 110, 276);
+        doc.text(`Fecha y Hora de descarga: ${currentDateTime}`, 108, 276);
         doc.setFontSize(10);
         doc.text(`Página, ${i}/${totalPages}`, 207, 276, { align: 'right' });
       }
