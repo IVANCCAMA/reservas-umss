@@ -4,6 +4,7 @@ import axios from 'axios';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
 import { useAppSelector } from '../../../redux/app/hooks';
+import Reporte from '../Reporte/Reporte';
 
 const ListadoMateriasPage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
@@ -57,11 +58,13 @@ const ListadoMateriasPage = () => {
   return (
     <div className="container-fluid listado-ambientes p-md-5">
       <>
-        <h2 className="text-start">Lista de reservas</h2>
+        <div className="d-flex justify-content-between">
+          <h2 className="text-start">Lista de reservas</h2>
+          <Reporte label="Generar reporte" icon="carbon:document" data={reservas} />
+        </div>
 
         {/* Se puede parametrizar la cantidad de filas mostradas por hojas */}
         <Table rows={reservas} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
-
         <Pagination
           pageNumber={pageNumber}
           setPageNumber={setPageNumber}
