@@ -14,8 +14,8 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
 
   const { reportModal } = useModal();
-  const [dataAmbientes, setDataAmbientes] = useState([{}]);
-  const [dataDocentes, setDataDocentes] = useState([{}]);
+  const [dataAmbientes, setDataAmbientes] = useState([]);
+  const [dataDocentes, setDataDocentes] = useState([]);
 
   const schema = yup.object().shape({
     fechaInicio: yup.date().default(''),
@@ -26,9 +26,26 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    console.log('Datosss', data);
-    generarPDFReporte();
+  const onSubmit = async (data) => {
+    const fecha = {
+      fechaFin: data.fechaFin,
+      fechaInicio: data.fechaInicio,
+    };
+    try {
+      /* CAMBIAR ENDPOINTS */
+      const responseAmbientes = await axios.get(`${baseURL}/reservas/lista_reservas` /*, fecha */);
+      const dataAmbientes = responseAmbientes.data;
+
+      const responseDocentes = await axios.get(`${baseURL}/reservas/lista_reservas` /*, fecha */);
+      const dataDocentes = responseDocentes.data;
+
+      /* console.log('ambientes>>>', dataAmbientes);
+      console.log('docentes>>>', dataDocentes); */
+
+      generarPDFReporte(dataAmbientes, dataDocentes);
+    } catch (error) {
+      console.error('Error fetching data', error);
+    }
   };
 
   const generarReporte = () => {
@@ -75,7 +92,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
     return nuevaFecha;
   }
 
-  const generarPDFReporte = () => {
+  const generarPDFReporte = (dataAmbientes, dataDocentes) => {
     const dataFilter = filterData(data, fechaIni, fechaFin);
 
     if (dataFilter.length > 0) {

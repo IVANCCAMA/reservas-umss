@@ -22,8 +22,6 @@ const Form: React.FC<FormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOnSubmit = (e: { preventDefault: () => void }) => {
-    console.log('hola');
-
     e.preventDefault();
     setIsSubmitting(true);
     onSubmit(); // Llama al onSubmit pasado como parte de rest, si existe
