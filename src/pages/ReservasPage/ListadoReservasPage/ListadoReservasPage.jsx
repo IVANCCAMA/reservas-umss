@@ -23,6 +23,13 @@ const ListadoMateriasPage = () => {
       .then((response) => {
         setReservas(
           response.data.map((reserv) => {
+            let colorEstado = '#E92929';
+            if (reserv.estado === 'vigente') {
+              colorEstado = '#21BF4E';
+            }else if (reserv.estado === 'cancelado') {
+              colorEstado = '#FFCA2C'
+            }
+
             return {
               Solicitante: reserv.nombre_usuario,
               Fecha: reserv.fecha_reserva.slice(0, 10),
@@ -30,7 +37,16 @@ const ListadoMateriasPage = () => {
               'Materia - Grupo': reserv.nombre_materia,
               Cantidad: reserv.cantidad_est,
               Ambiente: reserv.nombre_ambiente,
-              'Min-Capacidad-Max': reserv.min_cap_max,
+              Capacidad: reserv.min_cap_max.slice(0, 15),
+              'Registro de reserva': reserv.registro_reserva.slice(0, 19),
+              Estado: (
+                <div
+                  className="text-center text-white fw-bold px-2 rounded"
+                  style={{ backgroundColor: colorEstado }}
+                >
+                  {reserv.estado.toUpperCase()}
+                </div>
+              ),
             };
           }),
         );
