@@ -95,6 +95,14 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
         },
         margin: { top: 10 },
         styles: { lineColor: [0, 0, 0], lineWidth: 0.1 },
+        columnStyles: {
+          0: { cellWidth: 'auto' },
+          1: { cellWidth: 'auto' },
+          2: { cellWidth: 'auto' },
+          3: { cellWidth: 'auto' },
+          4: { cellWidth: 'auto' },
+          5: { cellWidth: 'auto' },
+        },
       });
 
       doc.setFontSize(14);
@@ -118,6 +126,14 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
         },
         margin: { top: 10 },
         styles: { lineColor: [0, 0, 0], lineWidth: 0.1 },
+        columnStyles: {
+          0: { cellWidth: 'auto' },
+          1: { cellWidth: 'auto' },
+          2: { cellWidth: 'auto' },
+          3: { cellWidth: 'auto' },
+          4: { cellWidth: 'auto' },
+          5: { cellWidth: 'auto' },
+        },
       });
 
       // Agregar una nueva página horizontal
@@ -158,7 +174,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
           1: { cellWidth: 30 },
           2: { cellWidth: 'auto' },
           3: { cellWidth: 'auto' },
-          4: { cellWidth: 'auto' },
+          4: { cellWidth: 25 },
           5: { cellWidth: 'auto' },
           6: { cellWidth: 'auto' },
           7: { cellWidth: 'auto' },
