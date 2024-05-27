@@ -2,11 +2,29 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import 'jspdf-autotable';
 import { jsPDF } from 'jspdf';
 import logoPDF from '../../../assets/Images/logoReserBit.png';
-const Reporte = ({ label, icon, data, fechaIni = '01-05-24', fechaFin = '26-05-24' }) => {
-  console.log('Datos en reporte', data);
+
+const Reporte = ({ label, icon, data, fechaIni = '2024-05-17', fechaFin = '2024-05-19' }) => {
+  const filterData = (data, fechaIni, fechaFin) => {
+    const startDate = new Date(fechaIni);
+    const endDate = new Date(fechaFin);
+
+    return data.filter((item) => {
+      const [time, date] = item.Registro.split(' ');
+      const itemDate = new Date(date.split('-').reverse().join('-') + 'T' + time);
+      return itemDate >= startDate && itemDate <= endDate;
+    });
+  };
+
+  function cambiarFormatoFecha(fecha) {
+    const partes = fecha.split('-');
+    const nuevaFecha = `${partes[2]}-${partes[1]}-${partes[0]}`;
+    return nuevaFecha;
+  }
 
   const generarPDFReporte = () => {
-    if (data.length > 0) {
+    const dataFilter = filterData(data, fechaIni, fechaFin);
+
+    if (dataFilter.length > 0) {
       const imageURL = logoPDF;
       const doc = new jsPDF({
         orientation: 'portrait',
@@ -23,7 +41,11 @@ const Reporte = ({ label, icon, data, fechaIni = '01-05-24', fechaFin = '26-05-2
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      doc.text(`FECHA REPORTE: Del ${fechaIni} al ${fechaFin}`, 13, 39);
+      doc.text(
+        `FECHA REPORTE: Del ${cambiarFormatoFecha(fechaIni)} al ${cambiarFormatoFecha(fechaFin)}`,
+        13,
+        39,
+      );
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
@@ -55,7 +77,7 @@ const Reporte = ({ label, icon, data, fechaIni = '01-05-24', fechaFin = '26-05-2
         'Ambiente',
         /* 'Min-Capacidad-Max', */
       ];
-      const datos = data.map((reserve, index) => [
+      const datos = dataFilter.map((reserve, index) => [
         index + 1,
         reserve.Registro,
         reserve.Solicitante,
