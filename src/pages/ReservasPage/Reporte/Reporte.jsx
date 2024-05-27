@@ -3,7 +3,7 @@ import 'jspdf-autotable';
 import { jsPDF } from 'jspdf';
 import logoPDF from '../../../assets/Images/logoReserBit.png';
 
-const Reporte = ({ label, icon, data, fechaIni = '2024-05-17', fechaFin = '2024-05-19' }) => {
+const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-05-27' }) => {
   const filterData = (data, fechaIni, fechaFin) => {
     const startDate = new Date(fechaIni);
     const endDate = new Date(fechaFin);
@@ -62,21 +62,12 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-05-17', fechaFin = '2024-
       doc.setFont('helvetica', 'normal');
       doc.text('CALLE UMSS NRO. N', 152, 14);
       doc.text('ZONA/BARRIO: UMSS', 150, 19);
-      doc.text(' COCHABAMBA', 156, 24);
+      doc.text('COCHABAMBA', 156, 24);
 
-      const startY = 45;
+      doc.setFontSize(14);
+      doc.text('Lista de ambientes más solicitados', 13, 50);
 
-      const columns = [
-        '#',
-        'Registro',
-        'Solicitante',
-        'Fecha',
-        'Horario',
-        /* 'Materia - Grupo', */
-        'Cantidad',
-        'Ambiente',
-        /* 'Min-Capacidad-Max', */
-      ];
+      /* Datos */
       const datos = dataFilter.map((reserve, index) => [
         index + 1,
         reserve.Registro,
@@ -90,9 +81,9 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-05-17', fechaFin = '2024-
       ]);
 
       doc.autoTable({
-        head: [columns],
-        body: datos,
-        startY: startY,
+        head: [['#', 'Aula', 'Capacidad', 'Estado', 'Tipo', 'Cantidad de reservas']],
+        body: datos.slice(0, 5),
+        startY: 52,
         headStyles: {
           fillColor: [230, 230, 230],
           textColor: [0, 0, 0],
@@ -106,8 +97,63 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-05-17', fechaFin = '2024-
         margin: { top: 10 },
         styles: { lineColor: [0, 0, 0], lineWidth: 0.1 },
       });
-      const totalPages = doc.internal.getNumberOfPages();
 
+      doc.setFontSize(14);
+      doc.text('Lista de docentes que realizaron más reservas', 13, 103);
+
+      doc.autoTable({
+        head: [['#', 'Solicitante', 'Tipo', 'Cod. SIS', 'Cantidad de reservas']],
+        body: datos.slice(0, 5),
+        startY: 105,
+        headStyles: {
+          fillColor: [230, 230, 230],
+          textColor: [0, 0, 0],
+          fontSize: 9,
+          halign: 'center',
+        },
+        bodyStyles: {
+          textColor: [0, 0, 0],
+          fontSize: 9,
+        },
+        margin: { top: 10 },
+        styles: { lineColor: [0, 0, 0], lineWidth: 0.1 },
+      });
+
+      doc.addPage();
+      doc.setFontSize(14);
+      doc.text('Lista de reservas', 13, 13);
+
+      doc.autoTable({
+        head: [
+          [
+            '#',
+            'Registro',
+            'Solicitante',
+            'Fecha',
+            'Horario',
+            /* 'Materia - Grupo', */
+            'Cantidad',
+            'Ambiente',
+            /* 'Min-Capacidad-Max', */
+          ],
+        ],
+        body: datos,
+        startY: 15,
+        headStyles: {
+          fillColor: [230, 230, 230],
+          textColor: [0, 0, 0],
+          fontSize: 9,
+          halign: 'center',
+        },
+        bodyStyles: {
+          textColor: [0, 0, 0],
+          fontSize: 9,
+        },
+        margin: { top: 10 },
+        styles: { lineColor: [0, 0, 0], lineWidth: 0.1 },
+      });
+
+      const totalPages = doc.internal.getNumberOfPages();
       for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
         const currentDateTime = new Date().toLocaleString();
