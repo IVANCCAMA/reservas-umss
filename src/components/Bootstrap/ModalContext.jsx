@@ -40,6 +40,18 @@ export const ModalProvider = ({ children }) => {
     });
   };
 
+  const createModalForm = (
+    body,
+    button1,
+    onClickButton1To = '',
+    button2 = undefined,
+    onClickButton2To = '',
+  ) => {
+    return {
+      body: body,
+    };
+  };
+
   const createModal = (
     body,
     button1,
@@ -59,16 +71,18 @@ export const ModalProvider = ({ children }) => {
           if (onClickButton1To) navigate(onClickButton1To);
         },
       },
-      button2: button2 ? {
-        ...button2,
-        onClick: () => {
-          setModal(null);
-          if (button2.onClick) {
-            button2.onClick();
+      button2: button2
+        ? {
+            ...button2,
+            onClick: () => {
+              setModal(null);
+              if (button2.onClick) {
+                button2.onClick();
+              }
+              if (onClickButton2To) navigate(onClickButton2To);
+            },
           }
-          if (onClickButton2To) navigate(onClickButton2To);
-        }
-      } : undefined
+        : undefined,
     };
   };
 
@@ -100,6 +114,17 @@ export const ModalProvider = ({ children }) => {
       onClick: onClickNo,
     };
     newModal(createModal(body, button1, onClickYesTo, button2, onClickNoTo));
+  };
+  const reportModal = ({
+    body,
+    onClickYesTo = '',
+    onClickNoTo = '',
+    labelBtn1 = '' /* Defautl value Si */,
+    labelBtn2 = '' /* Defautl value No */,
+    onClickYes = () => {},
+    onClickNo = () => {},
+  }) => {
+    newModal(createModalForm(body, onClickYesTo, onClickNoTo));
   };
 
   /**
@@ -137,7 +162,9 @@ export const ModalProvider = ({ children }) => {
   };
 
   return (
-    <ModalContext.Provider value={{ newModal, confirmationModal, errorModal, successModal }}>
+    <ModalContext.Provider
+      value={{ newModal, confirmationModal, errorModal, successModal, reportModal }}
+    >
       {children}
       {modal && <Modal {...modal} />}
     </ModalContext.Provider>

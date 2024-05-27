@@ -2,8 +2,66 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import 'jspdf-autotable';
 import { jsPDF } from 'jspdf';
 import logoPDF from '../../../assets/Images/logoReserBit.png';
+import { useModal } from '../../../components/Bootstrap/ModalContext';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import Form, { DateInput } from '../../../components/Form';
+import { useState } from 'react';
+import axios from 'axios';
 
-const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-05-27' }) => {
+const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-12-01' }) => {
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
+
+  const { reportModal } = useModal();
+  const [dataAmbientes, setDataAmbientes] = useState([{}]);
+  const [dataDocentes, setDataDocentes] = useState([{}]);
+
+  const schema = yup.object().shape({
+    fechaInicio: yup.date().default(''),
+    fechaFin: yup.date().default(''),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    clearErrors,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = (data) => {
+    console.log('Datosss', data);
+  };
+
+  const generarReporte = () => {
+    reportModal({
+      body: (
+        <Form className="text-start" onSubmit={handleSubmit(onSubmit)}>
+          <div className="text-center fw-bold fs-5 pt-0 mt-0">Generar reporte</div>
+          <div className="text-start mt-0">Seleccione rango de fechas para generar el reporte</div>
+          <DateInput
+            label={
+              <div className="text-start">
+                Fecha de inicio <span className="text-danger ms-1">*</span>
+              </div>
+            }
+            {...register('fechaInicio')}
+          />
+          <DateInput
+            label={
+              <div className="text-start">
+                Fecha fin <span className="text-danger ms-1">*</span>
+              </div>
+            }
+            {...register('fechaFin')}
+          />
+        </Form>
+      ),
+    });
+  };
+
   const filterData = (data, fechaIni, fechaFin) => {
     const startDate = new Date(fechaIni);
     const endDate = new Date(fechaFin);
@@ -64,7 +122,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
 
       doc.setFontSize(14);
       doc.setFont('helvetica', 'normal');
-      doc.text('Lista de ambientes más solicitados', 13, 50);
+      doc.text('Lista de cinco ambientes más solicitados', 13, 50);
 
       // Datos
       const datos = dataFilter.map((reserv, index) => [
@@ -108,7 +166,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
       doc.setFontSize(14);
       doc.setFont('helvetica', 'normal');
       /* Cambiar el 140 para ajustar */
-      doc.text('Lista de docentes que realizaron más reservas', 13, 140);
+      doc.text('Lista de cinco docentes que realizaron más reservas', 13, 140);
       /* Cambiar el 140 para ajustar */
       doc.autoTable({
         head: [['#', 'Solicitante', 'Tipo', 'Cod. SIS', 'Cantidad de reservas']],
@@ -136,7 +194,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
         },
       });
 
-      // Agregar una nueva página horizontal
+      // Página horizontal
       doc.addPage('a4', 'landscape');
       doc.setFontSize(14);
       doc.setFont('helvetica', 'normal');
@@ -205,7 +263,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
 
   return (
     <div>
-      <button className="btn btn-primary d-flex" onClick={generarPDFReporte}>
+      <button className="btn btn-primary d-flex" onClick={generarReporte}>
         <Icon icon={icon} width="30" height="30" />
         <div className="my-auto">{label}</div>
       </button>
