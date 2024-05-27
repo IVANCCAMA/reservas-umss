@@ -22,23 +22,19 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
     fechaFin: yup.date().default(''),
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    clearErrors,
-  } = useForm({
+  const { register, handleSubmit } = useForm({
     resolver: yupResolver(schema),
   });
 
   const onSubmit = (data) => {
     console.log('Datosss', data);
+    generarPDFReporte();
   };
 
   const generarReporte = () => {
     reportModal({
       body: (
-        <Form className="text-start" onSubmit={handleSubmit(onSubmit)}>
+        <Form className="text-start" onSubmit={handleSubmit(onSubmit)} btnName1={'Generar'}>
           <div className="text-center fw-bold fs-5 pt-0 mt-0">Generar reporte</div>
           <div className="text-start mt-0">Seleccione rango de fechas para generar el reporte</div>
           <DateInput
