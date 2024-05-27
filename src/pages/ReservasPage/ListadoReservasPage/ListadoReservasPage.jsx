@@ -11,6 +11,7 @@ const ListadoMateriasPage = () => {
 
   const [pageNumber, setPageNumber] = useState(1);
   const [reservas, setReservas] = useState([{}]);
+  const [data, setData] = useState([{}]);
 
   //redux
   const user = useAppSelector((state) => state.auth.usuario);
@@ -31,6 +32,7 @@ const ListadoMateriasPage = () => {
     axios
       .get(`${baseURL}/reservas${apiUsuario}`)
       .then((response) => {
+        setData(response.data);
         setReservas(
           response.data.map((reserv) => {
             return {
@@ -60,7 +62,7 @@ const ListadoMateriasPage = () => {
       <>
         <div className="d-flex justify-content-between">
           <h2 className="text-start">Lista de reservas</h2>
-          <Reporte label="Generar reporte" icon="carbon:document" data={reservas} />
+          <Reporte label="Generar reporte" icon="carbon:document" data={data} />
         </div>
 
         {/* Se puede parametrizar la cantidad de filas mostradas por hojas */}

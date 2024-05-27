@@ -9,7 +9,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
     const endDate = new Date(fechaFin);
 
     return data.filter((item) => {
-      const [time, date] = item.Registro.split(' ');
+      const [time, date] = item.registro_reserva.split(' ');
       const itemDate = new Date(date.split('-').reverse().join('-') + 'T' + time);
       return itemDate >= startDate && itemDate <= endDate;
     });
@@ -51,9 +51,6 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
       doc.setFontSize(11);
       doc.text('Reserbit umss', 47, 9);
       doc.setFont('helvetica', 'bold');
-      doc.text('NIT', 47, 14);
-      doc.setFont('helvetica', 'normal');
-      doc.text('5243380015', 57, 14);
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(12);
@@ -65,19 +62,20 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
       doc.text('COCHABAMBA', 156, 24);
 
       doc.setFontSize(14);
+      doc.setFont('helvetica', 'normal');
       doc.text('Lista de ambientes más solicitados', 13, 50);
 
       /* Datos */
-      const datos = dataFilter.map((reserve, index) => [
+      const datos = dataFilter.map((reserv, index) => [
         index + 1,
-        reserve.Registro,
-        reserve.Solicitante,
-        reserve.Fecha,
-        reserve.Horario,
-        /* reserve.Materia - Grupo, */
-        reserve.Cantidad,
-        reserve.Ambiente,
-        /* reserve.Min-Capacidad-Max, */
+        reserv.registro_reserva,
+        reserv.nombre_usuario,
+        reserv.fecha_reserva.slice(0, 10),
+        `${reserv.hora_inicio.slice(0, 5)} - ${reserv.hora_fin.slice(0, 5)}`,
+        reserv.nombre_materia,
+        reserv.cantidad_est,
+        reserv.nombre_ambiente,
+        reserv.min_cap_max,
       ]);
 
       doc.autoTable({
@@ -99,6 +97,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
       });
 
       doc.setFontSize(14);
+      doc.setFont('helvetica', 'normal');
       doc.text('Lista de docentes que realizaron más reservas', 13, 103);
 
       doc.autoTable({
@@ -119,10 +118,10 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
         styles: { lineColor: [0, 0, 0], lineWidth: 0.1 },
       });
 
-      doc.addPage();
+      doc.addPage('a4', 'landscape');
       doc.setFontSize(14);
+      doc.setFont('helvetica', 'normal');
       doc.text('Lista de reservas', 13, 13);
-
       doc.autoTable({
         head: [
           [
@@ -131,10 +130,10 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
             'Solicitante',
             'Fecha',
             'Horario',
-            /* 'Materia - Grupo', */
-            'Cantidad',
+            'Materia - Grupo',
+            'Cant.',
             'Ambiente',
-            /* 'Min-Capacidad-Max', */
+            'Min-Capacidad-Max',
           ],
         ],
         body: datos,
@@ -151,6 +150,17 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
         },
         margin: { top: 10 },
         styles: { lineColor: [0, 0, 0], lineWidth: 0.1 },
+        columnStyles: {
+          0: { cellWidth: 'auto' },
+          1: { cellWidth: 30 },
+          2: { cellWidth: 'auto' },
+          3: { cellWidth: 'auto' },
+          4: { cellWidth: 'auto' },
+          5: { cellWidth: 'auto' },
+          6: { cellWidth: 'auto' },
+          7: { cellWidth: 'auto' },
+          8: { cellWidth: 'auto' },
+        },
       });
 
       const totalPages = doc.internal.getNumberOfPages();
@@ -159,9 +169,14 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
         const currentDateTime = new Date().toLocaleString();
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
-        doc.text(`Fecha y Hora de descarga: ${currentDateTime}`, 108, 276);
-        doc.setFontSize(10);
-        doc.text(`Página, ${i}/${totalPages}`, 207, 276, { align: 'right' });
+        doc.text(
+          `Fecha y Hora de descarga: ${currentDateTime} Página, ${i}/${totalPages}`,
+          207,
+          276,
+          null,
+          null,
+          'right',
+        );
       }
 
       doc.save('Reporte Reservas.pdf');
