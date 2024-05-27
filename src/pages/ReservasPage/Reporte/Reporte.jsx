@@ -32,6 +32,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
         format: [215.9, 279.4],
       });
 
+      // Página vertical
       doc.addImage(imageURL, 'JPEG', 12, 2, 30, 15);
 
       doc.setFont('helvetica', 'bold');
@@ -65,7 +66,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
       doc.setFont('helvetica', 'normal');
       doc.text('Lista de ambientes más solicitados', 13, 50);
 
-      /* Datos */
+      // Datos
       const datos = dataFilter.map((reserv, index) => [
         index + 1,
         reserv.registro_reserva,
@@ -98,12 +99,13 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
 
       doc.setFontSize(14);
       doc.setFont('helvetica', 'normal');
-      doc.text('Lista de docentes que realizaron más reservas', 13, 103);
-
+      /* Cambiar el 140 para ajustar */
+      doc.text('Lista de docentes que realizaron más reservas', 13, 140);
+      /* Cambiar el 140 para ajustar */
       doc.autoTable({
         head: [['#', 'Solicitante', 'Tipo', 'Cod. SIS', 'Cantidad de reservas']],
         body: datos.slice(0, 5),
-        startY: 105,
+        startY: 142,
         headStyles: {
           fillColor: [230, 230, 230],
           textColor: [0, 0, 0],
@@ -118,6 +120,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
         styles: { lineColor: [0, 0, 0], lineWidth: 0.1 },
       });
 
+      // Agregar una nueva página horizontal
       doc.addPage('a4', 'landscape');
       doc.setFontSize(14);
       doc.setFont('helvetica', 'normal');
@@ -163,19 +166,20 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
         },
       });
 
+      // Agregar número de página a cada página
       const totalPages = doc.internal.getNumberOfPages();
       for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
         const currentDateTime = new Date().toLocaleString();
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
         doc.text(
-          `Fecha y Hora de descarga: ${currentDateTime} Página, ${i}/${totalPages}`,
-          207,
-          276,
-          null,
-          null,
-          'right',
+          `Fecha y Hora de descarga: ${currentDateTime} Página ${i}/${totalPages}`,
+          pageWidth - 10,
+          pageHeight - 10,
+          { align: 'right' },
         );
       }
 
