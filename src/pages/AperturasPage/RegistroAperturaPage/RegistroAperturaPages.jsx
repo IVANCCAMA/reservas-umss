@@ -12,6 +12,9 @@ const RegistroAperturaPage = () => {
   const { confirmationModal, successModal } = useModal();
   const { loadNotification, errorNotification } = useNotification();
 
+  const hoy = new Date();
+  const ayer = new Date(hoy);
+  ayer.setDate(hoy.getDate() - 1);
   const schema = yup.object().shape({
     motivo: yup
       .string()
@@ -27,7 +30,7 @@ const RegistroAperturaPage = () => {
       .date()
       .default('')
       .typeError('Seleccione una fecha válida')
-      .min(new Date(), 'Selecciona una fecha a futuro'),
+      .min(ayer, 'Selecciona una fecha a futuro'),
     fechaFin: yup
       .date()
       .default('')
@@ -51,7 +54,7 @@ const RegistroAperturaPage = () => {
       .date()
       .default('')
       .typeError('Seleccione una fecha válida')
-      .min(new Date(), 'Selecciona una fecha a futuro'),
+      .min(ayer, 'Selecciona una fecha a futuro'),
     reservaFin: yup
       .date()
       .default('')
@@ -88,8 +91,6 @@ const RegistroAperturaPage = () => {
             esAuxiliar: data.userType.includes('AUXILIAR'),
           })
           .then((response) => {
-            console.log(response);
-
             successModal({
               body: (
                 <>
@@ -147,7 +148,7 @@ const RegistroAperturaPage = () => {
               {...register('motivo')}
               placeholder="Escriba el motivo de apertura"
               error={errors.motivo?.message}
-              handleChange={(newValue) => newValue.toUpperCase()}
+              handleChange={(newValue) => new String(newValue.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ1-9 ]/g, '').toUpperCase())}
             />
 
             <div className="input-component d-flex">

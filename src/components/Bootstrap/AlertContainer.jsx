@@ -5,7 +5,7 @@ const AlertContainer = React.forwardRef((props, ref) => {
   const [alerts, setAlerts] = useState([]);
 
   const addAlert = (style, body, onClose) => {
-    const key = new Date().getTime();
+    const key = new Date().getTime() * Math.random() * 1000;
     setAlerts((currentAlerts) => [...currentAlerts, { key, style, body, onClose }]);
   };
 
