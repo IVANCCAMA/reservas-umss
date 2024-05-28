@@ -23,60 +23,39 @@ const ListadoAmbientesPage = () => {
       .then((response) => {
         setAmbientes(
           response.data.map((amb) => {
-            if (user.tipo_usuario === 'ADMINISTRADOR') {
-              return {
-                Aula: amb.nombre_ambiente,
-                Capacidad: amb.capacidad,
-                Disponibilidad: amb.disponible ? 'HABILITADO' : 'DESHABILITADO',
-                Tipo: amb.tipo.toUpperCase(),
-                Proyector: amb.proyector ? 'SI' : 'NO',
-                Editar: (
-                  <div className="boton-editar text-center me-md-3 rounded">
-                    <Link
-                      to={'/ambientes/listaAmbientes/editar/' + amb.id_ambiente}
-                      className="btn border border-0"
-                    >
-                      <div>
-                        <Icon icon="fa6-regular:pen-to-square" className="boton-icon" />
-                      </div>
-                    </Link>
+            const rows = {
+              Aula: amb.nombre_ambiente,
+              Capacidad: amb.capacidad,
+              Tipo: amb.tipo.toUpperCase(),
+              Disponibilidad: amb.disponible ? 'HABILITADO' : 'DESHABILITADO',
+            };
+            const editar = (
+              <div className="boton-editar text-center me-md-3 rounded">
+                <Link
+                  to={'/ambientes/listaAmbientes/editar/' + amb.id_ambiente}
+                  className="btn border border-0"
+                >
+                  <div>
+                    <Icon icon="fa6-regular:pen-to-square" className="boton-icon" />
                   </div>
-                ),
-
-                'Ver más': (
-                  <div className="boton-style text-center me-md-3 rounded">
-                    <Link
-                      to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
-                      className="btn border border-0"
-                    >
-                      <div>
-                        <Icon icon="gg:arrow-right-r" className="boton-icon" />
-                      </div>
-                    </Link>
+                </Link>
+              </div>
+            );
+            const verMas = (
+              <div className="boton-style text-center me-md-3 rounded">
+                <Link
+                  to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
+                  className="btn border border-0"
+                >
+                  <div>
+                    <Icon icon="gg:arrow-right-r" className="boton-icon" />
                   </div>
-                ),
-              };
-            } else {
-              return {
-                Aula: amb.nombre_ambiente,
-                Capacidad: amb.capacidad,
-                Disponibilidad: amb.disponible ? 'HABILITADO' : 'DESHABILITADO',
-                Tipo: amb.tipo.toUpperCase(),
-                Proyector: amb.proyector ? 'SI' : 'NO',
-                'Ver más': (
-                  <div className="boton-style text-center me-md-3 rounded">
-                    <Link
-                      to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
-                      className="btn border border-0"
-                    >
-                      <div>
-                        <Icon icon="gg:arrow-right-r" className="boton-icon" />
-                      </div>
-                    </Link>
-                  </div>
-                ),
-              };
-            }
+                </Link>
+              </div>
+            );
+            return user.tipo_usuario === 'ADMINISTRADOR'
+              ? { ...rows, Editar: editar, 'Ver más': verMas, }
+              : { ...rows, 'Ver más': verMas, }
           }),
         );
       })
