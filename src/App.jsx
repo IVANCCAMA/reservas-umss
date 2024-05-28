@@ -18,7 +18,8 @@ import PageNotFound from './pages/PageNotFound/PageNotFound';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Boot from './redux/boot.js';
 import PrivateRoute from './services/PrivateRoute/PrivateRoute';
-import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPages.jsx';
+import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPages';
+import CalendarioPage from './pages/AmbientesPage/CalendarioPage/CalendarioPage';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <div className="col-md-10 pt-5 p-0 main-content">
                 <Routes>
                   <Route path="/login" element={<LoginPage />} />
+                  <Route path="/ambientes/calendario/:id_ambiente" element={<CalendarioPage />} />
                   <Route path="/" element={<LoginPage />} />
                   <Route
                     path="/home"
