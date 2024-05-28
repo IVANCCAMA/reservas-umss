@@ -1,10 +1,13 @@
 import React, { ReactNode, useState } from 'react';
+import { string } from 'yup';
 
 interface FormProps {
   children: any;
   onSubmit: () => void;
   title?: string;
   onClickCancel?: () => void;
+  btnName1?: string;
+  btnName2?: string;
 }
 
 const Form: React.FC<FormProps> = ({
@@ -12,6 +15,8 @@ const Form: React.FC<FormProps> = ({
   onSubmit = () => {},
   title = '',
   onClickCancel = () => {},
+  btnName1 = 'Enviar',
+  btnName2 = 'Cancelar',
   ...rest
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,19 +29,20 @@ const Form: React.FC<FormProps> = ({
   };
 
   return (
-    <form {...{ ...rest, className: `${rest.className || ''} form-component`, onSubmit: handleOnSubmit }}>
-      {title && (<h2 className="text-md-center">{title}</h2>)}
+    <form
+      {...{
+        ...rest,
+        className: `${rest.className || ''} form-component`,
+        onSubmit: handleOnSubmit,
+      }}
+    >
+      {title && <h2 className="text-md-center">{title}</h2>}
 
       {children}
 
       <div className="d-flex justify-content-center pt-3">
-        <button
-          type="submit"
-          className="btn btn-success me-md-5"
-          disabled={isSubmitting}
-          style={{ width: "86px" }}
-        >
-          {isSubmitting ? 'Enviando...' : 'Enviar'}
+        <button type="submit" className="btn btn-success me-md-5" disabled={isSubmitting}>
+          {isSubmitting ? 'Enviando...' : btnName1}
         </button>
         <button
           type="button"
@@ -45,7 +51,7 @@ const Form: React.FC<FormProps> = ({
           disabled={isSubmitting}
           onClick={onClickCancel}
         >
-          Cancelar
+          {btnName2}
         </button>
       </div>
     </form>
