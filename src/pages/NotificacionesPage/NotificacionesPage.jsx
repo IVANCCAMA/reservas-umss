@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import Table from '../../components/Table/Table';
 import Pagination from '../../components/Pagination/Pagination';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { Icon } from '@iconify/react/dist/iconify.js';
 
 const notificacionesTest = [
   {
@@ -33,10 +35,24 @@ const NotificacionesPage = () => {
     /* Borrar esto */
     setNotificaciones(
       notificacionesTest.map((not) => {
-        return {
+        const rows = {
           'Fecha y hora': not.fecha_notificacion,
           Descripción: not.descripcion,
-          Leído: not.leido,
+        };
+        const leido = (
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckDefault"
+              checked={not.leido}
+            />
+          </div>
+        );
+        return {
+          ...rows,
+          Leído: leido,
         };
       }),
     );
