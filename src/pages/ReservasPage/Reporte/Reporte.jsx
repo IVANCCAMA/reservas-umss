@@ -51,6 +51,8 @@ const Reporte = ({ label, icon, data }) => {
           <div className="text-center fw-bold fs-5 pt-0 mt-0">Generar reporte</div>
           <div className="text-start mt-0">Seleccione rango de fechas para generar el reporte</div>
           <DateInput
+            minDate={''}
+            maxDate={''}
             label={
               <div className="text-start">
                 Fecha de inicio <span className="text-danger ms-1">*</span>
@@ -59,6 +61,8 @@ const Reporte = ({ label, icon, data }) => {
             {...register('fechaInicio')}
           />
           <DateInput
+            minDate={''}
+            maxDate={''}
             label={
               <div className="text-start">
                 Fecha fin <span className="text-danger ms-1">*</span>
