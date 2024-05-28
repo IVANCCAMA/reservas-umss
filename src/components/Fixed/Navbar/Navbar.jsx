@@ -45,6 +45,7 @@ const Navbar = () => {
         </div>
         {isLoggedIn && (
           <div className="d-flex align-items-center">
+            <Link to={'/notificaciones'} className="btn bi bi-bell-fill"></Link>
             <div className="me-2 nombreUsuario nav-item nav-link">{user.nombre_usuario}</div>
             <img
               src={user.foto_usuario}

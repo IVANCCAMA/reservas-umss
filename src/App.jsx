@@ -20,6 +20,7 @@ import Boot from './redux/boot.js';
 import PrivateRoute from './services/PrivateRoute/PrivateRoute';
 import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPages';
 import CalendarioPage from './pages/AmbientesPage/CalendarioPage/CalendarioPage';
+import NotificacionesPage from './pages/NotificacionesPage/NotificacionesPage.jsx';
 
 function App() {
   return (
@@ -34,7 +35,7 @@ function App() {
               </div>
             </PrivateRoute>
             <NotificationProvider>
-              <div className="col-md-10 pt-5 p-0 main-content">
+              <div className="col-md-10 pt-md-5 p-0 main-content">
                 <Routes>
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/ambientes/calendario/:id_ambiente" element={<CalendarioPage />} />
@@ -125,6 +126,14 @@ function App() {
                     element={
                       <PrivateRoute forTypeUser={'ADMINISTRADOR'}>
                         <ListadoAperturasPage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/notificaciones"
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <NotificacionesPage />
                       </PrivateRoute>
                     }
                   />
