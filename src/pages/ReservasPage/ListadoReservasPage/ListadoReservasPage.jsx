@@ -43,8 +43,10 @@ const ListadoMateriasPage = () => {
               Cantidad: reserv.cantidad_est,
               Ambiente: reserv.nombre_ambiente,
               'Min-Capacidad-Max': reserv.min_cap_max,
-            }
-            return user.tipo_usuario !== 'ADMINISTRADOR' ? rows : {Solicitante: reserv.nombre_usuario, ...rows};
+            };
+            return user.tipo_usuario !== 'ADMINISTRADOR'
+              ? rows
+              : { Solicitante: reserv.nombre_usuario, ...rows };
           }),
         );
       })
@@ -62,7 +64,9 @@ const ListadoMateriasPage = () => {
       <>
         <div className="d-flex justify-content-between">
           <h2 className="text-start">Lista de reservas</h2>
-          <Reporte label="Generar reporte" icon="carbon:document" data={data} />
+          {user.tipo_usuario === 'ADMINISTRADOR' && (
+            <Reporte label="Generar reporte" icon="carbon:document" data={data} />
+          )}
         </div>
 
         {/* Se puede parametrizar la cantidad de filas mostradas por hojas */}
