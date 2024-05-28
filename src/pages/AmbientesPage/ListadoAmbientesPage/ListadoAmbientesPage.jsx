@@ -6,6 +6,7 @@ import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { useAppSelector } from '../../../redux/app/hooks';
+import Filter from '../../../components/Filter/Filter';
 
 const ListadoAmbientesPage = () => {
   // redux
@@ -15,14 +16,14 @@ const ListadoAmbientesPage = () => {
   // estados
   const [pageNumber, setPageNumber] = useState(1);
   const [ambientes, setAmbientes] = useState([{}]);
+  const [filteredAmbientes, setFilteredAmbientes] = useState([]);
 
   // logica | api
   const loadAmbientes = () => {
     axios
       .get(`${baseURL}/ambientes`)
       .then((response) => {
-        setAmbientes(
-          response.data.map((amb) => {
+          const mappedAmbientes = response.data.map((amb) => {
             if (user.tipo_usuario === 'ADMINISTRADOR') {
               return {
                 Aula: amb.nombre_ambiente,
@@ -77,8 +78,10 @@ const ListadoAmbientesPage = () => {
                 ),
               };
             }
-          }),
-        );
+          });
+
+          setAmbientes(mappedAmbientes);
+          setFilteredAmbientes(mappedAmbientes);
       })
       .catch((error) => {
         console.error('Error al obtener los ambientes:', error);
@@ -90,16 +93,26 @@ const ListadoAmbientesPage = () => {
     loadAmbientes();
   }, []);
 
-  return (
-    <div className="container-fluid listado-ambientes p-md-5">
-      <h2 className="text-start">Lista de ambientes</h2>
-      <Table rows={ambientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
+  const handleFilter = (searchTerm) => {
+    const filteredData = ambientes.filter((amb) => {
+      return Object.values(amb).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredAmbientes(filteredData);
+  };
 
-      <Pagination
-        pageNumber={pageNumber}
-        setPageNumber={setPageNumber}
-        lastPage={Math.max(Math.floor((ambientes.length - 1) / 10) + 1, 1)}
-      />
+  return (
+      <div className="container-fluid listado-ambientes p-md-5">
+        <h2 className="text-start">Lista de ambientes</h2>
+        <Filter onFilter={handleFilter}/>
+        <Table rows={filteredAmbientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
+    
+        <Pagination
+          pageNumber={pageNumber}
+          setPageNumber={setPageNumber}
+          lastPage={Math.max(Math.floor((ambientes.length - 1) / 10) + 1, 1)}
+        />
     </div>
   );
 };

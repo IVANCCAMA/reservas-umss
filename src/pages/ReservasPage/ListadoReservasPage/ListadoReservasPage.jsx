@@ -4,12 +4,14 @@ import axios from 'axios';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
 import { useAppSelector } from '../../../redux/app/hooks';
+import Filter from '../../../components/Filter/Filter';
 
 const ListadoMateriasPage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
 
   const [pageNumber, setPageNumber] = useState(1);
   const [reservas, setReservas] = useState([{}]);
+  const [filteredReservas, setFilteredReservas] = useState([]);
 
   //redux
   const user = useAppSelector((state) => state.auth.usuario);
@@ -30,8 +32,8 @@ const ListadoMateriasPage = () => {
     axios
       .get(`${baseURL}/reservas${apiUsuario}`)
       .then((response) => {
-        setReservas(
-          response.data.map((reserv) => {
+        /* setReservas( */
+          const mappedReservas = response.data.map((reserv) => {
             return {
               Registro: reserv.registro_reserva,
               Solicitante: reserv.nombre_usuario,
@@ -42,8 +44,10 @@ const ListadoMateriasPage = () => {
               Ambiente: reserv.nombre_ambiente,
               'Min-Capacidad-Max': reserv.min_cap_max,
             };
-          }),
-        );
+          });
+        /* ); */
+        setReservas(mappedReservas);
+        setFilteredReservas(mappedReservas);
       })
       .catch((error) => {
         console.error('Error al obtener las reservas:', error);
@@ -54,13 +58,23 @@ const ListadoMateriasPage = () => {
     loadReservas();
   }, []);
 
+  const handleFilter = (searchTerm) => {
+    const filteredData = reservas.filter((reserv) => {
+      return Object.values(reserv).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredReservas(filteredData);
+  };
+
   return (
     <div className="container-fluid listado-ambientes p-md-5">
       <>
         <h2 className="text-start">Lista de reservas</h2>
 
+        <Filter onFilter={handleFilter}/>
         {/* Se puede parametrizar la cantidad de filas mostradas por hojas */}
-        <Table rows={reservas} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
+        <Table rows={filteredReservas} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
 
         <Pagination
           pageNumber={pageNumber}

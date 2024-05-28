@@ -4,12 +4,14 @@ import axios from 'axios';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
 import { useAppDispatch, useAppSelector } from '../../../redux/app/hooks.js';
+import Filter from '../../../components/Filter/Filter';
 
 const ListadoMateriasPage = () => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
   // estados
   const [pageNumber, setPageNumber] = useState(1);
   const [materias, setMaterias] = useState([{}]);
+  const [filteredMaterias, setFilteredMaterias] = useState([]);
 
   // redux
   const dispatch = useAppDispatch();
@@ -32,8 +34,8 @@ const ListadoMateriasPage = () => {
     axios
       .get(`${baseURL}${apiUsuario}`)
       .then((response) => {
-        setMaterias(
-          response.data.map((mat) => {
+        /* setMaterias( */
+          const mappedMaterias = response.data.map((mat) => {
             return {
               Materia: mat.nombre_materia,
               Nivel: mat.nivel_materia,
@@ -41,8 +43,10 @@ const ListadoMateriasPage = () => {
               Inscritos: mat.cantidad_est,
               Docentes: mat.docente,
             };
-          }),
-        );
+          });
+        /* ); */
+        setMaterias(mappedMaterias);
+        setFilteredMaterias(mappedMaterias);
       })
       .catch((error) => {
         console.error('Error al obtener las materias:', error);
@@ -53,12 +57,22 @@ const ListadoMateriasPage = () => {
     loadMaterias();
   }, []);
 
+  const handleFilter = (searchTerm) => {
+    const filteredData = materias.filter((mat) => {
+      return Object.values(mat).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredMaterias(filteredData);
+  };
+
   return (
     <div className="container-fluid listado-ambientes p-md-5">
       <h2 className="text-start">Materias registradas</h2>
+      <Filter onFilter={handleFilter} />
 
       {/* Se puede parametrizar la cantidad de filas mostradas por hojas */}
-      <Table rows={materias} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
+      <Table rows={filteredMaterias} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
 
       <Pagination
         pageNumber={pageNumber}
