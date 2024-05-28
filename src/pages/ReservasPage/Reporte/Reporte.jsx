@@ -78,6 +78,10 @@ const Reporte = ({ label, icon, data }) => {
     const endDate = new Date(fechaFin);
 
     return data.filter((item) => {
+      console.log(
+        'Format moment>>>',
+        moment(item.fecha_reserva, 'DD-MM-YYYY').format('YYYY/MM/DD'),
+      );
       const formartDat = cambiarFormatoFecha(item.fecha_reserva);
 
       const fechaReservParts = formartDat.split('-');
@@ -91,12 +95,6 @@ const Reporte = ({ label, icon, data }) => {
 
   function cambiarFormatoFecha(fecha) {
     const partes = fecha.split('-');
-    const nuevaFecha = `${partes[2]}-${partes[1]}-${partes[0]}`;
-    return nuevaFecha;
-  }
-
-  function cambiarFormatoFecha2(fecha) {
-    const partes = fecha.split('/');
     const nuevaFecha = `${partes[2]}-${partes[1]}-${partes[0]}`;
     return nuevaFecha;
   }
@@ -125,7 +123,7 @@ const Reporte = ({ label, icon, data }) => {
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.text(
-        `FECHA REPORTE: Del ${cambiarFormatoFecha2(fechas.fecha_inicio)} al ${cambiarFormatoFecha2(fechas.fecha_fin)}`,
+        `FECHA REPORTE: Del ${moment(fechas.fecha_inicio, 'YYYY/MM/DD').format('DD-MM-YYYY')} al ${moment(fechas.fecha_fin, 'YYYY/MM/DD').format('DD-MM-YYYY')}`,
         13,
         39,
       );
