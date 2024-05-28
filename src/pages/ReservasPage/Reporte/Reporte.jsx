@@ -71,23 +71,13 @@ const Reporte = ({ label, icon, data }) => {
     });
   };
 
-  /*   console.log(data);
-   */
   const filterData = (data, fechaIni, fechaFin) => {
     const startDate = new Date(fechaIni);
     const endDate = new Date(fechaFin);
 
     return data.filter((item) => {
-      console.log(
-        'Format moment>>>',
-        moment(item.fecha_reserva, 'DD-MM-YYYY').format('YYYY/MM/DD'),
-      );
-      const formartDat = cambiarFormatoFecha(item.fecha_reserva);
-
-      const fechaReservParts = formartDat.split('-');
-      const fechaReserv = new Date(
-        `${fechaReservParts[0]}/${fechaReservParts[1]}/${fechaReservParts[2]}`,
-      );
+      const formartDat = moment(item.fecha_reserva, 'DD-MM-YYYY').format('YYYY/MM/DD');
+      const fechaReserv = new Date(formartDat);
 
       return fechaReserv >= startDate && fechaReserv <= endDate;
     });
@@ -102,9 +92,37 @@ const Reporte = ({ label, icon, data }) => {
   const generarPDFReporte = (dataAmbientes, dataDocentes, fechas) => {
     const dataFilterReservas = filterData(data, fechas.fecha_inicio, fechas.fecha_fin);
 
-    console.log('Datos filtrados', dataFilterReservas);
-
     if (dataFilterReservas.length > 0) {
+      // Datos reservas
+      const datos = dataFilterReservas.map((reserv, index) => [
+        index + 1,
+        reserv.registro_reserva,
+        reserv.nombre_usuario,
+        reserv.fecha_reserva.slice(0, 10),
+        `${reserv.hora_inicio.slice(0, 5)} - ${reserv.hora_fin.slice(0, 5)}`,
+        reserv.nombre_materia,
+        reserv.cantidad_est,
+        reserv.nombre_ambiente,
+        reserv.min_cap_max,
+      ]);
+      // Datos ambientes
+      const ambientes = dataAmbientes.map((abm, index) => [
+        index + 1,
+        abm.nombre_ambiente,
+        abm.capacidad,
+        abm.disponible,
+        abm.tipo,
+        abm.cantidad_reservas,
+      ]);
+      // Datos ambientes
+      const docentes = dataDocentes.map((doc, index) => [
+        index + 1,
+        doc.nombre_usuario,
+        doc.tipo_usuario,
+        doc.codsiss,
+        doc.cantidad_reservas,
+      ]);
+
       const imageURL = logoPDF;
       const doc = new jsPDF({
         orientation: 'portrait',
@@ -145,36 +163,6 @@ const Reporte = ({ label, icon, data }) => {
       doc.setFontSize(14);
       doc.setFont('helvetica', 'normal');
       doc.text('Lista de cinco ambientes más solicitados', 13, 50);
-
-      // Datos reservas
-      const datos = dataFilterReservas.map((reserv, index) => [
-        index + 1,
-        reserv.registro_reserva,
-        reserv.nombre_usuario,
-        reserv.fecha_reserva.slice(0, 10),
-        `${reserv.hora_inicio.slice(0, 5)} - ${reserv.hora_fin.slice(0, 5)}`,
-        reserv.nombre_materia,
-        reserv.cantidad_est,
-        reserv.nombre_ambiente,
-        reserv.min_cap_max,
-      ]);
-      // Datos ambientes
-      const ambientes = dataAmbientes.map((abm, index) => [
-        index + 1,
-        abm.nombre_ambiente,
-        abm.capacidad,
-        abm.disponible,
-        abm.tipo,
-        abm.cantidad_reservas,
-      ]);
-      // Datos ambientes
-      const docentes = dataDocentes.map((doc, index) => [
-        index + 1,
-        doc.nombre_usuario,
-        doc.tipo_usuario,
-        doc.codsiss,
-        doc.cantidad_reservas,
-      ]);
 
       doc.autoTable({
         head: [['#', 'Aula', 'Capacidad', 'Estado', 'Tipo', 'Cantidad de reservas']],
@@ -296,6 +284,8 @@ const Reporte = ({ label, icon, data }) => {
       }
 
       doc.save('Reporte Reservas.pdf');
+    } else {
+      alert('No hay datos existentes entre las fechas seleccionadas.');
     }
   };
 
