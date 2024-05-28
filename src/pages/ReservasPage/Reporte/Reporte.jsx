@@ -7,16 +7,13 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Form, { DateInput } from '../../../components/Form';
-import { useState } from 'react';
 import axios from 'axios';
 import moment from 'moment';
 
-const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-12-01' }) => {
+const Reporte = ({ label, icon, data }) => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
 
   const { reportModal } = useModal();
-  const [dataAmbientes, setDataAmbientes] = useState([]);
-  const [dataDocentes, setDataDocentes] = useState([]);
 
   const schema = yup.object().shape({
     fechaInicio: yup.date().default(''),
@@ -28,25 +25,20 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
   });
 
   const onSubmit = async (data) => {
-    const fecha = {
-      fecha_inicio: moment(data.fechaFin).format('YYYY/MM/DD'),
-      fecha_fin: moment(data.fechaInicio).format('YYYY/MM/DD'),
+    console.log('Recibidopoo', data);
+
+    const fechas = {
+      fecha_inicio: moment(data.fechaInicio).format('YYYY/MM/DD'),
+      fecha_fin: moment(data.fechaFin).format('YYYY/MM/DD'),
     };
-
-    console.log('>>', fecha);
-
     try {
-      /* CAMBIAR ENDPOINTS */
-      const responseAmbientes = await axios.post(`${baseURL}/ambientes/reporte-ambientes`, fecha);
+      const responseAmbientes = await axios.post(`${baseURL}/ambientes/reporte-ambientes`, fechas);
       const dataAmbientes = responseAmbientes.data;
 
-      const responseDocentes = await axios.post(`${baseURL}/reservas/reporte-docentes`, fecha);
+      const responseDocentes = await axios.post(`${baseURL}/reservas/reporte-docentes`, fechas);
       const dataDocentes = responseDocentes.data;
 
-      /* console.log('ambientes>>>', dataAmbientes);
-      console.log('docentes>>>', dataDocentes); */
-
-      generarPDFReporte(dataAmbientes, dataDocentes);
+      generarPDFReporte(dataAmbientes, dataDocentes, fechas);
     } catch (error) {
       console.error('Error fetching data', error);
     }
@@ -79,14 +71,21 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
     });
   };
 
+  /*   console.log(data);
+   */
   const filterData = (data, fechaIni, fechaFin) => {
     const startDate = new Date(fechaIni);
     const endDate = new Date(fechaFin);
 
     return data.filter((item) => {
-      const [time, date] = item.registro_reserva.split(' ');
-      const itemDate = new Date(date.split('-').reverse().join('-') + 'T' + time);
-      return itemDate >= startDate && itemDate <= endDate;
+      const formartDat = cambiarFormatoFecha(item.fecha_reserva);
+
+      const fechaReservParts = formartDat.split('-');
+      const fechaReserv = new Date(
+        `${fechaReservParts[0]}/${fechaReservParts[1]}/${fechaReservParts[2]}`,
+      );
+
+      return fechaReserv >= startDate && fechaReserv <= endDate;
     });
   };
 
@@ -96,10 +95,18 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
     return nuevaFecha;
   }
 
-  const generarPDFReporte = (dataAmbientes, dataDocentes) => {
-    const dataFilter = filterData(data, fechaIni, fechaFin);
+  function cambiarFormatoFecha2(fecha) {
+    const partes = fecha.split('/');
+    const nuevaFecha = `${partes[2]}-${partes[1]}-${partes[0]}`;
+    return nuevaFecha;
+  }
 
-    if (dataFilter.length > 0) {
+  const generarPDFReporte = (dataAmbientes, dataDocentes, fechas) => {
+    const dataFilterReservas = filterData(data, fechas.fecha_inicio, fechas.fecha_fin);
+
+    console.log('Datos filtrados', dataFilterReservas);
+
+    if (dataFilterReservas.length > 0) {
       const imageURL = logoPDF;
       const doc = new jsPDF({
         orientation: 'portrait',
@@ -118,7 +125,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.text(
-        `FECHA REPORTE: Del ${cambiarFormatoFecha(fechaIni)} al ${cambiarFormatoFecha(fechaFin)}`,
+        `FECHA REPORTE: Del ${cambiarFormatoFecha2(fechas.fecha_inicio)} al ${cambiarFormatoFecha2(fechas.fecha_fin)}`,
         13,
         39,
       );
@@ -141,8 +148,8 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
       doc.setFont('helvetica', 'normal');
       doc.text('Lista de cinco ambientes más solicitados', 13, 50);
 
-      // Datos
-      const datos = dataFilter.map((reserv, index) => [
+      // Datos reservas
+      const datos = dataFilterReservas.map((reserv, index) => [
         index + 1,
         reserv.registro_reserva,
         reserv.nombre_usuario,
@@ -153,10 +160,27 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
         reserv.nombre_ambiente,
         reserv.min_cap_max,
       ]);
+      // Datos ambientes
+      const ambientes = dataAmbientes.map((abm, index) => [
+        index + 1,
+        abm.nombre_ambiente,
+        abm.capacidad,
+        abm.disponible,
+        abm.tipo,
+        abm.cantidad_reservas,
+      ]);
+      // Datos ambientes
+      const docentes = dataDocentes.map((doc, index) => [
+        index + 1,
+        doc.nombre_usuario,
+        doc.tipo_usuario,
+        doc.codsiss,
+        doc.cantidad_reservas,
+      ]);
 
       doc.autoTable({
         head: [['#', 'Aula', 'Capacidad', 'Estado', 'Tipo', 'Cantidad de reservas']],
-        body: datos.slice(0, 5),
+        body: ambientes.slice(0, 5),
         startY: 52,
         headStyles: {
           fillColor: [230, 230, 230],
@@ -187,7 +211,7 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
       /* Cambiar el 140 para ajustar */
       doc.autoTable({
         head: [['#', 'Solicitante', 'Tipo', 'Cod. SIS', 'Cantidad de reservas']],
-        body: datos.slice(0, 5),
+        body: docentes.slice(0, 5),
         startY: 142,
         headStyles: {
           fillColor: [230, 230, 230],
@@ -207,7 +231,6 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
           2: { cellWidth: 'auto' },
           3: { cellWidth: 'auto' },
           4: { cellWidth: 'auto' },
-          5: { cellWidth: 'auto' },
         },
       });
 
