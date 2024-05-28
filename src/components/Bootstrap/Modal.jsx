@@ -37,6 +37,9 @@ const Modal = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     show() {
+      const background = document.getElementsByClassName('modal-backdrop fade show');
+      const backgroundArray = Array.from(background);
+      backgroundArray.forEach(obj => obj.remove());
       if (modalRef.current) {
         const bsModal = new bootstrap.Modal(modalRef.current, {
           backdrop: 'static',

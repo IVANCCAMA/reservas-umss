@@ -32,16 +32,16 @@ const ListadoMateriasPage = () => {
       .then((response) => {
         setReservas(
           response.data.map((reserv) => {
-            return {
+            const rows = {
               Registro: reserv.registro_reserva,
-              Solicitante: reserv.nombre_usuario,
               Fecha: reserv.fecha_reserva.slice(0, 10),
               Horario: `${reserv.hora_inicio.slice(0, 5)} - ${reserv.hora_fin.slice(0, 5)}`,
               'Materia - Grupo': reserv.nombre_materia,
               Cantidad: reserv.cantidad_est,
               Ambiente: reserv.nombre_ambiente,
               'Min-Capacidad-Max': reserv.min_cap_max,
-            };
+            }
+            return user.tipo_usuario !== 'ADMINISTRADOR' ? rows : {Solicitante: reserv.nombre_usuario, ...rows};
           }),
         );
       })
