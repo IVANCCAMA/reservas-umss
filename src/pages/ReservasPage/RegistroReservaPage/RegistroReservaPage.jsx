@@ -577,7 +577,6 @@ const RegistroReservaPage = () => {
                                 return;
                               return (
                                 <div
-
                                   key={`periodo-${index}`}
                                   className="col-md-4 d-flex justify-content-center"
                                 >
