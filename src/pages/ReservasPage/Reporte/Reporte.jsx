@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Form, { DateInput } from '../../../components/Form';
 import { useState } from 'react';
 import axios from 'axios';
+import moment from 'moment';
 
 const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-12-01' }) => {
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
@@ -28,15 +29,18 @@ const Reporte = ({ label, icon, data, fechaIni = '2024-01-17', fechaFin = '2024-
 
   const onSubmit = async (data) => {
     const fecha = {
-      fechaFin: data.fechaFin,
-      fechaInicio: data.fechaInicio,
+      fecha_inicio: moment(data.fechaFin).format('YYYY/MM/DD'),
+      fecha_fin: moment(data.fechaInicio).format('YYYY/MM/DD'),
     };
+
+    console.log('>>', fecha);
+
     try {
       /* CAMBIAR ENDPOINTS */
-      const responseAmbientes = await axios.get(`${baseURL}/reservas/lista_reservas` /*, fecha */);
+      const responseAmbientes = await axios.post(`${baseURL}/ambientes/reporte-ambientes`, fecha);
       const dataAmbientes = responseAmbientes.data;
 
-      const responseDocentes = await axios.get(`${baseURL}/reservas/lista_reservas` /*, fecha */);
+      const responseDocentes = await axios.post(`${baseURL}/reservas/reporte-docentes`, fecha);
       const dataDocentes = responseDocentes.data;
 
       /* console.log('ambientes>>>', dataAmbientes);
