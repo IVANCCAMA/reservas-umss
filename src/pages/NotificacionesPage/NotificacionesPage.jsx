@@ -55,8 +55,6 @@ const NotificacionesPage = () => {
   const handleClickRow = async (idNotification) => {
     const selectedNotification = dataNotify.find((not) => not.id_notificacion === idNotification);
 
-    console.log(selectedNotification);
-
     if (selectedNotification && !selectedNotification.leido) {
       try {
         const response = await axios.put(

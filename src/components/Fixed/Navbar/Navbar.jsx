@@ -12,7 +12,7 @@ const Navbar = () => {
   const user = useAppSelector((state) => state.auth.usuario);
 
   // notificaciones
-  const [todosLeidos, setTodosLeidos] = useState(false);
+  const [todosLeidos, setTodosLeidos] = useState(true);
 
   const loadNotificaciones = (_baseURL) => {
     console.log('realizando peticion');
@@ -39,8 +39,14 @@ const Navbar = () => {
   useEffect(() => {
     if (isLoggedIn) {
       loadNotificaciones(baseURL);
+
+      const interval = setInterval(() => {
+        loadNotificaciones(baseURL);
+      }, 30000); // Verificar cada minuto
+
+      return () => clearInterval(interval);
     }
-  }, [baseURL]);
+  }, [baseURL, isLoggedIn]);
 
   return (
     <div
