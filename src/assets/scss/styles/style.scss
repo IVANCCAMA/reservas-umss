@@ -184,18 +184,12 @@ h1 {
 .alertNotify {
   position: absolute;
   top: 13px;
-  left: 664px;
+  right: 249px;
   display: inline-block;
-  padding: 0 4px;
-  min-width: 8px;
-  max-width: 18px;
-  height: 16px;
-  border: 2px solid #212121;
+  padding: 0 5px;
+  height: 13px;
+  border: 2px solid #ffffff;
   border-radius: 22px;
-  text-align: center;
-  font-family: 'Roboto', 'Arial', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 16px;
+  line-height: 13px;
   background-color: #ff0000;
 }
