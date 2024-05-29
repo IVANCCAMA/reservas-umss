@@ -114,7 +114,7 @@ const LoginPage = () => {
                   />
                   {errors.codsiss && <span className="text-danger">{errors.codsiss.message}</span>}
                 </div>
-                <div className="input-component">
+                <div className="input-component mt-2">
                   <label className="form-label">
                     Contraseña<span className="text-danger ms-1 fw-bold">*</span>
                   </label>
