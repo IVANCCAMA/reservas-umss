@@ -192,4 +192,7 @@ h1 {
   border-radius: 22px;
   line-height: 13px;
   background-color: #ff0000;
+  @include media-breakpoint-down(md) {
+    right: 70px;
+  }
 }
