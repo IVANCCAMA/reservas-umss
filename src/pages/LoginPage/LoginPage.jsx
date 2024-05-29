@@ -142,7 +142,7 @@ const LoginPage = () => {
                 </div>
                 <button
                   type="submit"
-                  className="btn btn-primary pt-md-2 w-100"
+                  className="btn btn-primary pt-md-2 w-100 mt-3"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Enviando...' : 'Iniciar sesión'}
