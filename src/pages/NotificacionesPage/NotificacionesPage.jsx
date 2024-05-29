@@ -20,7 +20,6 @@ const NotificacionesPage = () => {
       .then((response) => {
         setNotificaciones(
           response.data.map((not) => {
-            console.log(response.data);
             const rows = {
               id_notificacion: not.id_notificacion,
               'Fecha y hora': not.registro,
@@ -52,14 +51,23 @@ const NotificacionesPage = () => {
   }, [baseURL]);
 
   const handleClickRow = async (idNotification) => {
-    try {
-      const response = await axios.put(`${baseURL}/notificaciones/update-leido/${idNotification}`);
-      if (response.status === 200) {
-        console.log('Notificación actualizada correctamente:', response.data);
-        loadNotificaciones(baseURL);
+    const selectedNotification = notificaciones.find(
+      (not) => not.id_notificacion === idNotification,
+    );
+
+    if (selectedNotification && !selectedNotification.Leído) {
+      try {
+        const response = await axios.put(
+          `${baseURL}/notificaciones/update-leido/${idNotification}`,
+        );
+        if (response.status === 200) {
+          loadNotificaciones(baseURL);
+        }
+      } catch (error) {
+        console.error('Error al realizar la petición:', error);
       }
-    } catch (error) {
-      console.error('Error al realizar la petición:', error);
+    } else {
+      console.log('Notificacion ya leida');
     }
   };
 
