@@ -1,10 +1,46 @@
 import { Link } from 'react-router-dom';
 import logo from '../../../assets/Images/logoReserBit.png';
 import { useAppSelector } from '../../../redux/app/hooks';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Navbar = () => {
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
+
+  // data user redux
   const isLoggedIn = useAppSelector((state) => state.auth.token);
   const user = useAppSelector((state) => state.auth.usuario);
+
+  // notificaciones
+  const [todosLeidos, setTodosLeidos] = useState(false);
+
+  const loadNotificaciones = (_baseURL) => {
+    console.log('realizando peticion');
+    axios
+      .get(`${_baseURL}/notificaciones/${user.id_usuario}`)
+      .then((response) => {
+        leidosTodos(response.data);
+      })
+      .catch((error) => {
+        console.error('Error al obtener las notificaciones:', error);
+      });
+  };
+
+  const leidosTodos = (_dataNotify) => {
+    const someNotLeidos = _dataNotify.some((not) => !not.leido);
+    console.log('>>.', someNotLeidos);
+    if (someNotLeidos) {
+      setTodosLeidos(false);
+    } else {
+      setTodosLeidos(true);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      loadNotificaciones(baseURL);
+    }
+  }, [baseURL]);
 
   return (
     <div
@@ -46,7 +82,7 @@ const Navbar = () => {
         {isLoggedIn && (
           <div className="d-flex align-items-center iconNotify">
             <Link to={'/notificaciones'} className="btn bi bi-bell-fill">
-              <div className={`alertNotify`}></div>
+              <div className={`${todosLeidos ? '' : 'alertNotify'}`}></div>
             </Link>
             <div className="me-2 nombreUsuario nav-item nav-link">{user.nombre_usuario}</div>
             <img
