@@ -35,6 +35,13 @@ const ListadoMateriasPage = () => {
         setData(response.data);
         setReservas(
           response.data.map((reserv) => {
+            let colorEstado = '#E92929';
+            if (reserv.estado === 'vigente') {
+              colorEstado = '#21BF4E';
+            }
+            if (reserv.estado === 'cancelado') {
+              colorEstado = '#FFCA2C';
+            }
             const rows = {
               Registro: reserv.registro_reserva,
               Fecha: reserv.fecha_reserva.slice(0, 10),
@@ -43,6 +50,14 @@ const ListadoMateriasPage = () => {
               Cantidad: reserv.cantidad_est,
               Ambiente: reserv.nombre_ambiente,
               'Min-Capacidad-Max': reserv.min_cap_max,
+              Estado: (
+                <div
+                  className="text-center text-white fw-bold px-2 rounded"
+                  style={{ backgroundColor: colorEstado }}
+                >
+                  {reserv.estado}
+                </div>
+              ),
             };
             return user.tipo_usuario !== 'ADMINISTRADOR'
               ? rows
