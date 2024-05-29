@@ -14,25 +14,26 @@ const NotificacionesPage = () => {
   const [notificaciones, setNotificaciones] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const loadNotificaciones = () => {
+  const loadNotificaciones = (_baseURL) => {
     axios
-      .get(`${baseURL}/notificaciones/${user.id_usuario}`)
+      .get(`${_baseURL}/notificaciones/${user.id_usuario}`)
       .then((response) => {
         setNotificaciones(
           response.data.map((not) => {
+            console.log(response.data);
             const rows = {
+              id_notificacion: not.id_notificacion,
               'Fecha y hora': not.registro,
               Descripción: not.descripcion,
             };
             const leido = (
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="flexCheckDefault"
-                />
-              </div>
+              <Icon
+                className={`rounded-2 ${not.leido ? 'bg-leido' : 'bg-noLeido'}`}
+                icon="bx:check-double"
+                width="30"
+                height="30"
+                style={{ color: '#ffffff' }}
+              />
             );
             return {
               ...rows,
@@ -47,13 +48,32 @@ const NotificacionesPage = () => {
   };
 
   useEffect(() => {
-    loadNotificaciones();
-  }, []);
+    loadNotificaciones(baseURL);
+  }, [baseURL]);
+
+  const handleClickRow = async (idNotification) => {
+    try {
+      const response = await axios.put(`${baseURL}/notificaciones/update-leido/${idNotification}`);
+      if (response.status === 200) {
+        console.log('Notificación actualizada correctamente:', response.data);
+        loadNotificaciones(baseURL);
+      }
+    } catch (error) {
+      console.error('Error al realizar la petición:', error);
+    }
+  };
 
   return (
-    <div className="container p-md-4">
+    <div className="container notificaciones p-md-4">
       <h2>Notificaciones</h2>
-      <Table rows={notificaciones} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
+      <Table
+        rows={notificaciones}
+        firstRow={(pageNumber - 1) * 10}
+        lastRow={pageNumber * 10}
+        typeTable={'table-hover'}
+        trCliclable={true}
+        handleClickRow={handleClickRow}
+      />
 
       <Pagination
         pageNumber={pageNumber}
