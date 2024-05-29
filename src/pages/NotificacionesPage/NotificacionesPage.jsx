@@ -12,12 +12,14 @@ const NotificacionesPage = () => {
   const user = useAppSelector((state) => state.auth.usuario);
   // estados
   const [notificaciones, setNotificaciones] = useState([]);
+  const [dataNotify, setDataNotify] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
 
   const loadNotificaciones = (_baseURL) => {
     axios
       .get(`${_baseURL}/notificaciones/${user.id_usuario}`)
       .then((response) => {
+        setDataNotify(response.data);
         setNotificaciones(
           response.data.map((not) => {
             const rows = {
@@ -51,11 +53,11 @@ const NotificacionesPage = () => {
   }, [baseURL]);
 
   const handleClickRow = async (idNotification) => {
-    const selectedNotification = notificaciones.find(
-      (not) => not.id_notificacion === idNotification,
-    );
+    const selectedNotification = dataNotify.find((not) => not.id_notificacion === idNotification);
 
-    if (selectedNotification && !selectedNotification.Leído) {
+    console.log(selectedNotification);
+
+    if (selectedNotification && !selectedNotification.leido) {
       try {
         const response = await axios.put(
           `${baseURL}/notificaciones/update-leido/${idNotification}`,

@@ -166,10 +166,36 @@ h1 {
   }
 
   .bg-leido {
-    background-color: #0FA958;
+    background-color: #0fa958;
   }
 
-  .bg-noLeido{
-    background-color: #FF0000;
+  .bg-noLeido {
+    background-color: #ff0000;
   }
+}
+
+.iconNotify {
+  .btn {
+    font-size: 25px;
+    color: #215f88;
+  }
+}
+
+.alertNotify {
+  position: absolute;
+  top: 13px;
+  left: 664px;
+  display: inline-block;
+  padding: 0 4px;
+  min-width: 8px;
+  max-width: 18px;
+  height: 16px;
+  border: 2px solid #212121;
+  border-radius: 22px;
+  text-align: center;
+  font-family: 'Roboto', 'Arial', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  background-color: #ff0000;
 }
