@@ -19,7 +19,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import Boot from './redux/boot.js';
 import PrivateRoute from './services/PrivateRoute/PrivateRoute';
 import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPages';
-import CalendarioPage from './pages/AmbientesPage/CalendarioPage/CalendarioPage';
+import CalendarioPage from './pages/AmbientesPage/CalendarioPage/CalendarioPage2';
 
 function App() {
   return (

@@ -75,10 +75,10 @@ const RegistroReservaPage = () => {
     apertura: yup.object().shape({
       id: yup.number(),
       motivo: yup.string(),
-      reservaIni: yup.date(),
-      reservaFin: yup.date(),
       aperturaIni: yup.date(),
       aperturaFin: yup.date(),
+      reservaIni: yup.date(),
+      reservaFin: yup.date(),
     }).required('Error: Apertura is undefined'),
   });
 
@@ -130,6 +130,8 @@ const RegistroReservaPage = () => {
         const _apertura = {
           id: aux.id_apertura,
           motivo: aux.motivo,
+          aperturaIni: new Date(aux.apertura_inicio),
+          aperturaFin: new Date(aux.apertura_fin),
           reservaIni:
             new Date(aux.reserva_inicio).getTime() > currentDateTime.getTime()
               ? new Date(aux.reserva_inicio)
@@ -138,8 +140,6 @@ const RegistroReservaPage = () => {
             new Date(aux.reserva_fin).getTime() > currentDateTime.getTime()
               ? new Date(aux.reserva_fin)
               : currentDateTime,
-          aperturaIni: new Date(aux.apertura_inicio),
-          aperturaFin: new Date(aux.apertura_fin),
         }
         setValue('apertura', _apertura);
         const ini = _apertura?.aperturaIni.getTime();
