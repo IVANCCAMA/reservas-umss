@@ -1,0 +1,74 @@
+.rbc-calendar {
+
+  .rbc-events-container,
+  .rbc-row-segment {
+    margin: 0 !important;
+
+    .rbc-event {
+      padding: 0;
+      background: none;
+      border: none;
+
+      .rbc-event-label {
+        display: none;
+      }
+
+      .rbc-event-content {
+        position: relative;
+        padding: 2px;
+
+        .dropdown.dropdown-menu.card {
+          z-index: 1000000000;
+        }
+      }
+    }
+
+    .rbc-event:focus {
+      // background-color: aqua;
+      outline: none;
+    }
+  }
+
+  .rbc-month-view .rbc-month-row .rbc-row-content {
+    z-index: revert-layer;
+  }
+
+  .rbc-agenda-view .rbc-agenda-empty {
+    display: flex;
+    justify-content: center;
+    margin-top: 1%;
+    font-size: x-large;
+    font-weight: 500;
+  }
+
+  .rbc-month-view .rbc-month-row {
+    @media (max-height: 745px) {
+
+      .rbc-row-segment,
+      .rbc-event-content {
+        padding: 0;
+      }
+
+      .rbc-event-content {
+        padding: 2px;
+        padding-top: 0;
+      }
+
+      .dropdown-center button {
+        padding: 0;
+        // height: 20px !important;
+        font-size: 90% !important;
+      }
+    }
+
+    .rbc-row-content {
+      max-height: 100%;
+    }
+
+    button.rbc-show-more {
+      width: 100%;
+      height: 100%;
+      text-align: center;
+    }
+  }
+}

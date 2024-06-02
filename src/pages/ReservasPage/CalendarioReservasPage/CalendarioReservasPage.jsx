@@ -18,18 +18,17 @@ const CalendarioPage = () => {
 
   useEffect(() => {
     axios
-      .get(`${baseURL}/disponibles/ambiente/${id_ambiente}`)
-      .then(({ data }) => setAmbiente(data))
-      .catch(e => console.error('Error al obtener los datos del ambiente:', e));
-    axios
-      .get(`${baseURL}/reservas/reserva-ambientes/${id_ambiente}`)
-      .then(({ data }) => setReservas(data.map(obj => ({
-        id: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_inicio}-04:00`).getTime(),
-        title: 'RESERVADO',
-        start: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_inicio}-04:00`),
-        end: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_fin}-04:00`),
-        obj: obj,
-      }))))
+      .get(`${baseURL}/reservas/reserva-usuario/${user.id_usuario}`)
+      .then(({ data }) => setReservas(data.map(obj => {
+        const [dia, mes, anio] = obj.fecha_reserva.split('-');
+        return {
+          id: new Date(`${anio}-${mes}-${dia}T${obj.hora_inicio}-04:00`).getTime(),
+          title: 'RESERVADO',
+          start: new Date(`${anio}-${mes}-${dia}T${obj.hora_inicio}-04:00`),
+          end: new Date(`${anio}-${mes}-${dia}T${obj.hora_fin}-04:00`),
+          obj: obj,
+        };
+      })))
       .catch(e => console.error('Error al obtener las reservas del ambiente:', e));
     axios
       .get(`${baseURL}/aperturas/apertura-fecha`)
@@ -56,7 +55,7 @@ const CalendarioPage = () => {
             title: 'DISPONIBLE',
             start: new Date(date.setHours(date.getHours())),
             end: new Date(date.setHours(date.getHours() + 1, date.getMinutes() + 30)),
-            obj: {...periodo, estado: 'disponible'},
+            obj: { ...periodo, estado: 'disponible' },
           }));
           setDisponibilidad(prev => [...prev, ...occurrences]);
         });
@@ -85,7 +84,7 @@ const CalendarioPage = () => {
         // RESERVAS
         vigente: event.obj.nombre_usuario === user.nombre_usuario ? 'success' : 'danger opacity-75',
         cancelado: event.obj.nombre_usuario === user.nombre_usuario ? 'danger opacity-75' : 'warning opacity-75',
-        finalizado: event.obj.nombre_usuario === user.nombre_usuario ? 'danger opacity-75' : 'warning opacity-75',
+        finalizado: event.obj.nombre_usuario === user.nombre_usuario ? 'secondary opacity-75' : 'warning opacity-75',
         // DISPONIBLE
         disponible: 'primary opacity-75',
         // APERTURAS
@@ -114,7 +113,6 @@ const CalendarioPage = () => {
           ],
           footer: [
             { to: '/reservas/listaReservas', text: 'Mis reservas' },
-            { to: '/reservas/calendario', text: 'Mi calendario' },
           ],
         },
         DISPONIBLE: {
@@ -242,7 +240,7 @@ const CalendarioPage = () => {
       <div className='border border-2  rounded-2' style={{ height: 'calc(100vh - 190px)' }}>
         <Calendar
           step={45}
-          events={[...[...reservas, ...disponibilidad].filter((obj, index, self) =>
+          events={[...reservas.filter((obj, index, self) =>
             index === self.findIndex((t) => t.id === obj.id)), {
             id: apertura.id_apertura,
             title: 'APERTURA',

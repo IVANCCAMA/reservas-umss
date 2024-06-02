@@ -19,7 +19,9 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import Boot from './redux/boot.js';
 import PrivateRoute from './services/PrivateRoute/PrivateRoute';
 import RegistroAperturaPage from './pages/AperturasPage/RegistroAperturaPage/RegistroAperturaPages';
-import CalendarioPage from './pages/AmbientesPage/CalendarioPage/CalendarioPage2';
+import CalendarioPage from './pages/AmbientesPage/CalendarioPage/CalendarioPage';
+import ReservarAmbientePage from './pages/AmbientesPage/CalendarioPage/ReservarAmbientePage';
+import CalendarioReservasPage from './pages/ReservasPage/CalendarioReservasPage/CalendarioReservasPage';
 
 function App() {
   return (
@@ -38,6 +40,9 @@ function App() {
                 <Routes>
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/ambientes/calendario/:id_ambiente" element={<CalendarioPage />} />
+                  <Route path="/ambientes/calendario/reservar" element={<ReservarAmbientePage />} />
+                  <Route path="/reservas/calendario" element={<CalendarioReservasPage />} />
+                  
                   <Route path="/" element={<LoginPage />} />
                   <Route
                     path="/home"

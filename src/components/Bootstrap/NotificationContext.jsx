@@ -42,8 +42,8 @@ export const NotificationProvider = ({ children }) => {
       body,
     });
 
-    setTimeout(() => {
-      onTimeout();
+    setTimeout(async () => {
+      await onTimeout();
       setNotification(null);
       afterTimeout();
     }, timeout);
