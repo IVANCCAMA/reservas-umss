@@ -33,9 +33,9 @@ const Form: React.FC<FormProps> = ({
   };
 
   return (
-    <div className="container">
-      <div className={`row ${ismodal ? '' : 'py-md-3'} justify-content-center`}>
-        <div className={`${ismodal ? '' : 'col-md-8'}`}>
+    <div className="container form-comp">
+      <div className={`row ${ismodal ? '' : ''} justify-content-center`}>
+        <div className={`${ismodal ? '' : ''}`}>
           <form
             {...{
               ...rest,
@@ -47,7 +47,7 @@ const Form: React.FC<FormProps> = ({
 
             {children}
 
-            <div className="d-flex justify-content-center pt-3">
+            <div className="d-flex justify-content-center pt-3 botones">
               <button type="submit" className="btn btn-success me-md-5" disabled={isSubmitting}>
                 {isSubmitting ? 'Enviando...' : btnName1}
               </button>
