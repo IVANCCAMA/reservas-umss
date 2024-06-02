@@ -35,15 +35,15 @@ const ListadoMateriasPage = () => {
       .get(`${baseURL}${apiUsuario}`)
       .then((response) => {
         /* setMaterias( */
-          const mappedMaterias = response.data.map((mat) => {
-            return {
-              Materia: mat.nombre_materia,
-              Nivel: mat.nivel_materia,
-              Grupo: mat.nombre_grupo,
-              Inscritos: mat.cantidad_est,
-              Docentes: mat.docente,
-            };
-          });
+        const mappedMaterias = response.data.map((mat) => {
+          return {
+            Materia: mat.nombre_materia,
+            Nivel: mat.nivel_materia,
+            Grupo: mat.nombre_grupo,
+            Inscritos: mat.cantidad_est,
+            Docentes: mat.docente,
+          };
+        });
         /* ); */
         setMaterias(mappedMaterias);
         setFilteredMaterias(mappedMaterias);
@@ -60,7 +60,7 @@ const ListadoMateriasPage = () => {
   const handleFilter = (searchTerm) => {
     const filteredData = materias.filter((mat) => {
       return Object.values(mat).some((value) =>
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        String(value).toLowerCase().includes(searchTerm.toLowerCase()),
       );
     });
     setFilteredMaterias(filteredData);
@@ -77,7 +77,7 @@ const ListadoMateriasPage = () => {
       <Pagination
         pageNumber={pageNumber}
         setPageNumber={setPageNumber}
-        lastPage={Math.max(Math.floor((materias.length - 1) / 10) + 1, 1)}
+        lastPage={Math.max(Math.floor((filteredMaterias.length - 1) / 10) + 1, 1)}
       />
     </div>
   );

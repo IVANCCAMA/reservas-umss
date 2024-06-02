@@ -93,7 +93,7 @@ const ListadoReservasPage = () => {
       <Pagination
         pageNumber={pageNumber}
         setPageNumber={setPageNumber}
-        lastPage={Math.max(Math.floor((reservas.length - 1) / 10) + 1, 1)}
+        lastPage={Math.max(Math.floor((filteredReservas.length - 1) / 10) + 1, 1)}
       />
     </div>
   );
