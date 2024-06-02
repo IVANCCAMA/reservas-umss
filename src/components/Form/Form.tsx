@@ -1,22 +1,25 @@
-import React, { ReactNode, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 interface FormProps {
   children: any;
   onSubmit: () => void;
   title?: string;
-  onClickCancelTo?:() => void;
-  ismodal:boolean;
+  onClickCancelTo?: () => void;
+  ismodal: boolean;
   onClickCancel?: () => void;
+  btnName1?: string;
+  btnName2?: string;
 }
 
 const Form: React.FC<FormProps> = ({
   children,
-  onSubmit,
+  onSubmit = () => {},
   title = '',
-  onClickCancelTo=()=>{},
-  ismodal=false,
+  onClickCancelTo = () => {},
+  ismodal = false,
   onClickCancel = () => {},
+  btnName1 = 'Enviar',
+  btnName2 = 'Cancelar',
   ...rest
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,8 +33,8 @@ const Form: React.FC<FormProps> = ({
 
   return (
     <div className="container">
-      <div className={`row ${ismodal? '':'py-md-3'}  justify-content-center`}>{/*ELIMINANDO py-md-3  col-md-8*/}
-        <div className={`${ismodal? '':'col-md-8'}`}>
+      <div className={`row ${ismodal ? '' : 'py-md-3'} justify-content-center`}>
+        <div className={`${ismodal ? '' : 'col-md-8'}`}>
           <form
             {...{
               ...rest,
@@ -44,21 +47,17 @@ const Form: React.FC<FormProps> = ({
             {children}
 
             <div className="d-flex justify-content-center pt-3">
-              <button
-                type="submit"
-                className="btn btn-success me-md-5"
-                disabled={isSubmitting}
-                style={{ width: '86px' }}
-              >
-                {isSubmitting ? 'Enviando...' : 'Enviar'}
+              <button type="submit" className="btn btn-success me-md-5" disabled={isSubmitting}>
+                {isSubmitting ? 'Enviando...' : btnName1}
               </button>
               <button
                 type="button"
                 className="btn btn-danger"
+                data-bs-dismiss="modal"
                 disabled={isSubmitting}
                 onClick={onClickCancel}
               >
-                Cancelar
+                {btnName2}
               </button>
             </div>
           </form>

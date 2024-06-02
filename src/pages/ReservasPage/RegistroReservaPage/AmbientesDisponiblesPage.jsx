@@ -47,7 +47,7 @@ const AmbientesDisponibles = () => {
             cantidad_total: formData.cantidad_est,
           })
           .then((response) => {
-            // success
+            console.log(response);
             successModal({
               body: (
                 <>
@@ -67,6 +67,7 @@ const AmbientesDisponibles = () => {
             });
           })
           .catch((error) => {
+            formData.ambienteDisp = [];
             console.error('Error al registrar reserva:', error);
             errorModal({
               body: (
@@ -75,7 +76,7 @@ const AmbientesDisponibles = () => {
                   <div className="pt-md-3">
                     Error al registrar
                     <br />
-                    Intente de nnuevo
+                    Intente de nuevo
                   </div>
                 </>
               ),
@@ -93,7 +94,8 @@ const AmbientesDisponibles = () => {
       Estado: amb.estado,
       Tipo: amb.tipo_ambiente.toUpperCase(),
       Periodo: `${amb.hora_inicio?.slice(0, 5)} - ${amb.hora_fin?.slice(0, 5)}`,
-      Accion: (
+      Fecha: amb.fecha,
+      Acción: (
         <button
           type="button"
           className="btn btn-success boton-style w-auto text-center me-md-3 rounded"

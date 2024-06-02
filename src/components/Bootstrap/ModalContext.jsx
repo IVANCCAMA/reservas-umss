@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
 import Modal, { ButtonModal } from './Modal';
 import { useNavigate } from 'react-router-dom';
-import iconoError from '../../assets/Images/iconoError.png';
-import iconoExito from '../../assets/Images/iconoExito.png';
 
 // Crea el contexto sin tipo definido y con valor inicial undefined
 const ModalContext = createContext(undefined);
@@ -42,6 +40,18 @@ export const ModalProvider = ({ children }) => {
     });
   };
 
+  const createModalForm = (
+    body,
+    button1,
+    onClickButton1To = '',
+    button2 = undefined,
+    onClickButton2To = '',
+  ) => {
+    return {
+      body: body,
+    };
+  };
+
   const createModal = (
     body,
     button1,
@@ -54,10 +64,10 @@ export const ModalProvider = ({ children }) => {
       button1: {
         ...button1,
         onClick: () => {
+          setModal(null);
           if (button1.onClick) {
             button1.onClick();
           }
-          setModal(null);
           if (onClickButton1To) navigate(onClickButton1To);
         },
       },
@@ -65,10 +75,10 @@ export const ModalProvider = ({ children }) => {
         ? {
             ...button2,
             onClick: () => {
+              setModal(null);
               if (button2.onClick) {
                 button2.onClick();
               }
-              setModal(null);
               if (onClickButton2To) navigate(onClickButton2To);
             },
           }
@@ -104,6 +114,17 @@ export const ModalProvider = ({ children }) => {
       onClick: onClickNo,
     };
     newModal(createModal(body, button1, onClickYesTo, button2, onClickNoTo));
+  };
+  const reportModal = ({
+    body,
+    onClickYesTo = '',
+    onClickNoTo = '',
+    labelBtn1 = '' /* Defautl value Si */,
+    labelBtn2 = '' /* Defautl value No */,
+    onClickYes = () => {},
+    onClickNo = () => {},
+  }) => {
+    newModal(createModalForm(body, onClickYesTo, onClickNoTo));
   };
 
   /**
@@ -141,7 +162,9 @@ export const ModalProvider = ({ children }) => {
   };
 
   return (
-    <ModalContext.Provider value={{ newModal, confirmationModal, errorModal, successModal }}>
+    <ModalContext.Provider
+      value={{ newModal, confirmationModal, errorModal, successModal, reportModal }}
+    >
       {children}
       {modal && <Modal {...modal} />}
     </ModalContext.Provider>

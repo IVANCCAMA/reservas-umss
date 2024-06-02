@@ -11,6 +11,7 @@ import iconoError from '../../assets/Images/iconoError.png';
 
 const LoginPage = () => {
   const [authError, setAuthError] = useState(false);
+  const [showPassword, setShowPassword] = useState('password');
 
   const schema = yup.object({
     codsiss: yup.string().required('Este campo es obligatorio'),
@@ -83,7 +84,7 @@ const LoginPage = () => {
                     height: 25,
                   }}
                 />
-                <div className="h-auto">Codigo SIS o contraseña invalido</div>
+                <div className="h-auto">Código SIS o contraseña invalido</div>
                 <button
                   type="button"
                   className="btn-close h-auto"
@@ -113,24 +114,35 @@ const LoginPage = () => {
                   />
                   {errors.codsiss && <span className="text-danger">{errors.codsiss.message}</span>}
                 </div>
-                <div className="input-component">
+                <div className="input-component mt-2">
                   <label className="form-label">
                     Contraseña<span className="text-danger ms-1 fw-bold">*</span>
                   </label>
                   <input
-                    type="password"
+                    type={`${showPassword}`}
                     className="form-control"
                     autoComplete="current-password"
                     placeholder="Escribe tu contraseña"
                     {...register('contrasenia_usuario')}
                   />
+                  <span
+                    toggle="#password-field"
+                    className={`bi bi-eye${showPassword === 'password' ? '-slash' : ''} field-icon toggle-password`}
+                    onClick={() => {
+                      if (showPassword === 'password') {
+                        setShowPassword('text');
+                      } else {
+                        setShowPassword('password');
+                      }
+                    }}
+                  ></span>
                   {errors.contrasenia_usuario && (
                     <span className="text-danger">{errors.contrasenia_usuario.message}</span>
                   )}
                 </div>
                 <button
                   type="submit"
-                  className="btn btn-primary pt-md-2 w-100"
+                  className="btn btn-primary pt-md-2 w-100 mt-3"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Enviando...' : 'Iniciar sesión'}
