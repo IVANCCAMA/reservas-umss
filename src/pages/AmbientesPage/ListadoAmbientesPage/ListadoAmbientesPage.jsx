@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './ListadoAmbientesPage.scss';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
 import { Icon } from '@iconify/react/dist/iconify.js';
@@ -22,6 +22,8 @@ const schema = yup.object().shape({
 const ListadoAmbientesPage = () => {
   // redux
   const user = useAppSelector((state) => state.auth.usuario);
+
+  const navigate = useNavigate();
 
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
   // estados
@@ -53,8 +55,9 @@ const ListadoAmbientesPage = () => {
             if (response.status === 200) {
               successNotification({
                 body: 'Enviado correctamente',
-                afterTimeout: () => navigate('/reservas/ambientesDisponibles', {}),
               });
+              console.log('>> navegando');
+              navigate('/ambientes/listaAmbientes');
             } else {
               errorNotification({ body: 'Error al enviar, intente de nuevo' });
             }
@@ -72,9 +75,13 @@ const ListadoAmbientesPage = () => {
       body: (
         <div>
           <Icon icon="mi:circle-information" width="70" height="70" style={{ color: '#FF6B00' }} />
-          <div className="pt-md-4">
+          <div className="pt-md-3">
             ¿Está seguro de deshabilitar el ambiente {data.ambiente.nombre_ambiente} por el motivo "
             {data.motivo}"?
+          </div>
+          <div className="pt-md-3">
+            <span style={{ color: '#FF0000' }}>ADVERTENCIA:</span> <br />
+            Todas las reservas de este ambiente serán canceladas.
           </div>
         </div>
       ),
@@ -89,32 +96,13 @@ const ListadoAmbientesPage = () => {
       setValue('ambiente', amb);
       newModal({
         body: (
-          <Form
-            onSubmit={handleSubmit(onSubmitMotivo)}
-            onClickCancel={() => {
-              confirmationModal({
-                body: (
-                  <>
-                    <Icon
-                      className="iconAlert"
-                      icon="charm:circle-cross"
-                      style={{ color: '#FF3B20', height: '90px', width: '90px' }}
-                    />
-                    <div className="pt-md-3">
-                      ¿Estás seguro que desea cancelar el registro de reserva?
-                    </div>
-                  </>
-                ),
-                onClickYesTo: '/',
-              });
-            }}
-            ismodal={true}
-          >
+          <Form onSubmit={handleSubmit(onSubmitMotivo)} ismodal={true}>
             <h4 className="mb-3">
-              <b>Deshabilitar Ambiente</b>
+              <b>Deshabilitar ambiente</b>
             </h4>
-            <div className="text-start fw-bold pb-0 pe-1">Motivo</div>
-
+            <div className="text-start fw-bold pb-0 pe-1">
+              Motivo<span className="text-danger ms-1">*</span>
+            </div>
             <textarea
               {...register('motivo')}
               rows={2}
@@ -137,18 +125,19 @@ const ListadoAmbientesPage = () => {
               height="70"
               style={{ color: '#FF6B00' }}
             />
-            <div className="pt-md-4">
+            <div className="pt-md-4 fw-bold">
               ¿Está de acuerdo en habilitar el ambiente {amb.nombre_ambiente}?
             </div>
           </div>
         ),
-        onClickYesTo: '/materias/listaMaterias',
+        onClickYesTo: '/ambientes/listaAmbientes',
       });
     }
   }
 
   // lógica | API
   const loadAmbientes = () => {
+    console.log('Cargando ambientes');
     axios
       .get(`${baseURL}/ambientes`)
       .then((response) => {
@@ -170,7 +159,7 @@ const ListadoAmbientesPage = () => {
                     icon="iconamoon:edit-light"
                     width="36"
                     height="36"
-                    style={{ color: 'whiteS' }}
+                    style={{ color: 'white' }}
                     className="boton-icon"
                   />
                 </button>

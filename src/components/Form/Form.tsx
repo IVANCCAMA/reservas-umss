@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface FormProps {
   children: any;
@@ -9,6 +9,7 @@ interface FormProps {
   onClickCancel?: () => void;
   btnName1?: string;
   btnName2?: string;
+  className: string;
 }
 
 const Form: React.FC<FormProps> = ({
