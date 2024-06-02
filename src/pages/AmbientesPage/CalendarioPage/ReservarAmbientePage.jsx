@@ -22,7 +22,6 @@ const RegistroReservaPage = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
   const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
 
-  const navigate = useNavigate();
   const location = useLocation();
   const { confirmationModal, successModal } = useModal();
   const { loadNotification, errorNotification, successNotification } = useNotification();
@@ -32,14 +31,11 @@ const RegistroReservaPage = () => {
   const [users, setUsers] = useState(formData?.users || []);
   const [datalistSolicitante, setDatalistSolicitante] = useState(formData?.datalistSolicitante || []);
   const [isAdmin, setIsAdmin] = useState(user.tipo_usuario === 'ADMINISTRADOR');
-  const [tiposAmbiente, setTiposAmbiente] = useState(formData?.tiposAmbiente || []);
   const [addAssociates, setAddAssociates] = useState(formData?.addAssociates || false);
   const [associatesIds, setAssociatesIds] = useState(formData?.associatesIds || []);
   const addedAssociatesRef = useRef(null);
   const [grupos, setGrupos] = useState(formData?.grupos || []);
   const addedGroupsRef = useRef(null);
-  const [periodos, setPeriodos] = useState([{}]);
-  const [allCheckbox, setAllCheckBox] = useState(formData?.allCheckbox || false);
 
   const schema = yup.object().shape({
     solicitante: yup
@@ -47,7 +43,6 @@ const RegistroReservaPage = () => {
       .default(formData?.solicitante || user.nombre_usuario)
       .required('Ingrese un nombre de un usuario')
       .max(40, 'El nombre debe tener como máximo 40 caracteres'),
-    tipo_ambiente: yup.string().default(formData?.tipo_ambiente || '').required('Seleccione una categoria'),
     asociados: yup
       .array()
       .default(formData?.asociados || [])
@@ -112,12 +107,6 @@ const RegistroReservaPage = () => {
       .catch((error) => {
         console.error('Error al obtener los usuarios:', error);
       });
-    // recuperar tipos de ambientes
-    setTiposAmbiente([
-      { title: 'Aula común', value: 'aula comun' },
-      { title: 'Laboratorio', value: 'laboratorio' },
-      { title: 'Auditorio', value: 'auditorio' },
-    ]);
     // recuperar apertura
     axios
       .get(`${database}/aperturas/apertura-fecha`)
@@ -172,25 +161,20 @@ const RegistroReservaPage = () => {
       .catch((error) => {
         console.error('Error al obtener la apertura vigente:', error);
       });
-    // recuperar periodos
-    axios
-      .get(`${database}/periodos`)
-      .then((response) => setPeriodos(response.data))
-      .catch((error) => {
-        console.error('Error al obtener los periodos:', error);
-      });
 
     setTimeout(() => {
       if (formData) {
-        formData?.asociados.forEach((associateId) => {
+        console.log(formData);
+        formData?.asociados?.forEach((associateId) => {
           addAssociatesSelected(associateId, formData.users);
         });
         resetList();
-        formData.listaGrupos.forEach((groupId) => {
+        formData.listaGrupos?.forEach((groupId) => {
           addGropsSelected(groupId);
         });
         Object.keys(watch()).forEach((propiedad) => {
-          setValue(propiedad, formData[propiedad]);
+          if (formData[propiedad])
+            setValue(propiedad, formData[propiedad]);
         });
       }
     }, 1000);
@@ -236,31 +220,71 @@ const RegistroReservaPage = () => {
       onTimeout: () => {
         axios
           .post(`${database}/reservas`, {
-            tipo_ambiente: data.tipo_ambiente,
+            tipo_ambiente: formData.ambiente.tipo,
             cantidad_est: data.cantidad_est,
             periodos: data.periodos.map((obj) => ({ id_periodo: parseInt(obj) })),
             fecha_reserva: data.fecha_reserva,
           })
           .then((response) => {
-            if (Array.isArray(response.data) && response.data.length === 0) {
-              errorNotification({ body: 'No se encontró ningún ambiente disponible' });
+            console.log(response.data);
+            const ambienteDisp = response.data.find(obj => obj.ambiente_id == formData.ambiente.id_ambiente);
+            if (ambienteDisp) {
+              axios
+                .post(`${database}/reservas/crear/`, {
+                  id_disponible: ambienteDisp.id_disponible,
+                  fecha_reserva: data.fecha_reserva,
+                  motivo: data.motivo,
+                  listaGrupos: data.listaGrupos,
+                  id_apertura: data.apertura.id,
+                  cantidad_total: data.cantidad_est,
+                })
+                .then((response) => {
+                  console.log(response);
+                  successModal({
+                    body: (
+                      <>
+                        <Icon
+                          icon="gg:check-o"
+                          style={{ color: '#0fa958', height: '90px', width: '90px' }}
+                        />
+                        <div className="pt-md-3">
+                          Registro de reserva
+                          <br />
+                          exitoso
+                        </div>
+                      </>
+                    ),
+                    onClickTo: '/reservas/listaReservas',
+                  });
+                })
+                .catch((error) => {
+                  formData.ambienteDisp = [];
+                  console.error('Error al registrar reserva:', error);
+                  errorModal({
+                    body: (
+                      <>
+                        <img src={iconoError} />
+                        <div className="pt-md-3">
+                          Error al registrar
+                          <br />
+                          Intente de nuevo
+                        </div>
+                      </>
+                    ),
+                  });
+                });
             } else {
-              successNotification({
-                body: 'Enviado correctamente',
-                afterTimeout: () =>
-                  navigate('/reservas/ambientesDisponibles', {
-                    state: {
-                      ...data,
-                      ambienteDisp: response.data,
-                      users: users,
-                      datalistSolicitante: datalistSolicitante,
-                      tiposAmbiente: tiposAmbiente,
-                      addAssociates: addAssociates,
-                      associatesIds: associatesIds,
-                      grupos: grupos,
-                      allCheckbox: allCheckbox,
-                    },
-                  }),
+              errorModal({
+                body: (
+                  <>
+                    <img src={iconoError} />
+                    <div className="pt-md-3">
+                      El ambiente ya se encuentra
+                      <br />
+                      reservado. 
+                    </div>
+                  </>
+                ),
               });
             }
           })
@@ -268,7 +292,6 @@ const RegistroReservaPage = () => {
             console.error('Error al obtener los ambiente disponibles: ', error);
             errorNotification({ body: 'Error al enviar, intente de nuevo' });
           });
-
       },
     });
   };
@@ -345,6 +368,7 @@ const RegistroReservaPage = () => {
     const associatesFiltered = watch('asociados')?.filter((obj) => obj !== associate.id_usuario);
     setValue('asociados', associatesFiltered);
     searchGroupsByApplicant(_users);
+    console.log(associate, _users, associatesFiltered);
   };
 
   const addAssociatesSelected = (newValue, _users = users) => {
@@ -360,32 +384,6 @@ const RegistroReservaPage = () => {
     }
     searchGroupsByApplicant();
     return new String();
-  };
-
-  const checkedAll = () => {
-    setAllCheckBox((prev) => {
-      if (prev) {
-        setValue('periodos', []);
-      } else {
-        const isSaturday = new Date(watch('fecha_reserva')).getDay() === 5;
-        setValue(
-          'periodos',
-          periodos
-            .filter((periodo) => !isSaturday || periodo.id_periodo < 7)
-            .map((periodo) => `${periodo.id_periodo}`),
-        );
-      }
-      return !prev;
-    });
-  };
-
-  const handlePeriodoChange = () => {
-    const isSaturday = new Date(watch('fecha_reserva')).getDay() === 5;
-    const periodosId = periodos
-      .filter((periodo) => !isSaturday || periodo.id_periodo < 7)
-      .map((periodo) => `${periodo.id_periodo}`);
-    const _allCheckbox = periodosId.every((id) => watch('periodos').includes(id));
-    setAllCheckBox(_allCheckbox);
   };
 
   const ini = watch('apertura')?.aperturaIni?.getTime();
@@ -414,7 +412,7 @@ const RegistroReservaPage = () => {
                       </div>
                     </>
                   ),
-                  onClickYesTo: '/',
+                  onClickYesTo: `/ambientes/calendario/${formData.ambiente.id_ambiente}`,
                 });
               }}
             >
@@ -432,17 +430,18 @@ const RegistroReservaPage = () => {
                 error={errors.solicitante?.message}
               />}
 
-              <Select
-                label={
-                  <>
-                    Tipo de ambiente <span className="text-danger ms-1">*</span>
-                  </>
-                }
-                {...register('tipo_ambiente')}
-                placeholder="Seleccione el tipo de ambiente"
-                options={tiposAmbiente}
-                error={errors.tipo_ambiente?.message}
-              />
+              <div className="row row-cols6">
+                <div className="col-md-4">
+                  <TextInput disabled label='Ambiente' {...register('nombreAmbiente')} />
+                </div>
+
+                <div className="col-md-4">
+                  <TextInput disabled label='Fecha de reserva' {...register('fecha_reserva')} />
+                </div>
+                <div className="col-md-4">
+                  <TextInput disabled label='Periodo'{...register('periodo')} />
+                </div>
+              </div>
 
               {!isAdmin && (
                 <>
@@ -510,7 +509,16 @@ const RegistroReservaPage = () => {
               )}
 
               <div className="row row-cols6">
-                <div className="col-md-6">
+                <div className="col-md-9">
+                  <TextTarea
+                    label="Motivos de reserva"
+                    {...register('motivo')}
+                    placeholder="Escriba el motivo de la reserva"
+                    maxLength={201}
+                    error={errors.motivo?.message}
+                  />
+                </div>
+                <div className="col-md-3">
                   <NumberInput
                     label="Número de Estudiantes"
                     {...register('cantidad_est')}
@@ -518,85 +526,6 @@ const RegistroReservaPage = () => {
                     error={watch('cantidad_est') < 20 && errors.cantidad_est?.message}
                   />
                 </div>
-                <div className="col-md-6">
-                  <DateInput
-                    label={
-                      <>
-                        Fecha de reserva <span className="text-danger ms-1">*</span>
-                      </>
-                    }
-                    {...register('fecha_reserva')}
-                    minDate={watch('apertura').reservaIni?.toISOString()?.split('T')[0]}
-                    maxDate={watch('apertura').reservaFin?.toISOString()?.split('T')[0]}
-                    handleChange={(newValue) => {
-                      setValue('periodos', []);
-                      setAllCheckBox(false);
-                      return new Date(newValue)?.getDay() === 6 ? new String() : undefined;
-                    }}
-                    error={errors.fecha_reserva?.message}
-                  />
-                </div>
-              </div>
-
-              <TextTarea
-                label="Motivos de reserva"
-                {...register('motivo')}
-                placeholder="Escriba el motivo de la reserva"
-                maxLength={201}
-                error={errors.motivo?.message}
-              />
-
-              <div className="input-component">
-                <label className="form-label fw-bold">
-                  Periodos y horarios <span className="text-danger ms-1">*</span>
-                </label>
-
-                <Accordion
-                  id="periodos"
-                  accordionItems={[
-                    {
-                      title: 'Selecione periodo/s',
-                      body: (
-                        <div className="w-100">
-                          <div className="d-flex justify-content-between pb-2">
-                            <label>Periodos</label>
-                            <CheckboxInput
-                              checked={allCheckbox}
-                              label="Selecionar todos"
-                              handleChange={checkedAll}
-                              disabled={!watch('fecha_reserva')}
-                            />
-                          </div>
-
-                          <div className="row row-cols4">
-                            {periodos.map((periodo, index) => {
-                              const fechaReserva = watch('fecha_reserva');
-                              const selectedDay = fechaReserva && new Date(fechaReserva).getDay();
-                              if (!fechaReserva || (selectedDay === 5 && periodo.id_periodo > 6))
-                                return;
-                              return (
-                                <div
-                                  key={`periodo-${index}`}
-                                  className="col-md-4 d-flex justify-content-center"
-                                >
-                                  <CheckboxInput
-                                    label={`${periodo.hora_inicio?.slice(0, 5)} - ${periodo.hora_fin?.slice(0, 5)}`}
-                                    {...register('periodos')}
-                                    value={periodo.id_periodo}
-                                    afterChange={handlePeriodoChange}
-                                  />
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ),
-                    },
-                  ]}
-                />
-                {watch('periodos').length < 1 && errors.periodos && (
-                  <span className="text-danger">{errors.periodos.message}</span>
-                )}
               </div>
             </Form>
           </div>

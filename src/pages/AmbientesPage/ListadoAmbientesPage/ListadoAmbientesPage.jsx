@@ -189,6 +189,15 @@ const ListadoAmbientesPage = () => {
             ),
             Proyector: amb.proyector ? 'SI' : 'NO',
           };
+          const calendar = (
+            <div className="boton-style bg-info text-center me-md-3 rounded">
+              <Link to={'/ambientes/calendario/' + amb.id_ambiente} className="btn border border-0">
+                <div>
+                  <Icon icon="ion:calendar-outline" className="boton-icon" />
+                </div>
+              </Link>
+            </div>
+          );
 
           const editar = (
             <div className="boton-editar text-center me-md-3 rounded">
@@ -218,7 +227,7 @@ const ListadoAmbientesPage = () => {
 
           return user.tipo_usuario === 'ADMINISTRADOR'
             ? { ...rows, Editar: editar, 'Ver más': verMas }
-            : { ...rows, 'Ver más': verMas };
+            : { ...rows, Calendario: calendar, 'Ver más': verMas };
         });
 
         setAmbientes(mappedAmbientes);

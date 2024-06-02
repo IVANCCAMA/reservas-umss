@@ -14,6 +14,7 @@ const AmbientesDisponibles = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
   const location = useLocation();
   const formData = location.state;
+  console.log(formData);
   const { confirmationModal, errorModal, successModal } = useModal();
 
   const confirmSelect = (amb) => {
@@ -67,7 +68,6 @@ const AmbientesDisponibles = () => {
             });
           })
           .catch((error) => {
-            formData.ambienteDisp = [];
             console.error('Error al registrar reserva:', error);
             errorModal({
               body: (
