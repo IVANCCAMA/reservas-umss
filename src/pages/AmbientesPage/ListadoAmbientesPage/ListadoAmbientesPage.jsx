@@ -14,25 +14,28 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Form from '../../../components/Form';
 
+// Esquema de validación
 const schema = yup.object().shape({
   motivo: yup.string().required('El motivo es obligatorio'),
-  // Agrega aquí las demás reglas de validación que necesites
+  // mas campos
 });
 
 const ListadoAmbientesPage = () => {
-  // redux
+  // Redux
   const user = useAppSelector((state) => state.auth.usuario);
-
   const navigate = useNavigate();
-
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
-  // estados
+
+  // Estados
   const [pageNumber, setPageNumber] = useState(1);
   const [ambientes, setAmbientes] = useState([{}]);
   const [filteredAmbientes, setFilteredAmbientes] = useState([]);
-  const { confirmationModal, newModal } = useModal();
+
+  // Hooks
+  const { confirmationModal, newModal, setModal } = useModal();
   const { loadNotification, errorNotification, successNotification } = useNotification();
 
+  // Formulario
   const {
     setValue,
     register,
@@ -45,6 +48,7 @@ const ListadoAmbientesPage = () => {
     },
   });
 
+  // Enviar datos
   const enviarDatos = (motivo, id_ambiente) => {
     loadNotification({
       body: 'Enviando datos...',
@@ -53,23 +57,23 @@ const ListadoAmbientesPage = () => {
           .post(`${baseURL}/ambientes/editar-disponibilidad`, { motivo, id_ambiente })
           .then((response) => {
             if (response.status === 200) {
-              successNotification({
-                body: 'Enviado correctamente',
-              });
-              console.log('>> navegando');
-              navigate('/ambientes/listaAmbientes');
+              successNotification({ body: 'Enviado correctamente' });
+              window.location.reload();
             } else {
               errorNotification({ body: 'Error al enviar, intente de nuevo' });
             }
+            setModal(null);
           })
           .catch((error) => {
             console.error('Error al editar', error);
             errorNotification({ body: 'Error al enviar, intente de nuevo' });
+            setModal(null);
           });
       },
     });
   };
 
+  // Manejo de formulario
   const onSubmitMotivo = (data) => {
     confirmationModal({
       body: (
@@ -88,10 +92,13 @@ const ListadoAmbientesPage = () => {
       onClickYes: () => {
         enviarDatos(data.motivo, data.ambiente.id_ambiente);
       },
+      onClickNo: () => {
+        setModal(null);
+      },
     });
   };
 
-  function actionEditar(amb) {
+  const actionEditar = (amb) => {
     if (amb.disponible) {
       setValue('ambiente', amb);
       newModal({
@@ -133,11 +140,10 @@ const ListadoAmbientesPage = () => {
         onClickYesTo: '/ambientes/listaAmbientes',
       });
     }
-  }
+  };
 
-  // lógica | API
+  // Cargar ambientes
   const loadAmbientes = () => {
-    console.log('Cargando ambientes');
     axios
       .get(`${baseURL}/ambientes`)
       .then((response) => {
@@ -147,14 +153,9 @@ const ListadoAmbientesPage = () => {
             Capacidad: amb.capacidad,
             Tipo: amb.tipo.toUpperCase(),
             Disponibilidad: (
-              <div className=" align-items-center  d-flex ">
-                <span className="">{amb.disponible ? 'HABILITADO' : 'DESHABILITADO'}</span>
-                <button
-                  className="btn btn-primary p-0  ms-2 "
-                  onClick={() => {
-                    actionEditar(amb);
-                  }}
-                >
+              <div className="align-items-center d-flex">
+                <span>{amb.disponible ? 'HABILITADO' : 'DESHABILITADO'}</span>
+                <button className="btn btn-primary p-0 ms-2" onClick={() => actionEditar(amb)}>
                   <Icon
                     icon="iconamoon:edit-light"
                     width="36"
@@ -171,7 +172,7 @@ const ListadoAmbientesPage = () => {
           const editar = (
             <div className="boton-editar text-center me-md-3 rounded">
               <Link
-                to={'/ambientes/listaAmbientes/editar/' + amb.id_ambiente}
+                to={`/ambientes/listaAmbientes/editar/${amb.id_ambiente}`}
                 className="btn border border-0"
               >
                 <div>
@@ -184,7 +185,7 @@ const ListadoAmbientesPage = () => {
           const verMas = (
             <div className="boton-style text-center me-md-3 rounded">
               <Link
-                to={'/ambientes/listaAmbientes/fichaAmbiente/' + amb.id_ambiente}
+                to={`/ambientes/listaAmbientes/fichaAmbiente/${amb.id_ambiente}`}
                 className="btn border border-0"
               >
                 <div>
