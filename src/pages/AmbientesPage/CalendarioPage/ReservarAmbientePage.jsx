@@ -273,6 +273,19 @@ const RegistroReservaPage = () => {
                     ),
                   });
                 });
+            } else {
+              errorModal({
+                body: (
+                  <>
+                    <img src={iconoError} />
+                    <div className="pt-md-3">
+                      El ambiente ya se encuentra
+                      <br />
+                      reservado. 
+                    </div>
+                  </>
+                ),
+              });
             }
           })
           .catch((error) => {
