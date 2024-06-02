@@ -174,15 +174,17 @@ const ListadoAmbientesPage = () => {
             Disponibilidad: (
               <div className="align-items-center d-flex">
                 <span>{amb.disponible ? 'HABILITADO' : 'DESHABILITADO'}</span>
-                <button className="btn btn-primary p-0 ms-2" onClick={() => actionEditar(amb)}>
-                  <Icon
-                    icon="iconamoon:edit-light"
-                    width="36"
-                    height="36"
-                    style={{ color: 'white' }}
-                    className="boton-icon"
-                  />
-                </button>
+                {user.tipo_usuario === 'ADMINISTRADOR' && (
+                  <button className="btn btn-primary p-0 ms-2" onClick={() => actionEditar(amb)}>
+                    <Icon
+                      icon="iconamoon:edit-light"
+                      width="36"
+                      height="36"
+                      style={{ color: 'white' }}
+                      className="boton-icon"
+                    />
+                  </button>
+                )}
               </div>
             ),
             Proyector: amb.proyector ? 'SI' : 'NO',
