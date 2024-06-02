@@ -40,9 +40,30 @@ function App() {
               <div className="col-md-10 pt-md-5 p-0 main-content">
                 <Routes>
                   <Route path="/login" element={<LoginPage />} />
-                  <Route path="/ambientes/calendario/:id_ambiente" element={<CalendarioPage />} />
-                  <Route path="/ambientes/calendario/reservar" element={<ReservarAmbientePage />} />
-                  <Route path="/reservas/calendario" element={<CalendarioReservasPage />} />
+                  <Route
+                    path="/ambientes/calendario/:id_ambiente"
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <CalendarioPage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/ambientes/calendario/reservar"
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <ReservarAmbientePage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/reservas/calendario"
+                    element={
+                      <PrivateRoute forTypeUser={'ALL'}>
+                        <CalendarioReservasPage />
+                      </PrivateRoute>
+                    }
+                  />
 
                   <Route path="/" element={<LoginPage />} />
                   <Route
