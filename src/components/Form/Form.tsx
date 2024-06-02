@@ -1,19 +1,23 @@
-import React, { ReactNode, useState } from 'react';
-import { string } from 'yup';
+import React, { useState } from 'react';
 
 interface FormProps {
   children: any;
   onSubmit: () => void;
   title?: string;
+  onClickCancelTo?: () => void;
+  ismodal: boolean;
   onClickCancel?: () => void;
   btnName1?: string;
   btnName2?: string;
+  className: string;
 }
 
 const Form: React.FC<FormProps> = ({
   children,
   onSubmit = () => {},
   title = '',
+  onClickCancelTo = () => {},
+  ismodal = false,
   onClickCancel = () => {},
   btnName1 = 'Enviar',
   btnName2 = 'Cancelar',
@@ -29,32 +33,38 @@ const Form: React.FC<FormProps> = ({
   };
 
   return (
-    <form
-      {...{
-        ...rest,
-        className: `${rest.className || ''} form-component`,
-        onSubmit: handleOnSubmit,
-      }}
-    >
-      {title && <h2 className="text-md-center">{title}</h2>}
+    <div className="container form-comp">
+      <div className={`row ${ismodal ? '' : ''} justify-content-center`}>
+        <div className={`${ismodal ? '' : ''}`}>
+          <form
+            {...{
+              ...rest,
+              className: `${rest.className || ''} form-component`,
+              onSubmit: handleOnSubmit,
+            }}
+          >
+            {title && <h2 className="text-md-center">{title}</h2>}
 
-      {children}
+            {children}
 
-      <div className="d-flex justify-content-center pt-3">
-        <button type="submit" className="btn btn-success me-md-5" disabled={isSubmitting}>
-          {isSubmitting ? 'Enviando...' : btnName1}
-        </button>
-        <button
-          type="button"
-          className="btn btn-danger"
-          data-bs-dismiss="modal"
-          disabled={isSubmitting}
-          onClick={onClickCancel}
-        >
-          {btnName2}
-        </button>
+            <div className="d-flex justify-content-center pt-3 botones">
+              <button type="submit" className="btn btn-success me-md-5" disabled={isSubmitting}>
+                {isSubmitting ? 'Enviando...' : btnName1}
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                data-bs-dismiss="modal"
+                disabled={isSubmitting}
+                onClick={onClickCancel}
+              >
+                {btnName2}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </form>
+    </div>
   );
 };
 

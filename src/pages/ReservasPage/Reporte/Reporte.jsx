@@ -47,7 +47,12 @@ const Reporte = ({ label, icon, data }) => {
   const generarReporte = () => {
     reportModal({
       body: (
-        <Form className="text-start" onSubmit={handleSubmit(onSubmit)} btnName1={'Generar'}>
+        <Form
+          className="text-start"
+          onSubmit={handleSubmit(onSubmit)}
+          btnName1={'Generar'}
+          ismodal={true}
+        >
           <div className="text-center fw-bold fs-5 pt-0 mt-0">Generar reporte</div>
           <div className="text-start mt-0">Seleccione rango de fechas para generar el reporte</div>
           <DateInput
