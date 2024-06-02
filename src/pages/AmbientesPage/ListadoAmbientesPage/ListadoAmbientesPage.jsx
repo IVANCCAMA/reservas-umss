@@ -32,7 +32,7 @@ const ListadoAmbientesPage = () => {
   const [filteredAmbientes, setFilteredAmbientes] = useState([]);
 
   // Hooks
-  const { confirmationModal, newModal, setModal } = useModal();
+  const { confirmationModal, newModal } = useModal();
   const { loadNotification, errorNotification, successNotification } = useNotification();
 
   // Formulario
@@ -49,25 +49,46 @@ const ListadoAmbientesPage = () => {
   });
 
   // Enviar datos
-  const enviarDatos = (motivo, id_ambiente) => {
+  const desHabilitarAmbiente = (motivo, id_ambiente) => {
     loadNotification({
       body: 'Enviando datos...',
       onTimeout: () => {
         axios
           .post(`${baseURL}/ambientes/editar-disponibilidad`, { motivo, id_ambiente })
           .then((response) => {
+            console.log('>>>>', response.status);
             if (response.status === 200) {
               successNotification({ body: 'Enviado correctamente' });
               window.location.reload();
             } else {
               errorNotification({ body: 'Error al enviar, intente de nuevo' });
             }
-            setModal(null);
           })
           .catch((error) => {
             console.error('Error al editar', error);
             errorNotification({ body: 'Error al enviar, intente de nuevo' });
-            setModal(null);
+          });
+      },
+    });
+  };
+
+  const habilitarAmbiente = (id_ambiente) => {
+    loadNotification({
+      body: 'Cambiando estado...',
+      onTimeout: () => {
+        axios
+          .put(`${baseURL}/ambientes/editar-disponibilidad/${id_ambiente}`)
+          .then((response) => {
+            if (response.status === 200) {
+              successNotification({ body: 'Ambiente habilitado correctamente' });
+              window.location.reload();
+            } else {
+              errorNotification({ body: 'Error al cambiar, intente de nuevo' });
+            }
+          })
+          .catch((error) => {
+            console.error('Error al editar', error);
+            errorNotification({ body: 'Error al cambiar, intente de nuevo' });
           });
       },
     });
@@ -90,11 +111,9 @@ const ListadoAmbientesPage = () => {
         </div>
       ),
       onClickYes: () => {
-        enviarDatos(data.motivo, data.ambiente.id_ambiente);
+        desHabilitarAmbiente(data.motivo, data.ambiente.id_ambiente);
       },
-      onClickNo: () => {
-        setModal(null);
-      },
+      onClickNo: () => {},
     });
   };
 
@@ -137,7 +156,7 @@ const ListadoAmbientesPage = () => {
             </div>
           </div>
         ),
-        onClickYesTo: '/ambientes/listaAmbientes',
+        onClickYes: () => habilitarAmbiente(amb.id_ambiente),
       });
     }
   };
