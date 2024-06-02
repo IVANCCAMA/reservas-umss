@@ -15,7 +15,7 @@ const Navbar = () => {
   const [todosLeidos, setTodosLeidos] = useState(true);
 
   const loadNotificaciones = (_baseURL) => {
-    console.log('realizando peticion');
+    /* console.log('realizando peticion'); */
     axios
       .get(`${_baseURL}/notificaciones/${user.id_usuario}`)
       .then((response) => {
@@ -28,7 +28,7 @@ const Navbar = () => {
 
   const leidosTodos = (_dataNotify) => {
     const someNotLeidos = _dataNotify.some((not) => !not.leido);
-    console.log('>>.', someNotLeidos);
+    /* console.log('>>.', someNotLeidos); */
     if (someNotLeidos) {
       setTodosLeidos(false);
     } else {

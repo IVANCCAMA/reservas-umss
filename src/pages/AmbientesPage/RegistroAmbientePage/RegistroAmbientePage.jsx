@@ -209,7 +209,7 @@ const RegistroAmbientePage = () => {
     <div className="container registro-ambientes">
       <div className="row py-md-3 justify-content-center">
         <div className="col-md-8">
-          <h2 className="text-md-center">Registrar ambientes</h2>
+          <h2 className="text-md-center py-md-3">Registrar ambientes</h2>
 
           <form className="forms" onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="input-component">
