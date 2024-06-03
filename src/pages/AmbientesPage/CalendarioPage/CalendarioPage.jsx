@@ -20,29 +20,37 @@ const CalendarioPage = () => {
     axios
       .get(`${baseURL}/disponibles/ambiente/${id_ambiente}`)
       .then(({ data }) => setAmbiente(data))
-      .catch(e => console.error('Error al obtener los datos del ambiente:', e));
+      .catch((e) => console.error('Error al obtener los datos del ambiente:', e));
     axios
       .get(`${baseURL}/reservas/reserva-ambientes/${id_ambiente}`)
-      .then(({ data }) => setReservas(data.map(obj => ({
-        id: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_inicio}-04:00`).getTime(),
-        title: 'RESERVADO',
-        start: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_inicio}-04:00`),
-        end: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_fin}-04:00`),
-        obj: obj,
-      }))))
-      .catch(e => console.error('Error al obtener las reservas del ambiente:', e));
+      .then(({ data }) =>
+        setReservas(
+          data.map((obj) => ({
+            id: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_inicio}-04:00`).getTime(),
+            title: 'RESERVADO',
+            start: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_inicio}-04:00`),
+            end: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_fin}-04:00`),
+            obj: obj,
+          })),
+        ),
+      )
+      .catch((e) => console.error('Error al obtener las reservas del ambiente:', e));
     axios
       .get(`${baseURL}/aperturas/apertura-fecha`)
-      .then(({ data }) => setApertura(user.tipo_usuario === 'ADMINISTRADOR'
-        ? data[0]
-        : data.find(obj => obj[user.tipo_usuario.toLowerCase()])))
+      .then(({ data }) =>
+        setApertura(
+          user.tipo_usuario === 'ADMINISTRADOR'
+            ? data[0]
+            : data.find((obj) => obj[user.tipo_usuario.toLowerCase()]),
+        ),
+      )
       .catch((e) => console.error('Error al obtener la apertura vigente:', error));
   }, []);
 
   useEffect(() => {
-    if (ambiente.id_ambiente > 0 && apertura.id_apertura > 0) {
+    if (ambiente.id_ambiente > 0 && apertura.id_apertura > 0 && ambiente.disponible) {
       ambiente.disponibilidadPorDia.forEach((day, index) => {
-        day.periodos.forEach(periodo => {
+        day.periodos.forEach((periodo) => {
           const weekday = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
           const rule = new RRule({
             freq: RRule.WEEKLY,
@@ -51,32 +59,32 @@ const CalendarioPage = () => {
             dtstart: new Date(`${apertura.reserva_inicio.slice(0, 10)}T${periodo.hora_inicio}Z`),
             until: new Date(`${apertura.reserva_fin.slice(0, 10)}T${periodo.hora_inicio}Z`),
           });
-          const occurrences = rule.all().map(date => ({
+          const occurrences = rule.all().map((date) => ({
             id: new Date(date.setHours(date.getHours() + 4)).getTime(),
             title: 'DISPONIBLE',
             start: new Date(date.setHours(date.getHours())),
             end: new Date(date.setHours(date.getHours() + 1, date.getMinutes() + 30)),
-            obj: {...periodo, estado: 'disponible'},
+            obj: { ...periodo, estado: 'disponible' },
           }));
-          setDisponibilidad(prev => [...prev, ...occurrences]);
+          setDisponibilidad((prev) => [...prev, ...occurrences]);
         });
       });
     }
   }, [ambiente, apertura]);
 
   const messages = {
-    date: "Fecha",
-    time: "Hora",
-    event: "Evento",
-    allDay: "Todo el día",
-    week: "Semana",
-    day: "Día",
-    month: "Mes",
-    previous: "Anterior",
-    next: "Siguiente",
-    today: "Hoy",
-    agenda: "Agenda",
-    noEventsInRange: "Sin eventos"
+    date: 'Fecha',
+    time: 'Hora',
+    event: 'Evento',
+    allDay: 'Todo el día',
+    week: 'Semana',
+    day: 'Día',
+    month: 'Mes',
+    previous: 'Anterior',
+    next: 'Siguiente',
+    today: 'Hoy',
+    agenda: 'Agenda',
+    noEventsInRange: 'Sin eventos',
   };
 
   const components = {
@@ -84,14 +92,20 @@ const CalendarioPage = () => {
       const eventColor = {
         // RESERVAS
         vigente: event.obj.nombre_usuario === user.nombre_usuario ? 'success' : 'danger opacity-75',
-        cancelado: event.obj.nombre_usuario === user.nombre_usuario ? 'danger opacity-75' : 'warning opacity-75',
-        finalizado: event.obj.nombre_usuario === user.nombre_usuario ? 'danger opacity-75' : 'warning opacity-75',
+        cancelado:
+          event.obj.nombre_usuario === user.nombre_usuario
+            ? 'danger opacity-75'
+            : 'warning opacity-75',
+        finalizado:
+          event.obj.nombre_usuario === user.nombre_usuario
+            ? 'danger opacity-75'
+            : 'warning opacity-75',
         // DISPONIBLE
         disponible: 'primary opacity-75',
         // APERTURAS
         'EN CURSO': 'warning opacity-75',
-        'FINALIZADO': 'danger opacity-75',
-        'VIGENTE': 'primary opacity-75',
+        FINALIZADO: 'danger opacity-75',
+        VIGENTE: 'primary opacity-75',
 
         undefined: 'danger',
       };
@@ -99,14 +113,15 @@ const CalendarioPage = () => {
         RESERVADO: {
           header: event.obj.estado?.toUpperCase(),
           title: event.obj.nombre_usuario,
-          subtitle: `Registrado el ${new Date(event.obj.registro_reserva?.slice(0, 23) + '-04:00')
-            .toLocaleString('es-ES', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}.`,
+          subtitle: `Registrado el ${new Date(
+            event.obj.registro_reserva?.slice(0, 23) + '-04:00',
+          ).toLocaleString('es-ES', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })}.`,
           listGroup: [
             { key: 'Materia/s: ', value: event.obj.nombre_materia },
             { key: 'Motivo: ', value: event.obj.motivo },
@@ -120,26 +135,33 @@ const CalendarioPage = () => {
         DISPONIBLE: {
           header: 'DISPONIBLE',
           title: apertura.motivo,
-          subtitle: `Disponible el día ${new Date(event.start)
-            .toLocaleString('es-ES', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}.`,
+          subtitle: `Disponible el día ${new Date(event.start).toLocaleString('es-ES', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })}.`,
           listGroup: [
             {
               key: 'Fecha: ',
-              value: startUpperCase(new Date(event.start).toLocaleString('es-ES', {
-                weekday: 'long', month: 'long', day: 'numeric',
-              })),
+              value: startUpperCase(
+                new Date(event.start).toLocaleString('es-ES', {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                }),
+              ),
             },
             {
               key: 'Periodo: ',
-              value: `De las ${new Date(event.start)
-                .toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' })} a las ${new Date(event.end)
-                  .toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' })}.`,
+              value: `De las ${new Date(event.start).toLocaleString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })} a las ${new Date(event.end).toLocaleString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}.`,
             },
           ],
           footer: [
@@ -153,9 +175,12 @@ const CalendarioPage = () => {
                 periodos: [event.obj.id_periodo?.toString()],
                 periodo: `${event.obj.hora_inicio?.slice(0, 5)} - ${event.obj.hora_fin?.slice(0, 5)}`,
                 event: event,
-              }
+              },
             },
-            { to: `/ambientes/listaAmbientes/fichaAmbiente/${id_ambiente}`, text: 'Más información' },
+            {
+              to: `/ambientes/listaAmbientes/fichaAmbiente/${id_ambiente}`,
+              text: 'Más información',
+            },
           ],
         },
         APERTURA: {
@@ -165,23 +190,47 @@ const CalendarioPage = () => {
           listGroup: [
             {
               key: 'Desde: ',
-              value: startUpperCase(new Date(`${apertura.apertura_inicio?.slice(0, 23)}-04:00`).toLocaleString('es-ES', {
-                weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-              })),
+              value: startUpperCase(
+                new Date(`${apertura.apertura_inicio?.slice(0, 23)}-04:00`).toLocaleString(
+                  'es-ES',
+                  {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  },
+                ),
+              ),
             },
             {
               key: 'Hasta: ',
-              value: startUpperCase(new Date(`${apertura.apertura_fin?.slice(0, 23)}-04:00`).toLocaleString('es-ES', {
-                weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-              })),
+              value: startUpperCase(
+                new Date(`${apertura.apertura_fin?.slice(0, 23)}-04:00`).toLocaleString('es-ES', {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }),
+              ),
             },
             {
               key: 'Perdiodo de examen: ',
-              value: `Del ${new Date(`${apertura.apertura_inicio?.slice(0, 23)}-04:00`).toLocaleString('es-ES', {
-                weekday: 'long', month: 'long', day: 'numeric'
-              })} al ${new Date(`${apertura.apertura_fin?.slice(0, 23)}-04:00`).toLocaleString('es-ES', {
-                weekday: 'long', month: 'long', day: 'numeric'
-              })}.`,
+              value: `Del ${new Date(
+                `${apertura.apertura_inicio?.slice(0, 23)}-04:00`,
+              ).toLocaleString('es-ES', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+              })} al ${new Date(`${apertura.apertura_fin?.slice(0, 23)}-04:00`).toLocaleString(
+                'es-ES',
+                {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                },
+              )}.`,
             },
           ],
           footer: [
@@ -203,92 +252,117 @@ const CalendarioPage = () => {
           </button>
           <div className="dropdown-menu p-0 position-fixed">
             <div className="card" style={{ maxWidth: '28rem', minWidth: '18rem' }}>
-              <div className="card-header text-center">
-                {content[event.title].header}
-              </div>
+              <div className="card-header text-center">{content[event.title].header}</div>
               <div className="card-body py-2">
                 <h5 className="card-title">{content[event.title].title}</h5>
-                <h6 className="card-subtitle text-body-secondary">{content[event.title].subtitle}</h6>
+                <h6 className="card-subtitle text-body-secondary">
+                  {content[event.title].subtitle}
+                </h6>
               </div>
               <ul className="text-wrap list-group list-group-flush border">
-                {content[event.title].listGroup.map((item, index) => (
-                  item.value && (
-                    <li key={`footer-${event.id}-${index}`} className="list-group-item d-flex">
-                      {item.key} <p className='ms-2 mb-0'>{item.value}</p>
-                    </li>
-                  )
-                ))}
+                {content[event.title].listGroup.map(
+                  (item, index) =>
+                    item.value && (
+                      <li key={`footer-${event.id}-${index}`} className="list-group-item d-flex">
+                        {item.key} <p className="ms-2 mb-0">{item.value}</p>
+                      </li>
+                    ),
+                )}
               </ul>
               <div className="card-footer py-2">
                 {content[event.title].footer.map((link, index) => (
-                  <Link key={`footer-${event.id}-${index}`} to={link.to} className="card-link small" state={link.state}>{link.text}</Link>
+                  <Link
+                    key={`footer-${event.id}-${index}`}
+                    to={link.to}
+                    className="card-link small"
+                    state={link.state}
+                  >
+                    {link.text}
+                  </Link>
                 ))}
               </div>
             </div>
           </div>
         </div>
       );
-    }
+    },
   };
 
   const startUpperCase = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
-  }
+  };
 
   return (
     <div className="container-fluid listado-ambientes p-md-5 overflow-hidden">
       <h2 className="text-start">Calendario de {ambiente.nombre_ambiente}</h2>
 
-      <div className='border border-2  rounded-2' style={{ height: 'calc(100vh - 190px)' }}>
+      <div className="border border-2  rounded-2" style={{ height: 'calc(100vh - 190px)' }}>
         <Calendar
           step={45}
-          events={[...[...reservas, ...disponibilidad].filter((obj, index, self) =>
-            index === self.findIndex((t) => t.id === obj.id)), {
-            id: apertura.id_apertura,
-            title: 'APERTURA',
-            start: new Date(apertura.apertura_inicio),
-            end: new Date(apertura.apertura_fin),
-            obj: apertura,
-          }]}
+          events={[
+            ...[...reservas, ...disponibilidad].filter(
+              (obj, index, self) => index === self.findIndex((t) => t.id === obj.id),
+            ),
+            {
+              id: apertura.id_apertura,
+              title: 'APERTURA',
+              start: new Date(apertura.apertura_inicio),
+              end: new Date(apertura.apertura_fin),
+              obj: apertura,
+            },
+          ]}
           localizer={dayjsLocalizer(dayjs)}
           messages={messages}
           length={1}
           views={['agenda', 'day', 'week', 'month']}
-          defaultView='week'
+          defaultView="week"
           min={new Date(2024, 1, 1, 6, 45)}
           max={new Date(2024, 1, 1, 21, 45)}
           components={components}
           formats={{
-            dayFormat: date => startUpperCase(date.toLocaleString('es-ES', { weekday: 'short', day: 'numeric' })),
-            weekdayFormat: date => startUpperCase(date.toLocaleString('es-ES', { weekday: 'short' })),
-            timeGutterFormat: date => date.toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-            monthHeaderFormat: date => startUpperCase(date.toLocaleString('es-ES', { month: 'long', year: 'numeric' })),
-            dayRangeHeaderFormat: range => {
+            dayFormat: (date) =>
+              startUpperCase(date.toLocaleString('es-ES', { weekday: 'short', day: 'numeric' })),
+            weekdayFormat: (date) =>
+              startUpperCase(date.toLocaleString('es-ES', { weekday: 'short' })),
+            timeGutterFormat: (date) =>
+              date.toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+            monthHeaderFormat: (date) =>
+              startUpperCase(date.toLocaleString('es-ES', { month: 'long', year: 'numeric' })),
+            dayRangeHeaderFormat: (range) => {
               const dateFormat = { year: 'numeric', month: 'long', day: 'numeric' };
               const formattedDateStart = range.start.toLocaleDateString('es-ES', dateFormat);
               const formattedDateEnd = range.end.toLocaleDateString('es-ES', dateFormat);
               return startUpperCase(formattedDateStart) + ' al ' + startUpperCase(formattedDateEnd);
             },
-            dayHeaderFormat: date => {
-              const dateFormat = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dayHeaderFormat: (date) => {
+              const dateFormat = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              };
               const formattedDate = date.toLocaleString('es-ES', dateFormat);
               return startUpperCase(formattedDate);
             },
-            agendaHeaderFormat: range => {
+            agendaHeaderFormat: (range) => {
               const dateFormat = { year: 'numeric', month: 'long', day: '2-digit' };
               const formattedDateStart = range.start.toLocaleDateString('es-ES', dateFormat);
               const formattedDateEnd = range.end.toLocaleDateString('es-ES', dateFormat);
               return startUpperCase(formattedDateStart) + ' al ' + startUpperCase(formattedDateEnd);
             },
-            agendaDateFormat: date => startUpperCase(date.toLocaleString('es-ES', { weekday: 'short', month: 'long', day: 'numeric' })),
-            agendaTimeFormat: date => date.toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-            agendaTimeRangeFormat: range => {
+            agendaDateFormat: (date) =>
+              startUpperCase(
+                date.toLocaleString('es-ES', { weekday: 'short', month: 'long', day: 'numeric' }),
+              ),
+            agendaTimeFormat: (date) =>
+              date.toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+            agendaTimeRangeFormat: (range) => {
               const dateFormat = { hour: '2-digit', minute: '2-digit' };
               const formattedDateStart = range.start.toLocaleTimeString('es-ES', dateFormat);
               const formattedDateEnd = range.end.toLocaleTimeString('es-ES', dateFormat);
               return startUpperCase(formattedDateStart) + ' - ' + startUpperCase(formattedDateEnd);
             },
-            eventTimeRangeFormat: range => {
+            eventTimeRangeFormat: (range) => {
               const dateFormat = { hour: '2-digit', minute: '2-digit' };
               const formattedDateStart = range.start.toLocaleTimeString('es-ES', dateFormat);
               const formattedDateEnd = range.end.toLocaleTimeString('es-ES', dateFormat);

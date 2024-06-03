@@ -30,7 +30,9 @@ const RegistroReservaPage = () => {
   // aux
   const currentDateTime = new Date();
   const [users, setUsers] = useState(formData?.users || []);
-  const [datalistSolicitante, setDatalistSolicitante] = useState(formData?.datalistSolicitante || []);
+  const [datalistSolicitante, setDatalistSolicitante] = useState(
+    formData?.datalistSolicitante || [],
+  );
   const [isAdmin, setIsAdmin] = useState(user.tipo_usuario === 'ADMINISTRADOR');
   const [tiposAmbiente, setTiposAmbiente] = useState(formData?.tiposAmbiente || []);
   const [addAssociates, setAddAssociates] = useState(formData?.addAssociates || false);
@@ -47,7 +49,10 @@ const RegistroReservaPage = () => {
       .default(formData?.solicitante || user.nombre_usuario)
       .required('Ingrese un nombre de un usuario')
       .max(40, 'El nombre debe tener como máximo 40 caracteres'),
-    tipo_ambiente: yup.string().default(formData?.tipo_ambiente || '').required('Seleccione una categoria'),
+    tipo_ambiente: yup
+      .string()
+      .default(formData?.tipo_ambiente || '')
+      .required('Seleccione una categoria'),
     asociados: yup
       .array()
       .default(formData?.asociados || [])
@@ -57,9 +62,9 @@ const RegistroReservaPage = () => {
     listaGrupos: yup
       .array()
       .default(formData?.listaGrupos || [])
-      .of(yup.number().positive().integer(), 'Error type for group\'s value')
+      .of(yup.number().positive().integer(), "Error type for group's value")
       .test('noApplicantGroup', 'Seleccione algún grupo del solicitante', function (value) {
-        return value.some(idGroup => this.parent.applicantGroups.includes(idGroup));
+        return value.some((idGroup) => this.parent.applicantGroups.includes(idGroup));
       })
       .min(1, 'Seleccione al menos un grupo'),
     cantidad_est: yup
@@ -69,17 +74,30 @@ const RegistroReservaPage = () => {
       .max(500, 'el número de estudiantes debe ser menor a 500')
       .min(20, 'El número de estudiantes debe ser mayor a 20')
       .integer('El número de estudiantes debe ser un número entero'),
-    fecha_reserva: yup.string().default(formData?.fecha_reserva || '').required('Seleccione una fecha valida'),
-    motivo: yup.string().default(formData?.motivo || '').max(200, 'El motivo debe tener como máximo 200 caracteres'),
-    periodos: yup.array().default(formData?.periodos || []).of(yup.string()).min(1, 'Seleccione al menos un horario'),
-    apertura: yup.object().shape({
-      id: yup.number(),
-      motivo: yup.string(),
-      aperturaIni: yup.date(),
-      aperturaFin: yup.date(),
-      reservaIni: yup.date(),
-      reservaFin: yup.date(),
-    }).required('Error: Apertura is undefined'),
+    fecha_reserva: yup
+      .string()
+      .default(formData?.fecha_reserva || '')
+      .required('Seleccione una fecha valida'),
+    motivo: yup
+      .string()
+      .default(formData?.motivo || '')
+      .max(200, 'El motivo debe tener como máximo 200 caracteres'),
+    periodos: yup
+      .array()
+      .default(formData?.periodos || [])
+      .of(yup.string())
+      .min(1, 'Seleccione al menos un horario'),
+    apertura: yup
+      .object()
+      .shape({
+        id: yup.number(),
+        motivo: yup.string(),
+        aperturaIni: yup.date(),
+        aperturaFin: yup.date(),
+        reservaIni: yup.date(),
+        reservaFin: yup.date(),
+      })
+      .required('Error: Apertura is undefined'),
   });
 
   const {
@@ -122,8 +140,10 @@ const RegistroReservaPage = () => {
     axios
       .get(`${database}/aperturas/apertura-fecha`)
       .then(({ data }) => {
-        const aux = user.tipo_usuario === 'ADMINISTRADOR' ? data[0]
-          : data.find(obj => obj[user.tipo_usuario.toLowerCase()]);
+        const aux =
+          user.tipo_usuario === 'ADMINISTRADOR'
+            ? data[0]
+            : data.find((obj) => obj[user.tipo_usuario.toLowerCase()]);
         if (aux === undefined) {
           throw new Error('No existen aperturas vigentes');
         }
@@ -140,7 +160,7 @@ const RegistroReservaPage = () => {
             new Date(aux.reserva_fin).getTime() > currentDateTime.getTime()
               ? new Date(aux.reserva_fin)
               : currentDateTime,
-        }
+        };
         setValue('apertura', _apertura);
         const ini = _apertura?.aperturaIni.getTime();
         const fin = _apertura?.aperturaFin.getTime();
@@ -155,17 +175,21 @@ const RegistroReservaPage = () => {
             minute: 'numeric',
           };
           successModal({
-            body: (<>
-              <div className="position-absolute">
-                <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
-              </div>
-              Las reservas están actualmente<br />
-              cerradas. El periodo hábil para<br />
-              realizar reservas "{_apertura?.motivo}" es del {``}
-              {_apertura?.aperturaIni?.toLocaleString('es-ES', dateStringFormat)} {``}
-              al {_apertura?.aperturaFin?.toLocaleString('es-ES', dateStringFormat)}.
-            </>),
-            onClickTo: '/'
+            body: (
+              <>
+                <div className="position-absolute">
+                  <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+                </div>
+                Las reservas están actualmente
+                <br />
+                cerradas. El periodo hábil para
+                <br />
+                realizar reservas "{_apertura?.motivo}" es del {``}
+                {_apertura?.aperturaIni?.toLocaleString('es-ES', dateStringFormat)} {``}
+                al {_apertura?.aperturaFin?.toLocaleString('es-ES', dateStringFormat)}.
+              </>
+            ),
+            onClickTo: '/',
           });
         }
       })
@@ -234,41 +258,19 @@ const RegistroReservaPage = () => {
     loadNotification({
       body: 'Enviando formulario',
       onTimeout: () => {
-        axios
-          .post(`${database}/reservas`, {
-            tipo_ambiente: data.tipo_ambiente,
-            cantidad_est: data.cantidad_est,
-            periodos: data.periodos.map((obj) => ({ id_periodo: parseInt(obj) })),
-            fecha_reserva: data.fecha_reserva,
-          })
-          .then((response) => {
-            if (Array.isArray(response.data) && response.data.length === 0) {
-              errorNotification({ body: 'No se encontró ningún ambiente disponible' });
-            } else {
-              successNotification({
-                body: 'Enviado correctamente',
-                afterTimeout: () =>
-                  navigate('/reservas/ambientesDisponibles', {
-                    state: {
-                      ...data,
-                      ambienteDisp: response.data,
-                      users: users,
-                      datalistSolicitante: datalistSolicitante,
-                      tiposAmbiente: tiposAmbiente,
-                      addAssociates: addAssociates,
-                      associatesIds: associatesIds,
-                      grupos: grupos,
-                      allCheckbox: allCheckbox,
-                    },
-                  }),
-              });
-            }
-          })
-          .catch((error) => {
-            console.error('Error al obtener los ambiente disponibles: ', error);
-            errorNotification({ body: 'Error al enviar, intente de nuevo' });
-          });
-
+        navigate('/reservas/ambientesDisponibles', {
+          state: {
+            ...data,
+            ambienteDisp: [],
+            users: users,
+            datalistSolicitante: datalistSolicitante,
+            tiposAmbiente: tiposAmbiente,
+            addAssociates: addAssociates,
+            associatesIds: associatesIds,
+            grupos: grupos,
+            allCheckbox: allCheckbox,
+          },
+        });
       },
     });
   };
@@ -293,7 +295,10 @@ const RegistroReservaPage = () => {
       axios
         .get(`${database}/usuarios/${foundUser.id_usuario}/materias-grupos`)
         .then(({ data }) => {
-          setValue('applicantGroups', data.materia_grupo.map(obj => (obj.id_aux_grupo)));
+          setValue(
+            'applicantGroups',
+            data.materia_grupo.map((obj) => obj.id_aux_grupo),
+          );
         })
         .catch((error) => {
           console.error('Error al obtener las materias y grupos:', error);
@@ -418,19 +423,21 @@ const RegistroReservaPage = () => {
                 });
               }}
             >
-              {user.tipo_usuario === 'ADMINISTRADOR' && <TextInput
-                autoComplete="off"
-                label="Nombre del solicitante"
-                {...register('solicitante')}
-                placeholder="Ingrese el nombre del solicitante"
-                datalist={datalistSolicitante}
-                handleChange={handleSolicitante}
-                afterChange={() => {
-                  searchGroupsByApplicant();
-                  setAddAssociates(false);
-                }}
-                error={errors.solicitante?.message}
-              />}
+              {user.tipo_usuario === 'ADMINISTRADOR' && (
+                <TextInput
+                  autoComplete="off"
+                  label="Nombre del solicitante"
+                  {...register('solicitante')}
+                  placeholder="Ingrese el nombre del solicitante"
+                  datalist={datalistSolicitante}
+                  handleChange={handleSolicitante}
+                  afterChange={() => {
+                    searchGroupsByApplicant();
+                    setAddAssociates(false);
+                  }}
+                  error={errors.solicitante?.message}
+                />
+              )}
 
               <Select
                 label={
@@ -460,8 +467,11 @@ const RegistroReservaPage = () => {
                         name="asociados"
                         placeholder="Seleccionar un asociado"
                         options={users
-                          .filter((user) => associatesIds.includes(user.id_usuario)
-                            && !watch('asociados').includes(user.id_usuario))
+                          .filter(
+                            (user) =>
+                              associatesIds.includes(user.id_usuario) &&
+                              !watch('asociados').includes(user.id_usuario),
+                          )
                           .map((user) => ({
                             value: user.id_usuario,
                             title: user.nombre_usuario,
@@ -495,7 +505,9 @@ const RegistroReservaPage = () => {
                         title: `${group.nombre_materia} - ${group.nombre_grupo}`,
                       }))}
                     handleChange={addGropsSelected}
-                    afterChange={() => { clearErrors('listaGrupos') }}
+                    afterChange={() => {
+                      clearErrors('listaGrupos');
+                    }}
                     error={errors.listaGrupos?.message}
                   />
 
@@ -503,7 +515,9 @@ const RegistroReservaPage = () => {
                     className="input-component"
                     style={{ display: watch('listaGrupos').length > 0 ? 'block' : 'none' }}
                   >
-                    <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
+                    <label className="form-label fw-bold">
+                      Lista de materias y grupos añadidos
+                    </label>
                     <AlertContainer ref={addedGroupsRef} />
                   </div>
                 </>
@@ -514,7 +528,9 @@ const RegistroReservaPage = () => {
                   <NumberInput
                     label="Número de Estudiantes"
                     {...register('cantidad_est')}
-                    disabled={user.tipo_usuario !== 'ADMINISTRADOR' || watch('listaGrupos').length < 1}
+                    disabled={
+                      user.tipo_usuario !== 'ADMINISTRADOR' || watch('listaGrupos').length < 1
+                    }
                     error={watch('cantidad_est') < 20 && errors.cantidad_est?.message}
                   />
                 </div>
@@ -614,11 +630,17 @@ const RegistroReservaPage = () => {
     };
     return (
       <div className="container">
-        <div className='m-3 p-3'>
+        <div className="m-3 p-3">
           <div className="h5 alert alert-warning d-flex align-items-center">
-            <Icon className='me-2' icon="gg:info" width="70" height="70" style={{ color: '#FF6B00' }} />
-            Usted no puede realizar la reserva, ya que el periodo de
-            reserva para "{user.tipo_usuario}", es del {``}
+            <Icon
+              className="me-2"
+              icon="gg:info"
+              width="70"
+              height="70"
+              style={{ color: '#FF6B00' }}
+            />
+            Usted no puede realizar la reserva, ya que el periodo de reserva para "
+            {user.tipo_usuario}", es del {``}
             {watch('apertura')?.aperturaIni?.toLocaleString('es-ES', dateStringFormat)} {``}
             al {watch('apertura')?.aperturaFin?.toLocaleString('es-ES', dateStringFormat)}.
           </div>
