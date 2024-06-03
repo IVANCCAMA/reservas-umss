@@ -116,7 +116,6 @@ const EditarAmbientePage = () => {
       .required('El campo es obligatorio')
       .min(100, 'El número mínimo es 100')
       .max(150, 'El número máximo es 150'),
-    disponible: yup.bool(),
     proyector: yup.bool(),
     dia: yup
       .object()
@@ -326,19 +325,7 @@ const EditarAmbientePage = () => {
                   {...register('proyector')}
                 />
               </div>
-              <div className="col-md">
-                <label className="form-check-label me-md-2 fw-bold" htmlFor={`disponible`}>
-                  Disponiblidad de ambiente
-                </label>
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id={`disponible`}
-                  {...register('disponible')}
-                />
-              </div>
             </div>
-
             {/* Horarios */}
             <div className="my-3">
               <label className="form-label fw-bold">

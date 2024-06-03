@@ -114,7 +114,7 @@ const LoginPage = () => {
                   />
                   {errors.codsiss && <span className="text-danger">{errors.codsiss.message}</span>}
                 </div>
-                <div className="input-component">
+                <div className="input-component mt-2">
                   <label className="form-label">
                     Contraseña<span className="text-danger ms-1 fw-bold">*</span>
                   </label>
@@ -142,7 +142,7 @@ const LoginPage = () => {
                 </div>
                 <button
                   type="submit"
-                  className="btn btn-primary pt-md-2 w-100"
+                  className="btn btn-primary pt-md-2 w-100 mt-3"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Enviando...' : 'Iniciar sesión'}

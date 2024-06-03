@@ -159,3 +159,48 @@ h1 {
   opacity: 0.5;
   filter: alpha(opacity=50);
 } */
+
+.notificaciones {
+  .clickable-row {
+    cursor: pointer;
+  }
+
+  .bg-leido {
+    background-color: #0fa958;
+  }
+
+  .bg-noLeido {
+    background-color: #ff0000;
+  }
+}
+
+.iconNotify {
+  .btn {
+    font-size: 25px;
+    color: #215f88;
+  }
+}
+
+.alertNotify {
+  position: absolute;
+  top: 13px;
+  right: 249px;
+  display: inline-block;
+  padding: 0 5px;
+  height: 13px;
+  border: 2px solid #ffffff;
+  border-radius: 22px;
+  line-height: 13px;
+  background-color: #ff0000;
+  @include media-breakpoint-down(md) {
+    right: 70px;
+  }
+}
+
+.form-comp {
+  .botones {
+    button {
+      width: 100px;
+    }
+  }
+}

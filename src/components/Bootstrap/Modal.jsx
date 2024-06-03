@@ -37,10 +37,13 @@ const Modal = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     show() {
+      const background = document.getElementsByClassName('modal-backdrop fade show');
+      const backgroundArray = Array.from(background);
+      backgroundArray.forEach((obj) => obj.remove());
       if (modalRef.current) {
         const bsModal = new bootstrap.Modal(modalRef.current, {
           backdrop: 'static',
-          keyboard: true
+          keyboard: true,
         });
         bsModal.show();
       }
@@ -58,14 +61,16 @@ const Modal = forwardRef((props, ref) => {
       aria-hidden="true"
     >
       <div className="modal-dialog modal-dialog-centered" style={{ width: '350px' }}>
-        <div className="modal-content pt-md-3">
-          <div className="modal-body text-center">
-            {body}
-          </div>
-          {(button1 || button2) && (<div className={`modal-footer justify-content-${(button1 && button2) ? 'between' : 'center'}`}>
-            {button1 && <ButtonModal {...button1} />}
-            {button2 && <ButtonModal {...button2} />}
-          </div>)}
+        <div className="modal-content">
+          <div className="modal-body text-center">{body}</div>
+          {(button1 || button2) && (
+            <div
+              className={`modal-footer justify-content-${button1 && button2 ? 'between' : 'center'}`}
+            >
+              {button1 && <ButtonModal {...button1} />}
+              {button2 && <ButtonModal {...button2} />}
+            </div>
+          )}
         </div>
       </div>
     </div>
