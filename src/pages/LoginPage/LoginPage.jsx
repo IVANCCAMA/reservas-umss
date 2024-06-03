@@ -53,7 +53,6 @@ const LoginPage = () => {
       .unwrap()
       .then((response) => {
         setAuthError(true);
-        console.log(response);
       })
       .catch((error) => {
         console.log('error', error);

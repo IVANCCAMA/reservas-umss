@@ -261,7 +261,7 @@ const RegistroReservaPage = () => {
         navigate('/reservas/ambientesDisponibles', {
           state: {
             ...data,
-            ambienteDisp: [],
+            ambienteDisp: response.data,
             users: users,
             datalistSolicitante: datalistSolicitante,
             tiposAmbiente: tiposAmbiente,
