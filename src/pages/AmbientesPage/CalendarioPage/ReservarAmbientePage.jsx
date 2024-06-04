@@ -23,9 +23,10 @@ const RegistroReservaPage = () => {
   const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
 
   const location = useLocation();
-  const { confirmationModal, successModal } = useModal();
+  const { confirmationModal, successModal, errorModal } = useModal();
   const { loadNotification, errorNotification, successNotification } = useNotification();
   const formData = location.state;
+  console.log(formData);
   // aux
   const currentDateTime = new Date();
   const [users, setUsers] = useState(formData?.users || []);
@@ -145,9 +146,9 @@ const RegistroReservaPage = () => {
           };
           successModal({
             body: (<>
-              <div className="position-absolute">
-                <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
-              </div>
+              {/* <div className="position-absolute"> */}
+              <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+              {/* </div> */}
               Las reservas están actualmente<br />
               cerradas. El periodo hábil para<br />
               realizar reservas "{_apertura?.motivo}" es del {``}
@@ -221,73 +222,92 @@ const RegistroReservaPage = () => {
         axios
           .post(`${database}/reservas`, {
             tipo_ambiente: formData.ambiente.tipo,
-            cantidad_est: data.cantidad_est,
+            cantidad_est: formData.ambiente.capacidad,
             periodos: data.periodos.map((obj) => ({ id_periodo: parseInt(obj) })),
             fecha_reserva: data.fecha_reserva,
           })
-          .then((response) => {
-            console.log(response.data);
-            const ambienteDisp = response.data.find(obj => obj.ambiente_id == formData.ambiente.id_ambiente);
-            if (ambienteDisp) {
-              axios
-                .post(`${database}/reservas/crear/`, {
-                  id_disponible: ambienteDisp.id_disponible,
-                  fecha_reserva: data.fecha_reserva,
-                  motivo: data.motivo,
-                  listaGrupos: data.listaGrupos,
-                  id_apertura: data.apertura.id,
-                  cantidad_total: data.cantidad_est,
-                })
-                .then((response) => {
-                  console.log(response);
-                  successModal({
-                    body: (
-                      <>
-                        <Icon
-                          icon="gg:check-o"
-                          style={{ color: '#0fa958', height: '90px', width: '90px' }}
-                        />
-                        <div className="pt-md-3">
-                          Registro de reserva
-                          <br />
-                          exitoso
-                        </div>
-                      </>
-                    ),
-                    onClickTo: '/reservas/listaReservas',
+          .then((response) => confirmationModal({
+            body: (
+              <>
+                <div className="position-absolute">
+                  <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+                </div>
+                <div>
+                  Confirmar reserva <br />
+                  Aula: {formData.ambiente.nombre_ambiente} <br />
+                  Capacidad: {formData.ambiente.capacidad} <br />
+                  Tipo: {formData.ambiente.tipo} <br />
+                  Fecha: {new Date(`${data.fecha_reserva}T00:00:00.000-04:00`)
+                    .toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric', })} <br />
+                  Hora: {formData.periodo} <br />
+                </div>
+              </>
+            ),
+            onClickYes: () => {
+              console.log(response.data);
+              const ambienteDisp = response.data.find(obj => obj.ambiente_id == formData.ambiente.id_ambiente);
+              if (ambienteDisp) {
+                axios
+                  .post(`${database}/reservas/crear/`, {
+                    id_disponible: ambienteDisp.id_disponible,
+                    fecha_reserva: data.fecha_reserva,
+                    motivo: data.motivo,
+                    listaGrupos: data.listaGrupos,
+                    id_apertura: data.apertura.id,
+                    cantidad_total: data.cantidad_est,
+                  })
+                  .then((response) => {
+                    console.log(response);
+                    successModal({
+                      body: (
+                        <>
+                          <Icon
+                            icon="gg:check-o"
+                            style={{ color: '#0fa958', height: '90px', width: '90px' }}
+                          />
+                          <div className="pt-md-3">
+                            Registro de reserva
+                            <br />
+                            exitoso
+                          </div>
+                        </>
+                      ),
+                      onClickTo: '/reservas/listaReservas',
+                    });
+                  })
+                  .catch((error) => {
+                    formData.ambienteDisp = [];
+                    console.error('Error al registrar reserva:', error);
+                    errorModal({
+                      body: (
+                        <>
+                          <img src={iconoError} />
+                          <div className="pt-md-3">
+                            Error al registrar.
+                            <br />
+                            Intente de nuevo
+                          </div>
+                        </>
+                      ),
+                    });
                   });
-                })
-                .catch((error) => {
-                  formData.ambienteDisp = [];
-                  console.error('Error al registrar reserva:', error);
-                  errorModal({
-                    body: (
-                      <>
-                        <img src={iconoError} />
-                        <div className="pt-md-3">
-                          Error al registrar
-                          <br />
-                          Intente de nuevo
-                        </div>
-                      </>
-                    ),
-                  });
+              } else {
+                errorModal({
+                  body: (
+                    <>
+                      <img src={iconoError} />
+                      <div className="pt-md-3">
+                        El ambiente ya se encuentra
+                        <br />
+                        reservado.
+                      </div>
+                    </>
+                  ),
+                  onClickTo: `/ambientes/calendario/${formData.ambiente.id_ambiente}`,
                 });
-            } else {
-              errorModal({
-                body: (
-                  <>
-                    <img src={iconoError} />
-                    <div className="pt-md-3">
-                      El ambiente ya se encuentra
-                      <br />
-                      reservado. 
-                    </div>
-                  </>
-                ),
-              });
+              }
             }
-          })
+          }))
           .catch((error) => {
             console.error('Error al obtener los ambiente disponibles: ', error);
             errorNotification({ body: 'Error al enviar, intente de nuevo' });
@@ -386,175 +406,148 @@ const RegistroReservaPage = () => {
     return new String();
   };
 
-  const ini = watch('apertura')?.aperturaIni?.getTime();
-  const fin = watch('apertura')?.aperturaFin?.getTime();
-  const hoy = currentDateTime.getTime();
-  if (ini <= hoy && hoy <= fin) {
-    return (
-      <div className="container">
-        <div className="row py-md-3 justify-content-center">
-          <div className="col-md-8">
-            <Form
-              title="Formulario de reserva"
-              className="needs-validation"
-              onSubmit={handleSubmit(onSubmit)}
-              onClickCancel={() => {
-                confirmationModal({
-                  body: (
-                    <>
-                      <Icon
-                        className="iconAlert"
-                        icon="charm:circle-cross"
-                        style={{ color: '#FF3B20', height: '90px', width: '90px' }}
-                      />
-                      <div className="pt-md-3">
-                        ¿Estás seguro que desea <br /> cancelar el registro de <br /> reserva?
-                      </div>
-                    </>
-                  ),
-                  onClickYesTo: `/ambientes/calendario/${formData.ambiente.id_ambiente}`,
-                });
+  return (
+    <div className="container">
+      <div className="row py-md-3 justify-content-center">
+        <div className="col-md-8">
+          <Form
+            title="Formulario de reserva"
+            className="needs-validation"
+            onSubmit={handleSubmit(onSubmit)}
+            onClickCancel={() => {
+              confirmationModal({
+                body: (
+                  <>
+                    <Icon
+                      className="iconAlert"
+                      icon="charm:circle-cross"
+                      style={{ color: '#FF3B20', height: '90px', width: '90px' }}
+                    />
+                    <div className="pt-md-3">
+                      ¿Estás seguro que desea <br /> cancelar el registro de <br /> reserva?
+                    </div>
+                  </>
+                ),
+                onClickYesTo: `/ambientes/calendario/${formData.ambiente.id_ambiente}`,
+              });
+            }}
+          >
+            {user.tipo_usuario === 'ADMINISTRADOR' && <TextInput
+              autoComplete="off"
+              label="Nombre del solicitante"
+              {...register('solicitante')}
+              placeholder="Ingrese el nombre del solicitante"
+              datalist={datalistSolicitante}
+              handleChange={handleSolicitante}
+              afterChange={() => {
+                searchGroupsByApplicant();
+                setAddAssociates(false);
               }}
-            >
-              {user.tipo_usuario === 'ADMINISTRADOR' && <TextInput
-                autoComplete="off"
-                label="Nombre del solicitante"
-                {...register('solicitante')}
-                placeholder="Ingrese el nombre del solicitante"
-                datalist={datalistSolicitante}
-                handleChange={handleSolicitante}
-                afterChange={() => {
-                  searchGroupsByApplicant();
-                  setAddAssociates(false);
-                }}
-                error={errors.solicitante?.message}
-              />}
+              error={errors.solicitante?.message}
+            />}
 
-              <div className="row row-cols6">
-                <div className="col-md-4">
-                  <TextInput disabled label='Ambiente' {...register('nombreAmbiente')} />
-                </div>
-
-                <div className="col-md-4">
-                  <TextInput disabled label='Fecha de reserva' {...register('fecha_reserva')} />
-                </div>
-                <div className="col-md-4">
-                  <TextInput disabled label='Periodo'{...register('periodo')} />
-                </div>
+            <div className="row row-cols6">
+              <div className="col-md-4">
+                <TextInput disabled label='Ambiente' {...register('nombreAmbiente')} />
               </div>
 
-              {!isAdmin && (
-                <>
-                  <CheckboxInput
-                    label="Agregar asociados"
-                    checked={addAssociates && watch('solicitante').length > 0}
-                    disabled={watch('solicitante').length < 1}
-                    handleChange={() => setAddAssociates((prev) => !prev)}
-                  />
+              <div className="col-md-4">
+                <TextInput disabled label='Fecha de reserva' {...register('fecha_reserva')} />
+              </div>
+              <div className="col-md-4">
+                <TextInput disabled label='Periodo'{...register('periodo')} />
+              </div>
+            </div>
 
-                  {addAssociates && (
+            {!isAdmin && (
+              <>
+                <CheckboxInput
+                  label="Agregar asociados"
+                  checked={addAssociates && watch('solicitante').length > 0}
+                  disabled={watch('solicitante').length < 1}
+                  handleChange={() => setAddAssociates((prev) => !prev)}
+                />
+
+                {addAssociates && (
+                  <>
+                    <Select
+                      label="Nombre de asociado"
+                      name="asociados"
+                      placeholder="Seleccionar un asociado"
+                      options={users
+                        .filter((user) => associatesIds.includes(user.id_usuario)
+                          && !watch('asociados').includes(user.id_usuario))
+                        .map((user) => ({
+                          value: user.id_usuario,
+                          title: user.nombre_usuario,
+                        }))}
+                      handleChange={addAssociatesSelected}
+                      error={watch('asociados').length < 1 && errors.asociados?.message}
+                    />
+
+                    <div
+                      className="input-component"
+                      style={{ display: watch('asociados').length > 0 ? 'block' : 'none' }}
+                    >
+                      <label className="form-label fw-bold">Lista de asociados añadidos</label>
+                      <AlertContainer ref={addedAssociatesRef} />
+                    </div>
+                  </>
+                )}
+
+                <Select
+                  label={
                     <>
-                      <Select
-                        label="Nombre de asociado"
-                        name="asociados"
-                        placeholder="Seleccionar un asociado"
-                        options={users
-                          .filter((user) => associatesIds.includes(user.id_usuario)
-                            && !watch('asociados').includes(user.id_usuario))
-                          .map((user) => ({
-                            value: user.id_usuario,
-                            title: user.nombre_usuario,
-                          }))}
-                        handleChange={addAssociatesSelected}
-                        error={watch('asociados').length < 1 && errors.asociados?.message}
-                      />
-
-                      <div
-                        className="input-component"
-                        style={{ display: watch('asociados').length > 0 ? 'block' : 'none' }}
-                      >
-                        <label className="form-label fw-bold">Lista de asociados añadidos</label>
-                        <AlertContainer ref={addedAssociatesRef} />
-                      </div>
+                      Materias y grupos <span className="text-danger ms-1">*</span>
                     </>
-                  )}
+                  }
+                  name="listaGrupos"
+                  placeholder="Seleccionar materias y grupos"
+                  options={grupos
+                    .filter((group) => !watch('listaGrupos')?.includes(group.id_aux_grupo))
+                    .map((group) => ({
+                      value: group.id_aux_grupo,
+                      title: `${group.nombre_materia} - ${group.nombre_grupo}`,
+                    }))}
+                  handleChange={addGropsSelected}
+                  afterChange={() => { clearErrors('listaGrupos') }}
+                  error={errors.listaGrupos?.message}
+                />
 
-                  <Select
-                    label={
-                      <>
-                        Materias y grupos <span className="text-danger ms-1">*</span>
-                      </>
-                    }
-                    name="listaGrupos"
-                    placeholder="Seleccionar materias y grupos"
-                    options={grupos
-                      .filter((group) => !watch('listaGrupos')?.includes(group.id_aux_grupo))
-                      .map((group) => ({
-                        value: group.id_aux_grupo,
-                        title: `${group.nombre_materia} - ${group.nombre_grupo}`,
-                      }))}
-                    handleChange={addGropsSelected}
-                    afterChange={() => { clearErrors('listaGrupos') }}
-                    error={errors.listaGrupos?.message}
-                  />
-
-                  <div
-                    className="input-component"
-                    style={{ display: watch('listaGrupos').length > 0 ? 'block' : 'none' }}
-                  >
-                    <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
-                    <AlertContainer ref={addedGroupsRef} />
-                  </div>
-                </>
-              )}
-
-              <div className="row row-cols6">
-                <div className="col-md-9">
-                  <TextTarea
-                    label="Motivos de reserva"
-                    {...register('motivo')}
-                    placeholder="Escriba el motivo de la reserva"
-                    maxLength={201}
-                    error={errors.motivo?.message}
-                  />
+                <div
+                  className="input-component"
+                  style={{ display: watch('listaGrupos').length > 0 ? 'block' : 'none' }}
+                >
+                  <label className="form-label fw-bold">Lista de materias y grupos añadidos</label>
+                  <AlertContainer ref={addedGroupsRef} />
                 </div>
-                <div className="col-md-3">
-                  <NumberInput
-                    label="Número de Estudiantes"
-                    {...register('cantidad_est')}
-                    disabled={user.tipo_usuario !== 'ADMINISTRADOR' || watch('listaGrupos').length < 1}
-                    error={watch('cantidad_est') < 20 && errors.cantidad_est?.message}
-                  />
-                </div>
+              </>
+            )}
+
+            <div className="row row-cols6">
+              <div className="col-md-9">
+                <TextTarea
+                  label="Motivos de reserva"
+                  {...register('motivo')}
+                  placeholder="Escriba el motivo de la reserva"
+                  maxLength={201}
+                  error={errors.motivo?.message}
+                />
               </div>
-            </Form>
-          </div>
+              <div className="col-md-3">
+                <NumberInput
+                  label="Número de Estudiantes"
+                  {...register('cantidad_est')}
+                  disabled={user.tipo_usuario !== 'ADMINISTRADOR' || watch('listaGrupos').length < 1}
+                  error={watch('cantidad_est') < 20 && errors.cantidad_est?.message}
+                />
+              </div>
+            </div>
+          </Form>
         </div>
       </div>
-    );
-  } else {
-    const dateStringFormat = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-    };
-    return (
-      <div className="container">
-        <div className='m-3 p-3'>
-          <div className="h5 alert alert-warning d-flex align-items-center">
-            <Icon className='me-2' icon="gg:info" width="70" height="70" style={{ color: '#FF6B00' }} />
-            Usted no puede realizar la reserva, ya que el periodo de
-            reserva para "{user.tipo_usuario}", es del {``}
-            {watch('apertura')?.aperturaIni?.toLocaleString('es-ES', dateStringFormat)} {``}
-            al {watch('apertura')?.aperturaFin?.toLocaleString('es-ES', dateStringFormat)}.
-          </div>
-        </div>
-      </div>
-    );
-  }
+    </div>
+  );
 };
 
 export default RegistroReservaPage;

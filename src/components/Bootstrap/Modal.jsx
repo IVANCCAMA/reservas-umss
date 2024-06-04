@@ -43,7 +43,7 @@ const Modal = forwardRef((props, ref) => {
       if (modalRef.current) {
         const bsModal = new bootstrap.Modal(modalRef.current, {
           backdrop: 'static',
-          keyboard: true
+          keyboard: false,
         });
         bsModal.show();
       }

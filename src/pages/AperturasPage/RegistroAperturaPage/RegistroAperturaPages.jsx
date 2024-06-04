@@ -47,8 +47,9 @@ const RegistroAperturaPage = () => {
       .required('Seleccione una hora válida')
       .matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Debe tener un formato de hora válido (HH:MM)')
       .test('es-mayor', 'Seleccione una hora posterior a la hora de inicio', function (value) {
-        const primerString = this.parent.horaInicio;
-        return value > primerString;
+        const fechaInicio = this.parent.fechaInicio.toISOString().slice(0, 11) + this.parent.horaInicio;
+        const fechaFin = this.parent.fechaFin.toISOString().slice(0, 11) + value;
+        return new Date(fechaInicio).getTime() < new Date(fechaFin).getTime();
       }),
     reservaInicio: yup
       .date()
