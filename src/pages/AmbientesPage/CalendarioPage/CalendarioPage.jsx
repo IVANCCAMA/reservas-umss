@@ -299,40 +299,40 @@ const CalendarioPage = () => {
         Calendario de {ambiente.nombre_ambiente}
       </h2>
       <div className="w-100 p-2">
-        <span className="fs-5 fw-bold">Mis reservas:</span>
-        <button
-          className={`ms-4 px-4 btn bg-opacity-25 btn-success`}
+        <span className="fs-6 fw-bold">Mis reservas:</span>
+        <span
+          className={`ms-2 badge text-bg-success`}
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
           RESERVADO
-        </button>
-        <button
-          className={`ms-2 px-4 btn bg-opacity-25 btn-danger opacity-75`}
+        </span>
+        <span
+          className={`ms-2 badge text-bg-danger`}
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
           CANCELADO
-        </button>
-        <span className="ms-5 fs-5 fw-bold">Otras reservas:</span>
-        <button
-          className={`ms-4 px-4 btn bg-opacity-25 btn-danger opacity-75`}
+        </span>
+        <span className="ms-4 fs-6 fw-bold">Otras reservas:</span>
+        <span
+          className={`ms-3 badge text-bg-danger btn-danger`}
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
           RESERVADO
-        </button>
-        <button
-          className={`ms-2 px-4 btn bg-opacity-25 btn-warning opacity-75`}
+        </span>
+        <span
+          className={`ms-2 badge text-bg-warning`}
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
           CANCELADO
-        </button>
+        </span>
       </div>
 
       <div className="border border-2  rounded-2" style={{ height: 'calc(100vh - 150px)' }}>
