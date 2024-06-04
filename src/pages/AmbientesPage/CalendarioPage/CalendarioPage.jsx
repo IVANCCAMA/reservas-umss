@@ -44,7 +44,7 @@ const CalendarioPage = () => {
             : data.find((obj) => obj[user.tipo_usuario.toLowerCase()]),
         ),
       )
-      .catch((e) => console.error('Error al obtener la apertura vigente:', error));
+      .catch((e) => console.error('Error al obtener la apertura vigente:', e));
   }, []);
 
   useEffect(() => {
@@ -188,6 +188,7 @@ const CalendarioPage = () => {
           title: apertura.motivo,
           subtitle: `Apertura para ${apertura.docente ? 'Docentes' : ''}${apertura.docente && apertura.auxiliar ? ' y ' : ''}${apertura.auxiliar ? 'Auxiliares' : ''}.`,
           listGroup: [
+            { key: 'Estado: ', value: event.obj.estado },
             {
               key: 'Desde: ',
               value: startUpperCase(
@@ -294,9 +295,47 @@ const CalendarioPage = () => {
 
   return (
     <div className="container-fluid listado-ambientes p-md-5 overflow-hidden">
-      <h2 className="text-start">Calendario de {ambiente.nombre_ambiente}</h2>
+      <h2 className="text-start d-flex justify-content-between">
+        Calendario de {ambiente.nombre_ambiente}
+      </h2>
+      <div className="w-100 p-2">
+        <span className="fs-5 fw-bold">Mis reservas:</span>
+        <button
+          className={`ms-4 px-4 btn bg-opacity-25 btn-success`}
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          RESERVADO
+        </button>
+        <button
+          className={`ms-2 px-4 btn bg-opacity-25 btn-danger opacity-75`}
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          CANCELADO
+        </button>
+        <span className="ms-5 fs-5 fw-bold">Otras reservas:</span>
+        <button
+          className={`ms-4 px-4 btn bg-opacity-25 btn-danger opacity-75`}
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          RESERVADO
+        </button>
+        <button
+          className={`ms-2 px-4 btn bg-opacity-25 btn-warning opacity-75`}
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          CANCELADO
+        </button>
+      </div>
 
-      <div className="border border-2  rounded-2" style={{ height: 'calc(100vh - 190px)' }}>
+      <div className="border border-2  rounded-2" style={{ height: 'calc(100vh - 150px)' }}>
         <Calendar
           step={45}
           events={[
@@ -306,8 +345,8 @@ const CalendarioPage = () => {
             {
               id: apertura.id_apertura,
               title: 'APERTURA',
-              start: new Date(apertura.apertura_inicio),
-              end: new Date(apertura.apertura_fin),
+              start: new Date(apertura.apertura_inicio?.slice(0, 23) + '-04:00'),
+              end: new Date(apertura.apertura_fin?.slice(0, 23) + '-04:00'),
               obj: apertura,
             },
           ]}
@@ -315,7 +354,7 @@ const CalendarioPage = () => {
           messages={messages}
           length={1}
           views={['agenda', 'day', 'week', 'month']}
-          defaultView="week"
+          defaultView="month"
           min={new Date(2024, 1, 1, 6, 45)}
           max={new Date(2024, 1, 1, 21, 45)}
           components={components}

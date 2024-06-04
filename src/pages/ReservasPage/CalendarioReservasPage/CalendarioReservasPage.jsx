@@ -1,20 +1,16 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../../redux/app/hooks';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Calendar, dayjsLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import dayjs from 'dayjs';
-import { RRule } from 'rrule';
 
 const CalendarioPage = () => {
   const user = useAppSelector((state) => state.auth.usuario);
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
-  const { id_ambiente } = useParams();
-  const [ambiente, setAmbiente] = useState({});
   const [reservas, setReservas] = useState([]);
   const [apertura, setApertura] = useState({});
-  const [disponibilidad, setDisponibilidad] = useState([[]]);
 
   useEffect(() => {
     axios
@@ -36,40 +32,11 @@ const CalendarioPage = () => {
       .catch((e) => console.error('Error al obtener las reservas del ambiente:', e));
     axios
       .get(`${baseURL}/aperturas/apertura-fecha`)
-      .then(({ data }) =>
-        setApertura(
-          user.tipo_usuario === 'ADMINISTRADOR'
-            ? data[0]
-            : data.find((obj) => obj[user.tipo_usuario.toLowerCase()]),
-        ),
-      )
-      .catch((e) => console.error('Error al obtener la apertura vigente:', error));
+      .then(({ data }) => setApertura(user.tipo_usuario === 'ADMINISTRADOR'
+        ? data[0]
+        : data.find(obj => obj[user.tipo_usuario.toLowerCase()])))
+      .catch(e => console.error('Error al obtener la apertura vigente:', e));
   }, []);
-
-  useEffect(() => {
-    if (ambiente.id_ambiente > 0 && apertura.id_apertura > 0) {
-      ambiente.disponibilidadPorDia.forEach((day, index) => {
-        day.periodos.forEach((periodo) => {
-          const weekday = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
-          const rule = new RRule({
-            freq: RRule.WEEKLY,
-            interval: 1,
-            byweekday: [RRule[weekday[index]]],
-            dtstart: new Date(`${apertura.reserva_inicio.slice(0, 10)}T${periodo.hora_inicio}Z`),
-            until: new Date(`${apertura.reserva_fin.slice(0, 10)}T${periodo.hora_inicio}Z`),
-          });
-          const occurrences = rule.all().map((date) => ({
-            id: new Date(date.setHours(date.getHours() + 4)).getTime(),
-            title: 'DISPONIBLE',
-            start: new Date(date.setHours(date.getHours())),
-            end: new Date(date.setHours(date.getHours() + 1, date.getMinutes() + 30)),
-            obj: { ...periodo, estado: 'disponible' },
-          }));
-          setDisponibilidad((prev) => [...prev, ...occurrences]);
-        });
-      });
-    }
-  }, [ambiente, apertura]);
 
   const messages = {
     date: 'Fecha',
@@ -112,78 +79,28 @@ const CalendarioPage = () => {
         RESERVADO: {
           header: event.obj.estado?.toUpperCase(),
           title: event.obj.nombre_usuario,
-          subtitle: `Registrado el ${new Date(
-            event.obj.registro_reserva?.slice(0, 23) + '-04:00',
-          ).toLocaleString('es-ES', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          })}.`,
+          subtitle: `Registrado el ${new Date(event.obj.registro_reserva_sin_formato?.slice(0, 23) + '-04:00')
+            .toLocaleString('es-ES', {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}.`,
           listGroup: [
             { key: 'Materia/s: ', value: event.obj.nombre_materia },
             { key: 'Motivo: ', value: event.obj.motivo },
             { key: 'Cantidad: ', value: event.obj.cantidad_est },
+            { key: 'Ambiente: ', value: event.obj.nombre_ambiente },
           ],
           footer: [{ to: '/reservas/listaReservas', text: 'Mis reservas' }],
-        },
-        DISPONIBLE: {
-          header: 'DISPONIBLE',
-          title: apertura.motivo,
-          subtitle: `Disponible el día ${new Date(event.start).toLocaleString('es-ES', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          })}.`,
-          listGroup: [
-            {
-              key: 'Fecha: ',
-              value: startUpperCase(
-                new Date(event.start).toLocaleString('es-ES', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric',
-                }),
-              ),
-            },
-            {
-              key: 'Periodo: ',
-              value: `De las ${new Date(event.start).toLocaleString('es-ES', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })} a las ${new Date(event.end).toLocaleString('es-ES', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}.`,
-            },
-          ],
-          footer: [
-            {
-              to: '/ambientes/calendario/reservar',
-              text: 'Reservar ambiente',
-              state: {
-                ambiente: ambiente,
-                nombreAmbiente: ambiente.nombre_ambiente,
-                fecha_reserva: dayjs(event.start).format('YYYY-MM-DD'),
-                periodos: [event.obj.id_periodo?.toString()],
-                periodo: `${event.obj.hora_inicio?.slice(0, 5)} - ${event.obj.hora_fin?.slice(0, 5)}`,
-                event: event,
-              },
-            },
-            {
-              to: `/ambientes/listaAmbientes/fichaAmbiente/${id_ambiente}`,
-              text: 'Más información',
-            },
-          ],
         },
         APERTURA: {
           header: 'APERTURA',
           title: apertura.motivo,
           subtitle: `Apertura para ${apertura.docente ? 'Docentes' : ''}${apertura.docente && apertura.auxiliar ? ' y ' : ''}${apertura.auxiliar ? 'Auxiliares' : ''}.`,
           listGroup: [
+            { key: 'Estado: ', value: event.obj.estado },
             {
               key: 'Desde: ',
               value: startUpperCase(
@@ -288,30 +205,38 @@ const CalendarioPage = () => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
+  const [dateValue, setDateValue] = useState(new Date());
   return (
     <div className="container-fluid listado-ambientes p-md-5 overflow-hidden">
-      <h2 className="text-start">Mi calendario de reservas</h2>
+      <h2 className="text-start d-flex justify-content-between">
+        Mi calendario de reservas
+        {/* <button
+          className={`ms-4 px-4 btn bg-opacity-25 btn-warning opacity-75`}
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          onClick={setDateValue()}
+        >
+          APERTURA
+        </button> */}
+      </h2>
 
-      <div className="border border-2  rounded-2" style={{ height: 'calc(100vh - 190px)' }}>
+      <div className='border border-2  rounded-2' style={{ height: 'calc(100vh - 170px)' }}>
         <Calendar
           step={45}
-          events={[
-            ...reservas.filter(
-              (obj, index, self) => index === self.findIndex((t) => t.id === obj.id),
-            ),
-            {
-              id: apertura.id_apertura,
-              title: 'APERTURA',
-              start: new Date(apertura.apertura_inicio),
-              end: new Date(apertura.apertura_fin),
-              obj: apertura,
-            },
-          ]}
+          events={[...[...reservas.filter((obj, index, self) =>
+            index === self.findIndex((t) => t.id === obj.id))], {
+            id: apertura.id_apertura,
+            title: 'APERTURA',
+            start: new Date(apertura.apertura_inicio?.slice(0, 23) + '-04:00'),
+            end: new Date(apertura.apertura_fin?.slice(0, 23) + '-04:00'),
+            obj: apertura,
+          }]}
           localizer={dayjsLocalizer(dayjs)}
           messages={messages}
           length={1}
           views={['agenda', 'day', 'week', 'month']}
-          defaultView="week"
+          defaultView='month'
           min={new Date(2024, 1, 1, 6, 45)}
           max={new Date(2024, 1, 1, 21, 45)}
           components={components}
