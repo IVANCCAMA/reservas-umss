@@ -17,7 +17,7 @@ const AmbientesDisponibles = () => {
   const { confirmationModal, errorModal, successModal } = useModal();
   const { errorNotification } = useNotification();
 
-  useEffect(() => {
+  const queryAmbientesDisp = () => {
     axios
       .post(`${database}/reservas`, {
         tipo_ambiente: formData.tipo_ambiente,
@@ -35,7 +35,9 @@ const AmbientesDisponibles = () => {
         console.error('Error al obtener los ambiente disponibles: ', error);
         errorNotification({ body: 'Error al enviar, intente de nuevo' });
       });
-  }, []);
+  };
+
+  useEffect(() => queryAmbientesDisp, []);
 
   const confirmSelect = (amb) => {
     // show modal confirm
@@ -88,6 +90,7 @@ const AmbientesDisponibles = () => {
             });
           })
           .catch((error) => {
+            queryAmbientesDisp();
             console.error('Error al registrar reserva:', error);
             errorModal({
               body: (
