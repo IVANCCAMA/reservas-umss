@@ -1,5 +1,4 @@
-// src/components/Filter/Filter.jsx
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 const Filter = ({ onFilter }) => {
     const [searchTerm, setSearchTerm] = useState('');

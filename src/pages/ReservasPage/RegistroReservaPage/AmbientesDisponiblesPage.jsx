@@ -7,6 +7,7 @@ import Pagination from '../../../components/Pagination/Pagination';
 import { useModal, useNotification } from '../../../components/Bootstrap';
 import { Icon } from '@iconify/react';
 import iconoError from '../../../assets/Images/iconoError.png';
+import Filter from '../../../components/Filter/Filter';
 
 const AmbientesDisponibles = () => {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const AmbientesDisponibles = () => {
   };
 
   useEffect(() => queryAmbientesDisp, []);
-
+  const [filteredAmbientes, setFilteredAmbientes] = useState(formData.ambienteDisp);
   const confirmSelect = (amb) => {
     // show modal confirm
     confirmationModal({
@@ -70,7 +71,6 @@ const AmbientesDisponibles = () => {
             cantidad_total: formData.cantidad_est,
           })
           .then((response) => {
-            console.log(response);
             successModal({
               body: (
                 <>
@@ -109,8 +109,17 @@ const AmbientesDisponibles = () => {
     });
   };
 
+  const handleFilter = (searchTerm) => {
+    const filteredData = formData.ambienteDisp.filter((amb) => {
+      return Object.values(amb).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredAmbientes(filteredData);
+  };
+
   const [pageNumber, setPageNumber] = useState(1);
-  const ambientes = formData.ambienteDisp?.map((amb) => {
+  const ambientes = filteredAmbientes.map((amb) => {
     return {
       Aula: amb.nombre_ambiente,
       Capacidad: amb.capacidad_ambiente,
@@ -135,6 +144,8 @@ const AmbientesDisponibles = () => {
   return (
     <div className="container-fluid listado-ambientes p-md-5">
       <h2 className="text-start">Lista de ambientes disponible</h2>
+      <Filter onFilter={handleFilter} />
+
       <Table rows={ambientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
 
       <div className="my-3 row row-cols6">
