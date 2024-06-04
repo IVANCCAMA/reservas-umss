@@ -11,7 +11,7 @@ import iconoError from '../../../assets/Images/iconoError.png';
 const AmbientesDisponibles = () => {
   const navigate = useNavigate();
   // estados
-  const database = 'https://backendtis-production.up.railway.app/api';
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
   const location = useLocation();
   const formData = location.state;
   const { confirmationModal, errorModal, successModal } = useModal();
@@ -19,7 +19,7 @@ const AmbientesDisponibles = () => {
 
   const queryAmbientesDisp = () => {
     axios
-      .post(`${database}/reservas`, {
+      .post(`${baseURL}/reservas`, {
         tipo_ambiente: formData.tipo_ambiente,
         cantidad_est: formData.cantidad_est,
         periodos: formData.periodos.map((obj) => ({ id_periodo: parseInt(obj) })),
@@ -61,7 +61,7 @@ const AmbientesDisponibles = () => {
       onClickYes: () => {
         // register new reserva
         axios
-          .post(`${database}/reservas/crear/`, {
+          .post(`${baseURL}/reservas/crear/`, {
             id_disponible: amb.id_disponible,
             fecha_reserva: formData.fecha_reserva,
             motivo: formData.motivo,

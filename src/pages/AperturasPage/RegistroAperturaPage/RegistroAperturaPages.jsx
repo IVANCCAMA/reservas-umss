@@ -7,7 +7,7 @@ import Form, { TextInput, DateInput, CheckboxInput, TimeInput } from '../../../c
 import { Icon } from '@iconify/react';
 
 const RegistroAperturaPage = () => {
-  const database = 'https://backendtis-production.up.railway.app/api';
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
 
   const { confirmationModal, successModal } = useModal();
   const { loadNotification, errorNotification } = useNotification();
@@ -80,7 +80,7 @@ const RegistroAperturaPage = () => {
       body: 'Enviando formulario',
       onTimeout: () => {
         axios
-          .post(`${database}/aperturas`, {
+          .post(`${baseURL}/aperturas`, {
             motivo: data.motivo,
             apertura_inicio: data.fechaInicio.toISOString().split('T')[0],
             apertura_fin: data.fechaFin.toISOString().split('T')[0],

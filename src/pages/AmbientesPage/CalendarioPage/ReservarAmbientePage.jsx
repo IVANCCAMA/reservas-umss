@@ -19,7 +19,7 @@ import { useAppSelector } from '../../../redux/app/hooks';
 
 const RegistroReservaPage = () => {
   const user = useAppSelector((state) => state.auth.usuario);
-  const database = 'https://backendtis-production.up.railway.app/api';
+  const baseURL = import.meta.env.VITE_APP_DOMAIN;
   const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
 
   const location = useLocation();
@@ -100,7 +100,7 @@ const RegistroReservaPage = () => {
   useEffect(() => {
     // recuperar users para el id del solicitante
     axios
-      .get(`${database}/usuarios`)
+      .get(`${baseURL}/usuarios`)
       .then(({ data }) => {
         setUsers(data);
         searchGroupsByApplicant(data);
@@ -110,7 +110,7 @@ const RegistroReservaPage = () => {
       });
     // recuperar apertura
     axios
-      .get(`${database}/aperturas/apertura-fecha`)
+      .get(`${baseURL}/aperturas/apertura-fecha`)
       .then(({ data }) => {
         const aux = user.tipo_usuario === 'ADMINISTRADOR' ? data[0]
           : data.find(obj => obj[user.tipo_usuario.toLowerCase()]);
@@ -205,7 +205,7 @@ const RegistroReservaPage = () => {
     setAssociatesIds([]);
     grupos.forEach(async (group) => {
       await axios
-        .get(`${database}/materias/usuarios-materia/${group.id_materia}`)
+        .get(`${baseURL}/materias/usuarios-materia/${group.id_materia}`)
         .then(({ data }) => {
           data.grupos.forEach((subGroup) => {
             subGroup.aux_grupos.forEach((aux) =>
@@ -232,7 +232,7 @@ const RegistroReservaPage = () => {
       body: 'Enviando formulario',
       onTimeout: () => {
         axios
-          .post(`${database}/reservas`, {
+          .post(`${baseURL}/reservas`, {
             tipo_ambiente: formData.ambiente.tipo,
             cantidad_est: formData.ambiente.capacidad,
             periodos: data.periodos.map((obj) => ({ id_periodo: parseInt(obj) })),
@@ -260,7 +260,7 @@ const RegistroReservaPage = () => {
               const ambienteDisp = response.data.find(obj => obj.ambiente_id == formData.ambiente.id_ambiente);
               if (ambienteDisp) {
                 axios
-                  .post(`${database}/reservas/crear/`, {
+                  .post(`${baseURL}/reservas/crear/`, {
                     id_disponible: ambienteDisp.id_disponible,
                     fecha_reserva: data.fecha_reserva,
                     motivo: data.motivo,
@@ -346,7 +346,7 @@ const RegistroReservaPage = () => {
     if (foundUser?.id_usuario) {
       resetList();
       axios
-        .get(`${database}/usuarios/${foundUser.id_usuario}/materias-grupos`)
+        .get(`${baseURL}/usuarios/${foundUser.id_usuario}/materias-grupos`)
         .then(({ data }) => {
           setValue('applicantGroups', data.materia_grupo.map(obj => (obj.id_aux_grupo)));
         })
@@ -355,7 +355,7 @@ const RegistroReservaPage = () => {
         });
       axios
         // .get(`${database}/usuarios/${foundUser.id_usuario}/materias-grupos`)
-        .post(`${database}/usuarios/materias-grupos-asociados`, {
+        .post(`${baseURL}/usuarios/materias-grupos-asociados`, {
           id_solicitantes: [foundUser.id_usuario, ...watch('asociados')],
         })
         .then(({ data }) => {
