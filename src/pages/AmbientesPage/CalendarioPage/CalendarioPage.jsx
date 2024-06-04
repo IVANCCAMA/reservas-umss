@@ -283,8 +283,8 @@ const CalendarioPage = () => {
             index === self.findIndex((t) => t.id === obj.id)), {
             id: apertura.id_apertura,
             title: 'APERTURA',
-            start: new Date(apertura.apertura_inicio.slice(0, 23) + '-04:00'),
-            end: new Date(apertura.apertura_fin.slice(0, 23) + '-04:00'),
+            start: new Date(apertura.apertura_inicio?.slice(0, 23) + '-04:00'),
+            end: new Date(apertura.apertura_fin?.slice(0, 23) + '-04:00'),
             obj: apertura,
           }]}
           localizer={dayjsLocalizer(dayjs)}
