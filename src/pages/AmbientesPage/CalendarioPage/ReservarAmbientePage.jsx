@@ -115,6 +115,18 @@ const RegistroReservaPage = () => {
         const aux = user.tipo_usuario === 'ADMINISTRADOR' ? data[0]
           : data.find(obj => obj[user.tipo_usuario.toLowerCase()]);
         if (aux === undefined) {
+          successModal({
+            body: (<>
+              <div className="position-absolute">
+                <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+              </div>
+              Actualmente no se tiene<br />
+              registrado ninguna apertura.<br />
+              Se le notificará cuando exista una<br />
+              apertura para "{user.tipo_usuario}".
+            </>),
+            onClickTo: '/'
+          });
           throw new Error('No existen aperturas vigentes');
         }
         const _apertura = {
@@ -146,9 +158,9 @@ const RegistroReservaPage = () => {
           };
           successModal({
             body: (<>
-              {/* <div className="position-absolute"> */}
-              <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
-              {/* </div> */}
+              <div className="position-absolute">
+                <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+              </div>
               Las reservas están actualmente<br />
               cerradas. El periodo hábil para<br />
               realizar reservas "{_apertura?.motivo}" es del {``}

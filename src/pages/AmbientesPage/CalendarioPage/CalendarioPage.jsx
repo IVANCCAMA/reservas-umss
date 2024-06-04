@@ -238,7 +238,9 @@ const CalendarioPage = () => {
 
   return (
     <div className="container-fluid listado-ambientes p-md-5 overflow-hidden">
-      <h2 className="text-start">Calendario de {ambiente.nombre_ambiente}</h2>
+      <h2 className="text-start d-flex justify-content-between">
+        Calendario de {ambiente.nombre_ambiente}
+      </h2>
       <div className='w-100 p-2'>
         <span className='fs-5 fw-bold'>Mis reservas:</span>
         <button
@@ -291,7 +293,7 @@ const CalendarioPage = () => {
           messages={messages}
           length={1}
           views={['agenda', 'day', 'week', 'month']}
-          defaultView='week'
+          defaultView='month'
           min={new Date(2024, 1, 1, 6, 45)}
           max={new Date(2024, 1, 1, 21, 45)}
           components={components}

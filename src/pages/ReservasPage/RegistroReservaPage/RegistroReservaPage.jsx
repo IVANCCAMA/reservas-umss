@@ -125,6 +125,18 @@ const RegistroReservaPage = () => {
         const aux = user.tipo_usuario === 'ADMINISTRADOR' ? data[0]
           : data.find(obj => obj[user.tipo_usuario.toLowerCase()]);
         if (aux === undefined) {
+          successModal({
+            body: (<>
+              <div className="position-absolute">
+                <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+              </div>
+              Actualmente no se tiene<br />
+              registrado ninguna apertura.<br />
+              Se le notificará cuando exista una<br />
+              apertura para "{user.tipo_usuario}".
+            </>),
+            onClickTo: '/'
+          });
           throw new Error('No existen aperturas vigentes');
         }
         const _apertura = {
@@ -145,7 +157,7 @@ const RegistroReservaPage = () => {
         const ini = _apertura?.aperturaIni.getTime();
         const fin = _apertura?.aperturaFin.getTime();
         const hoy = currentDateTime.getTime();
-        if ((ini <= hoy && hoy <= fin)) {
+        if (!(ini <= hoy && hoy <= fin)) {
           const dateStringFormat = {
             weekday: 'long',
             year: 'numeric',
@@ -268,7 +280,6 @@ const RegistroReservaPage = () => {
             console.error('Error al obtener los ambiente disponibles: ', error);
             errorNotification({ body: 'Error al enviar, intente de nuevo' });
           });
-
       },
     });
   };

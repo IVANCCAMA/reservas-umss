@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 // import './ListadoAmbientesPage.scss';
 import axios from 'axios';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
-import { useModal } from '../../../components/Bootstrap/ModalContext';
+import { useModal, useNotification } from '../../../components/Bootstrap';
 import { Icon } from '@iconify/react';
 import iconoError from '../../../assets/Images/iconoError.png';
 
@@ -14,8 +14,28 @@ const AmbientesDisponibles = () => {
   const database = 'https://backendtis-production.up.railway.app/api';
   const location = useLocation();
   const formData = location.state;
-  console.log(formData);
   const { confirmationModal, errorModal, successModal } = useModal();
+  const { errorNotification } = useNotification();
+
+  useEffect(() => {
+    axios
+      .post(`${database}/reservas`, {
+        tipo_ambiente: formData.tipo_ambiente,
+        cantidad_est: formData.cantidad_est,
+        periodos: formData.periodos.map((obj) => ({ id_periodo: parseInt(obj) })),
+        fecha_reserva: formData.fecha_reserva,
+      })
+      .then((response) => {
+        if (Array.isArray(response.data) && response.data.length === 0) {
+          errorNotification({ body: 'No se encontró ningún ambiente disponible' });
+        }
+        formData.ambienteDisp = response.data;
+      })
+      .catch((error) => {
+        console.error('Error al obtener los ambiente disponibles: ', error);
+        errorNotification({ body: 'Error al enviar, intente de nuevo' });
+      });
+  }, []);
 
   const confirmSelect = (amb) => {
     // show modal confirm
@@ -87,7 +107,7 @@ const AmbientesDisponibles = () => {
   };
 
   const [pageNumber, setPageNumber] = useState(1);
-  const ambientes = formData.ambienteDisp.map((amb) => {
+  const ambientes = formData.ambienteDisp?.map((amb) => {
     return {
       Aula: amb.nombre_ambiente,
       Capacidad: amb.capacidad_ambiente,

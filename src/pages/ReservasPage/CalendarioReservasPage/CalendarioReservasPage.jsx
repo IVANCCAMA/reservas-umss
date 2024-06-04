@@ -26,12 +26,12 @@ const CalendarioPage = () => {
         };
       })))
       .catch(e => console.error('Error al obtener las reservas del ambiente:', e));
-      axios
-        .get(`${baseURL}/aperturas/apertura-fecha`)
-        .then(({ data }) => setApertura(user.tipo_usuario === 'ADMINISTRADOR'
-          ? data[0]
-          : data.find(obj => obj[user.tipo_usuario.toLowerCase()])))
-        .catch(e => console.error('Error al obtener la apertura vigente:', e));
+    axios
+      .get(`${baseURL}/aperturas/apertura-fecha`)
+      .then(({ data }) => setApertura(user.tipo_usuario === 'ADMINISTRADOR'
+        ? data[0]
+        : data.find(obj => obj[user.tipo_usuario.toLowerCase()])))
+      .catch(e => console.error('Error al obtener la apertura vigente:', e));
   }, []);
 
   const messages = {
@@ -165,26 +165,38 @@ const CalendarioPage = () => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
+  const [dateValue, setDateValue] = useState(new Date());
   return (
     <div className="container-fluid listado-ambientes p-md-5 overflow-hidden">
-      <h2 className="text-start">Mi calendario de reservas</h2>
+      <h2 className="text-start d-flex justify-content-between">
+        Mi calendario de reservas
+        {/* <button
+          className={`ms-4 px-4 btn bg-opacity-25 btn-warning opacity-75`}
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          onClick={setDateValue()}
+        >
+          APERTURA
+        </button> */}
+      </h2>
 
       <div className='border border-2  rounded-2' style={{ height: 'calc(100vh - 170px)' }}>
         <Calendar
           step={45}
           events={[...[...reservas.filter((obj, index, self) =>
             index === self.findIndex((t) => t.id === obj.id))], {
-              id: apertura.id_apertura,
-              title: 'APERTURA',
-              start: new Date(apertura.apertura_inicio?.slice(0, 23) + '-04:00'),
-              end: new Date(apertura.apertura_fin?.slice(0, 23) + '-04:00'),
-              obj: apertura,
-            }]}
+            id: apertura.id_apertura,
+            title: 'APERTURA',
+            start: new Date(apertura.apertura_inicio?.slice(0, 23) + '-04:00'),
+            end: new Date(apertura.apertura_fin?.slice(0, 23) + '-04:00'),
+            obj: apertura,
+          }]}
           localizer={dayjsLocalizer(dayjs)}
           messages={messages}
           length={1}
           views={['agenda', 'day', 'week', 'month']}
-          defaultView='week'
+          defaultView='month'
           min={new Date(2024, 1, 1, 6, 45)}
           max={new Date(2024, 1, 1, 21, 45)}
           components={components}
