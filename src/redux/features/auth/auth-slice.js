@@ -33,7 +33,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loginRequest.fulfilled, (state, action) => {
-      console.log(state, action);
       /* Simulación de token */
       action.payload.token = crypto.randomUUID();
 

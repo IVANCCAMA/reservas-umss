@@ -1,76 +1,42 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../../redux/app/hooks';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Calendar, dayjsLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import dayjs from 'dayjs';
-import { RRule } from 'rrule';
 
 const CalendarioPage = () => {
   const user = useAppSelector((state) => state.auth.usuario);
   const baseURL = import.meta.env.VITE_APP_DOMAIN;
-  const { id_ambiente } = useParams();
-  const [ambiente, setAmbiente] = useState({});
   const [reservas, setReservas] = useState([]);
   const [apertura, setApertura] = useState({});
-  const [disponibilidad, setDisponibilidad] = useState([[]]);
 
   useEffect(() => {
     axios
-      .get(`${baseURL}/disponibles/ambiente/${id_ambiente}`)
-      .then(({ data }) => setAmbiente(data))
-      .catch((e) => console.error('Error al obtener los datos del ambiente:', e));
-    axios
-      .get(`${baseURL}/reservas/reserva-ambientes/${id_ambiente}`)
+      .get(`${baseURL}/reservas/reserva-usuario/${user.id_usuario}`)
       .then(({ data }) =>
         setReservas(
-          data.map((obj) => ({
-            id: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_inicio}-04:00`).getTime(),
-            title: 'RESERVADO',
-            start: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_inicio}-04:00`),
-            end: new Date(`${obj.fecha_reserva?.slice(0, 10)}T${obj.hora_fin}-04:00`),
-            obj: obj,
-          })),
+          data.map((obj) => {
+            const [dia, mes, anio] = obj.fecha_reserva.split('-');
+            return {
+              id: new Date(`${anio}-${mes}-${dia}T${obj.hora_inicio}-04:00`).getTime(),
+              title: 'RESERVADO',
+              start: new Date(`${anio}-${mes}-${dia}T${obj.hora_inicio}-04:00`),
+              end: new Date(`${anio}-${mes}-${dia}T${obj.hora_fin}-04:00`),
+              obj: obj,
+            };
+          }),
         ),
       )
       .catch((e) => console.error('Error al obtener las reservas del ambiente:', e));
     axios
       .get(`${baseURL}/aperturas/apertura-fecha`)
-      .then(({ data }) =>
-        setApertura(
-          user.tipo_usuario === 'ADMINISTRADOR'
-            ? data[0]
-            : data.find((obj) => obj[user.tipo_usuario.toLowerCase()]),
-        ),
-      )
-      .catch((e) => console.error('Error al obtener la apertura vigente:', e));
+      .then(({ data }) => setApertura(user.tipo_usuario === 'ADMINISTRADOR'
+        ? data[0]
+        : data.find(obj => obj[user.tipo_usuario.toLowerCase()])))
+      .catch(e => console.error('Error al obtener la apertura vigente:', e));
   }, []);
-
-  useEffect(() => {
-    if (ambiente.id_ambiente > 0 && apertura.id_apertura > 0 && ambiente.disponible) {
-      ambiente.disponibilidadPorDia.forEach((day, index) => {
-        day.periodos.forEach((periodo) => {
-          const weekday = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
-          const rule = new RRule({
-            freq: RRule.WEEKLY,
-            interval: 1,
-            byweekday: [RRule[weekday[index]]],
-            dtstart: new Date(`${apertura.reserva_inicio.slice(0, 10)}T${periodo.hora_inicio}Z`),
-            until: new Date(`${apertura.reserva_fin.slice(0, 10)}T${periodo.hora_inicio}Z`),
-          });
-          const occurrences = rule.all().map((date) => ({
-            id: new Date(date.setHours(date.getHours() + 4)).getTime(),
-            title: 'DISPONIBLE',
-            start: new Date(date.setHours(date.getHours())),
-            end: new Date(date.setHours(date.getHours() + 1, date.getMinutes() + 30)),
-            obj: { ...periodo, estado: 'disponible' },
-          }));
-          setDisponibilidad((prev) => [...prev, ...occurrences]);
-        });
-      });
-    }
-  }, [ambiente, apertura]);
 
   const messages = {
     date: 'Fecha',
@@ -98,7 +64,7 @@ const CalendarioPage = () => {
             : 'warning opacity-75',
         finalizado:
           event.obj.nombre_usuario === user.nombre_usuario
-            ? 'danger opacity-75'
+            ? 'secondary opacity-75'
             : 'warning opacity-75',
         // DISPONIBLE
         disponible: 'primary opacity-75',
@@ -113,75 +79,21 @@ const CalendarioPage = () => {
         RESERVADO: {
           header: event.obj.estado?.toUpperCase(),
           title: event.obj.nombre_usuario,
-          subtitle: `Registrado el ${new Date(
-            event.obj.registro_reserva?.slice(0, 23) + '-04:00',
-          ).toLocaleString('es-ES', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          })}.`,
+          subtitle: `Registrado el ${new Date(event.obj.registro_reserva_sin_formato?.slice(0, 23) + '-04:00')
+            .toLocaleString('es-ES', {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}.`,
           listGroup: [
             { key: 'Materia/s: ', value: event.obj.nombre_materia },
             { key: 'Motivo: ', value: event.obj.motivo },
             { key: 'Cantidad: ', value: event.obj.cantidad_est },
+            { key: 'Ambiente: ', value: event.obj.nombre_ambiente },
           ],
-          footer: [
-            { to: '/reservas/listaReservas', text: 'Mis reservas' },
-            { to: '/reservas/calendario', text: 'Mi calendario' },
-          ],
-        },
-        DISPONIBLE: {
-          header: 'DISPONIBLE',
-          title: apertura.motivo,
-          subtitle: `Disponible el día ${new Date(event.start).toLocaleString('es-ES', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          })}.`,
-          listGroup: [
-            {
-              key: 'Fecha: ',
-              value: startUpperCase(
-                new Date(event.start).toLocaleString('es-ES', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric',
-                }),
-              ),
-            },
-            {
-              key: 'Periodo: ',
-              value: `De las ${new Date(event.start).toLocaleString('es-ES', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })} a las ${new Date(event.end).toLocaleString('es-ES', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}.`,
-            },
-          ],
-          footer: [
-            {
-              to: '/ambientes/calendario/reservar',
-              text: 'Reservar ambiente',
-              state: {
-                ambiente: ambiente,
-                nombreAmbiente: ambiente.nombre_ambiente,
-                fecha_reserva: dayjs(event.start).format('YYYY-MM-DD'),
-                periodos: [event.obj.id_periodo?.toString()],
-                periodo: `${event.obj.hora_inicio?.slice(0, 5)} - ${event.obj.hora_fin?.slice(0, 5)}`,
-                event: event,
-              },
-            },
-            {
-              to: `/ambientes/listaAmbientes/fichaAmbiente/${id_ambiente}`,
-              text: 'Más información',
-            },
-          ],
+          footer: [{ to: '/reservas/listaReservas', text: 'Mis reservas' }],
         },
         APERTURA: {
           header: 'APERTURA',
@@ -293,68 +205,38 @@ const CalendarioPage = () => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
+  const [dateValue, setDateValue] = useState(new Date());
   return (
     <div className="container-fluid listado-ambientes p-md-5 overflow-hidden">
       <h2 className="text-start d-flex justify-content-between">
-        Calendario de {ambiente.nombre_ambiente}
+        Mi calendario de reservas
+        {/* <button
+          className={`ms-4 px-4 btn bg-opacity-25 btn-warning opacity-75`}
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          onClick={setDateValue()}
+        >
+          APERTURA
+        </button> */}
       </h2>
-      <div className="w-100 p-2">
-        <span className="fs-6 fw-bold">Mis reservas:</span>
-        <span
-          className={`ms-2 badge text-bg-success`}
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          RESERVADO
-        </span>
-        <span
-          className={`ms-2 badge text-bg-danger`}
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          CANCELADO
-        </span>
-        <span className="ms-4 fs-6 fw-bold">Otras reservas:</span>
-        <span
-          className={`ms-3 badge text-bg-danger btn-danger`}
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          RESERVADO
-        </span>
-        <span
-          className={`ms-2 badge text-bg-warning`}
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          CANCELADO
-        </span>
-      </div>
 
-      <div className="border border-2  rounded-2" style={{ height: 'calc(100vh - 150px)' }}>
+      <div className='border border-2  rounded-2' style={{ height: 'calc(100vh - 170px)' }}>
         <Calendar
           step={45}
-          events={[
-            ...[...reservas, ...disponibilidad].filter(
-              (obj, index, self) => index === self.findIndex((t) => t.id === obj.id),
-            ),
-            {
-              id: apertura.id_apertura,
-              title: 'APERTURA',
-              start: new Date(apertura.apertura_inicio?.slice(0, 23) + '-04:00'),
-              end: new Date(apertura.apertura_fin?.slice(0, 23) + '-04:00'),
-              obj: apertura,
-            },
-          ]}
+          events={[...[...reservas.filter((obj, index, self) =>
+            index === self.findIndex((t) => t.id === obj.id))], {
+            id: apertura.id_apertura,
+            title: 'APERTURA',
+            start: new Date(apertura.apertura_inicio?.slice(0, 23) + '-04:00'),
+            end: new Date(apertura.apertura_fin?.slice(0, 23) + '-04:00'),
+            obj: apertura,
+          }]}
           localizer={dayjsLocalizer(dayjs)}
           messages={messages}
           length={1}
           views={['agenda', 'day', 'week', 'month']}
-          defaultView="month"
+          defaultView='month'
           min={new Date(2024, 1, 1, 6, 45)}
           max={new Date(2024, 1, 1, 21, 45)}
           components={components}

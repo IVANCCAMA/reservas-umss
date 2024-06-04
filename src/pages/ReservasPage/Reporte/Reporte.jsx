@@ -175,7 +175,7 @@ const Reporte = ({ label, icon, data }) => {
 
       doc.autoTable({
         head: [['#', 'Aula', 'Capacidad', 'Estado', 'Tipo', 'Cantidad de reservas']],
-        body: ambientes.slice(0, 5),
+        body: ambientes.slice(0, 10),
         startY: 52,
         headStyles: {
           fillColor: [230, 230, 230],
@@ -206,8 +206,8 @@ const Reporte = ({ label, icon, data }) => {
       /* Cambiar el 140 para ajustar */
       doc.autoTable({
         head: [['#', 'Solicitante', 'Tipo', 'Cod. SIS', 'Cantidad de reservas']],
-        body: docentes.slice(0, 5),
-        startY: 142,
+        body: docentes.slice(0, 10),
+        startY: 145,
         headStyles: {
           fillColor: [230, 230, 230],
           textColor: [0, 0, 0],

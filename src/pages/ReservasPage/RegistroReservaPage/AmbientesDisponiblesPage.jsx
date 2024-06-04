@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 // import './ListadoAmbientesPage.scss';
 import axios from 'axios';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
-import { useModal } from '../../../components/Bootstrap/ModalContext';
+import { useModal, useNotification } from '../../../components/Bootstrap';
 import { Icon } from '@iconify/react';
 import iconoError from '../../../assets/Images/iconoError.png';
+import Filter from '../../../components/Filter/Filter';
 
 const AmbientesDisponibles = () => {
   const navigate = useNavigate();
@@ -15,7 +16,30 @@ const AmbientesDisponibles = () => {
   const location = useLocation();
   const formData = location.state;
   const { confirmationModal, errorModal, successModal } = useModal();
+  const { errorNotification } = useNotification();
 
+  const queryAmbientesDisp = () => {
+    axios
+      .post(`${database}/reservas`, {
+        tipo_ambiente: formData.tipo_ambiente,
+        cantidad_est: formData.cantidad_est,
+        periodos: formData.periodos.map((obj) => ({ id_periodo: parseInt(obj) })),
+        fecha_reserva: formData.fecha_reserva,
+      })
+      .then((response) => {
+        if (Array.isArray(response.data) && response.data.length === 0) {
+          errorNotification({ body: 'No se encontró ningún ambiente disponible' });
+        }
+        formData.ambienteDisp = response.data;
+      })
+      .catch((error) => {
+        console.error('Error al obtener los ambiente disponibles: ', error);
+        errorNotification({ body: 'Error al enviar, intente de nuevo' });
+      });
+  };
+
+  useEffect(() => queryAmbientesDisp, []);
+  const [filteredAmbientes, setFilteredAmbientes] = useState(formData.ambienteDisp);
   const confirmSelect = (amb) => {
     // show modal confirm
     confirmationModal({
@@ -47,7 +71,6 @@ const AmbientesDisponibles = () => {
             cantidad_total: formData.cantidad_est,
           })
           .then((response) => {
-            console.log(response);
             successModal({
               body: (
                 <>
@@ -67,7 +90,7 @@ const AmbientesDisponibles = () => {
             });
           })
           .catch((error) => {
-            formData.ambienteDisp = [];
+            queryAmbientesDisp();
             console.error('Error al registrar reserva:', error);
             errorModal({
               body: (
@@ -86,8 +109,17 @@ const AmbientesDisponibles = () => {
     });
   };
 
+  const handleFilter = (searchTerm) => {
+    const filteredData = formData.ambienteDisp.filter((amb) => {
+      return Object.values(amb).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredAmbientes(filteredData);
+  };
+
   const [pageNumber, setPageNumber] = useState(1);
-  const ambientes = formData.ambienteDisp.map((amb) => {
+  const ambientes = filteredAmbientes.map((amb) => {
     return {
       Aula: amb.nombre_ambiente,
       Capacidad: amb.capacidad_ambiente,
@@ -112,6 +144,8 @@ const AmbientesDisponibles = () => {
   return (
     <div className="container-fluid listado-ambientes p-md-5">
       <h2 className="text-start">Lista de ambientes disponible</h2>
+      <Filter onFilter={handleFilter} />
+
       <Table rows={ambientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
 
       <div className="my-3 row row-cols6">

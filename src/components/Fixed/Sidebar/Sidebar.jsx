@@ -27,6 +27,7 @@ const Sidebar = () => {
       subs: [
         { to: '/reservas/reservarAmbiente', name: 'Reservar ambiente' },
         { to: '/reservas/listaReservas', name: 'Lista de reservas' },
+        { to: '/reservas/calendario', name: 'Calendario de reservas' },
       ],
       viewSubs: true,
       forTypeUser: 'ADMINISTRADOR',
