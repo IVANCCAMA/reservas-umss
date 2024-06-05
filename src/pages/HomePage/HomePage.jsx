@@ -1,5 +1,7 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import patito from '../../assets/Images/patito.png';
+import Reloj from '../../components/Reloj/Reloj';
 
 export default function HomePage() {
   return (
@@ -15,6 +17,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="col-md-7">
+          {/* <Reloj /> */}
           <p>
             Simplificamos el proceso de reserva de espacios en tu campus para eventos, reuniones y
             actividades académicas. Con nuestra interfaz intuitiva, puedes encontrar y reservar

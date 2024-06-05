@@ -88,8 +88,8 @@ const Navbar = () => {
         {isLoggedIn && (
           <div className="d-flex align-items-center">
             {user.tipo_usuario !== 'ADMINISTRADOR' && (
-              <div className="iconNotify">
-                <Link to={'/notificaciones'} className="btn bi bi-bell-fill">
+              <div className="position-relative iconNotify">
+                <Link to={'/notificaciones'} className="btn bi bi-bell-fill position-relative">
                   <div className={`${todosLeidos ? '' : 'alertNotify'}`}></div>
                 </Link>
               </div>

@@ -175,6 +175,7 @@ h1 {
 }
 
 .iconNotify {
+  position: relative;
   .btn {
     font-size: 25px;
     color: #215f88;
@@ -183,8 +184,8 @@ h1 {
 
 .alertNotify {
   position: absolute;
-  top: 13px;
-  right: 249px;
+  top: 11px;
+  right: 11px;
   display: inline-block;
   padding: 0 5px;
   height: 13px;
