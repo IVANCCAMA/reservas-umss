@@ -155,24 +155,18 @@ const Reporte = ({ label, icon, data }) => {
         39,
       );
 
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(11);
-      doc.text('Reserbit umss', 47, 9);
-      doc.setFont('helvetica', 'bold');
-
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(12);
       doc.text('Universidad Mayor de San Simón', 139, 9);
       doc.setFontSize(11);
       doc.setFont('helvetica', 'normal');
-      doc.text('CALLE UMSS NRO. N', 152, 14);
-      doc.text('ZONA/BARRIO: UMSS', 150, 19);
-      doc.text('COCHABAMBA', 156, 24);
+      doc.text('Calle Sucre y parque la Torre'.toUpperCase(), 138, 14);
+      /* doc.text('ZONA/BARRIO: UMSS', 150, 19); */
+      doc.text('COCHABAMBA', 156, 19);
 
       doc.setFontSize(14);
       doc.setFont('helvetica', 'normal');
       doc.text('Lista de cinco ambientes más solicitados', 13, 50);
-
       doc.autoTable({
         head: [['#', 'Aula', 'Capacidad', 'Estado', 'Tipo', 'Cantidad de reservas']],
         body: ambientes.slice(0, 10),
@@ -201,13 +195,11 @@ const Reporte = ({ label, icon, data }) => {
 
       doc.setFontSize(14);
       doc.setFont('helvetica', 'normal');
-      /* Cambiar el 140 para ajustar */
       doc.text('Lista de cinco docentes que realizaron más reservas', 13, 140);
-      /* Cambiar el 140 para ajustar */
       doc.autoTable({
         head: [['#', 'Solicitante', 'Tipo', 'Cod. SIS', 'Cantidad de reservas']],
         body: docentes.slice(0, 10),
-        startY: 145,
+        startY: 142,
         headStyles: {
           fillColor: [230, 230, 230],
           textColor: [0, 0, 0],
@@ -287,7 +279,7 @@ const Reporte = ({ label, icon, data }) => {
         doc.text(
           `Fecha y Hora de descarga: ${currentDateTime} Página ${i}/${totalPages}`,
           pageWidth - 10,
-          pageHeight - 10,
+          pageHeight - 5,
           { align: 'right' },
         );
       }
