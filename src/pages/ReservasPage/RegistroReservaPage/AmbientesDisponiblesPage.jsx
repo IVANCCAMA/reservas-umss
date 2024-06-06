@@ -12,11 +12,12 @@ import Filter from '../../../components/Filter/Filter';
 const AmbientesDisponibles = () => {
   const navigate = useNavigate();
   // estados
-  const database = 'https://backendtis-production.up.railway.app/api';
+  const database = import.meta.env.VITE_APP_DOMAIN;
   const location = useLocation();
   const formData = location.state;
   const { confirmationModal, errorModal, successModal } = useModal();
   const { errorNotification } = useNotification();
+  const [ambientesData, setAmbientesData] = useState([]);
 
   const queryAmbientesDisp = () => {
     axios
@@ -27,13 +28,13 @@ const AmbientesDisponibles = () => {
         fecha_reserva: formData.fecha_reserva,
       })
       .then((response) => {
-        console.log('Deployado lista de ambientes disponibles');
         console.log(response.data);
         if (Array.isArray(response.data) && response.data.length === 0) {
           errorNotification({ body: 'No se encontró ningún ambiente disponible' });
         }
+        //formData.ambienteDisp = response.data;
+        setAmbientesData(response.data);
         setFilteredAmbientes(response.data);
-        formData.ambienteDisp = response.data;
       })
       .catch((error) => {
         console.error('Error al obtener los ambiente disponibles: ', error);
@@ -42,7 +43,7 @@ const AmbientesDisponibles = () => {
   };
 
   useEffect(() => queryAmbientesDisp, []);
-  const [filteredAmbientes, setFilteredAmbientes] = useState(formData.ambienteDisp);
+  const [filteredAmbientes, setFilteredAmbientes] = useState(ambientesData);
   const confirmSelect = (amb) => {
     // show modal confirm
     confirmationModal({
@@ -113,7 +114,7 @@ const AmbientesDisponibles = () => {
   };
 
   const handleFilter = (searchTerm) => {
-    const filteredData = formData.ambienteDisp.filter((amb) => {
+    const filteredData = ambientesData.filter((amb) => {
       return Object.values(amb).some((value) =>
         String(value).toLowerCase().includes(searchTerm.toLowerCase()),
       );

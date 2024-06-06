@@ -7,7 +7,7 @@ import Form, { TextInput, DateInput, CheckboxInput, TimeInput } from '../../../c
 import { Icon } from '@iconify/react';
 
 const RegistroAperturaPage = () => {
-  const database = 'https://backendtis-production.up.railway.app/api';
+  const database = import.meta.env.VITE_APP_DOMAIN;
 
   const { confirmationModal, successModal } = useModal();
   const { loadNotification, errorNotification } = useNotification();
@@ -47,7 +47,8 @@ const RegistroAperturaPage = () => {
       .required('Seleccione una hora válida')
       .matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Debe tener un formato de hora válido (HH:MM)')
       .test('es-mayor', 'Seleccione una hora posterior a la hora de inicio', function (value) {
-        const fechaInicio = this.parent.fechaInicio.toISOString().slice(0, 11) + this.parent.horaInicio;
+        const fechaInicio =
+          this.parent.fechaInicio.toISOString().slice(0, 11) + this.parent.horaInicio;
         const fechaFin = this.parent.fechaFin.toISOString().slice(0, 11) + value;
         return new Date(fechaInicio).getTime() < new Date(fechaFin).getTime();
       }),
@@ -149,7 +150,9 @@ const RegistroAperturaPage = () => {
               {...register('motivo')}
               placeholder="Escriba el motivo de apertura"
               error={errors.motivo?.message}
-              handleChange={(newValue) => new String(newValue.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ1-9 ]/g, '').toUpperCase())}
+              handleChange={(newValue) =>
+                new String(newValue.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ1-9 ]/g, '').toUpperCase())
+              }
             />
 
             <div className="input-component d-flex">

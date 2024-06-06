@@ -19,7 +19,7 @@ import { useAppSelector } from '../../../redux/app/hooks';
 
 const RegistroReservaPage = () => {
   const user = useAppSelector((state) => state.auth.usuario);
-  const database = 'https://backendtis-production.up.railway.app/api';
+  const database = import.meta.env.VITE_APP_DOMAIN;
   const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
 
   const location = useLocation();
@@ -30,7 +30,9 @@ const RegistroReservaPage = () => {
   // aux
   const currentDateTime = new Date();
   const [users, setUsers] = useState(formData?.users || []);
-  const [datalistSolicitante, setDatalistSolicitante] = useState(formData?.datalistSolicitante || []);
+  const [datalistSolicitante, setDatalistSolicitante] = useState(
+    formData?.datalistSolicitante || [],
+  );
   const [isAdmin, setIsAdmin] = useState(user.tipo_usuario === 'ADMINISTRADOR');
   const [addAssociates, setAddAssociates] = useState(formData?.addAssociates || false);
   const [associatesIds, setAssociatesIds] = useState(formData?.associatesIds || []);
@@ -53,9 +55,9 @@ const RegistroReservaPage = () => {
     listaGrupos: yup
       .array()
       .default(formData?.listaGrupos || [])
-      .of(yup.number().positive().integer(), 'Error type for group\'s value')
+      .of(yup.number().positive().integer(), "Error type for group's value")
       .test('noApplicantGroup', 'Seleccione algún grupo del solicitante', function (value) {
-        return value.some(idGroup => this.parent.applicantGroups.includes(idGroup));
+        return value.some((idGroup) => this.parent.applicantGroups.includes(idGroup));
       })
       .min(1, 'Seleccione al menos un grupo'),
     cantidad_est: yup
@@ -65,17 +67,30 @@ const RegistroReservaPage = () => {
       .max(500, 'el número de estudiantes debe ser menor a 500')
       .min(20, 'El número de estudiantes debe ser mayor a 20')
       .integer('El número de estudiantes debe ser un número entero'),
-    fecha_reserva: yup.string().default(formData?.fecha_reserva || '').required('Seleccione una fecha valida'),
-    motivo: yup.string().default(formData?.motivo || '').max(200, 'El motivo debe tener como máximo 200 caracteres'),
-    periodos: yup.array().default(formData?.periodos || []).of(yup.string()).min(1, 'Seleccione al menos un horario'),
-    apertura: yup.object().shape({
-      id: yup.number(),
-      motivo: yup.string(),
-      aperturaIni: yup.date(),
-      aperturaFin: yup.date(),
-      reservaIni: yup.date(),
-      reservaFin: yup.date(),
-    }).required('Error: Apertura is undefined'),
+    fecha_reserva: yup
+      .string()
+      .default(formData?.fecha_reserva || '')
+      .required('Seleccione una fecha valida'),
+    motivo: yup
+      .string()
+      .default(formData?.motivo || '')
+      .max(200, 'El motivo debe tener como máximo 200 caracteres'),
+    periodos: yup
+      .array()
+      .default(formData?.periodos || [])
+      .of(yup.string())
+      .min(1, 'Seleccione al menos un horario'),
+    apertura: yup
+      .object()
+      .shape({
+        id: yup.number(),
+        motivo: yup.string(),
+        aperturaIni: yup.date(),
+        aperturaFin: yup.date(),
+        reservaIni: yup.date(),
+        reservaFin: yup.date(),
+      })
+      .required('Error: Apertura is undefined'),
   });
 
   const {
@@ -112,20 +127,27 @@ const RegistroReservaPage = () => {
     axios
       .get(`${database}/aperturas/apertura-fecha`)
       .then(({ data }) => {
-        const aux = user.tipo_usuario === 'ADMINISTRADOR' ? data[0]
-          : data.find(obj => obj[user.tipo_usuario.toLowerCase()]);
+        const aux =
+          user.tipo_usuario === 'ADMINISTRADOR'
+            ? data[0]
+            : data.find((obj) => obj[user.tipo_usuario.toLowerCase()]);
         if (aux === undefined) {
           successModal({
-            body: (<>
-              <div className="position-absolute">
-                <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
-              </div>
-              Actualmente no se tiene<br />
-              registrado ninguna apertura.<br />
-              Se le notificará cuando exista una<br />
-              apertura para "{user.tipo_usuario}".
-            </>),
-            onClickTo: '/'
+            body: (
+              <>
+                <div className="position-absolute">
+                  <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+                </div>
+                Actualmente no se tiene
+                <br />
+                registrado ninguna apertura.
+                <br />
+                Se le notificará cuando exista una
+                <br />
+                apertura para "{user.tipo_usuario}".
+              </>
+            ),
+            onClickTo: '/',
           });
           throw new Error('No existen aperturas vigentes');
         }
@@ -142,7 +164,7 @@ const RegistroReservaPage = () => {
             new Date(aux.reserva_fin).getTime() > currentDateTime.getTime()
               ? new Date(aux.reserva_fin)
               : currentDateTime,
-        }
+        };
         setValue('apertura', _apertura);
         const ini = _apertura?.aperturaIni.getTime();
         const fin = _apertura?.aperturaFin.getTime();
@@ -157,17 +179,21 @@ const RegistroReservaPage = () => {
             minute: 'numeric',
           };
           successModal({
-            body: (<>
-              <div className="position-absolute">
-                <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
-              </div>
-              Las reservas están actualmente<br />
-              cerradas. El periodo hábil para<br />
-              realizar reservas "{_apertura?.motivo}" es del {``}
-              {_apertura?.aperturaIni?.toLocaleString('es-ES', dateStringFormat)} {``}
-              al {_apertura?.aperturaFin?.toLocaleString('es-ES', dateStringFormat)}.
-            </>),
-            onClickTo: '/'
+            body: (
+              <>
+                <div className="position-absolute">
+                  <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+                </div>
+                Las reservas están actualmente
+                <br />
+                cerradas. El periodo hábil para
+                <br />
+                realizar reservas "{_apertura?.motivo}" es del {``}
+                {_apertura?.aperturaIni?.toLocaleString('es-ES', dateStringFormat)} {``}
+                al {_apertura?.aperturaFin?.toLocaleString('es-ES', dateStringFormat)}.
+              </>
+            ),
+            onClickTo: '/',
           });
         }
       })
@@ -186,8 +212,7 @@ const RegistroReservaPage = () => {
           addGropsSelected(groupId);
         });
         Object.keys(watch()).forEach((propiedad) => {
-          if (formData[propiedad])
-            setValue(propiedad, formData[propiedad]);
+          if (formData[propiedad]) setValue(propiedad, formData[propiedad]);
         });
       }
     }, 1000);
@@ -238,88 +263,96 @@ const RegistroReservaPage = () => {
             periodos: data.periodos.map((obj) => ({ id_periodo: parseInt(obj) })),
             fecha_reserva: data.fecha_reserva,
           })
-          .then((response) => confirmationModal({
-            body: (
-              <>
-                <div className="position-absolute">
-                  <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
-                </div>
-                <div>
-                  Confirmar reserva <br />
-                  Aula: {formData.ambiente.nombre_ambiente} <br />
-                  Capacidad: {formData.ambiente.capacidad} <br />
-                  Tipo: {formData.ambiente.tipo} <br />
-                  Fecha: {new Date(`${data.fecha_reserva}T00:00:00.000-04:00`)
-                    .toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric', })} <br />
-                  Hora: {formData.periodo} <br />
-                </div>
-              </>
-            ),
-            onClickYes: () => {
-              console.log(response.data);
-              const ambienteDisp = response.data.find(obj => obj.ambiente_id == formData.ambiente.id_ambiente);
-              if (ambienteDisp) {
-                axios
-                  .post(`${database}/reservas/crear/`, {
-                    id_disponible: ambienteDisp.id_disponible,
-                    fecha_reserva: data.fecha_reserva,
-                    motivo: data.motivo,
-                    listaGrupos: data.listaGrupos,
-                    id_apertura: data.apertura.id,
-                    cantidad_total: data.cantidad_est,
-                  })
-                  .then((response) => {
-                    console.log(response);
-                    successModal({
-                      body: (
-                        <>
-                          <Icon
-                            icon="gg:check-o"
-                            style={{ color: '#0fa958', height: '90px', width: '90px' }}
-                          />
-                          <div className="pt-md-3">
-                            Registro de reserva
-                            <br />
-                            exitoso
-                          </div>
-                        </>
-                      ),
-                      onClickTo: '/reservas/listaReservas',
+          .then((response) =>
+            confirmationModal({
+              body: (
+                <>
+                  <div className="position-absolute">
+                    <Icon icon="gg:info" width="45" height="45" style={{ color: '#FF6B00' }} />
+                  </div>
+                  <div>
+                    Confirmar reserva <br />
+                    Aula: {formData.ambiente.nombre_ambiente} <br />
+                    Capacidad: {formData.ambiente.capacidad} <br />
+                    Tipo: {formData.ambiente.tipo} <br />
+                    Fecha:{' '}
+                    {new Date(`${data.fecha_reserva}T00:00:00.000-04:00`).toLocaleDateString(
+                      'es-ES',
+                      { weekday: 'long', month: 'long', day: 'numeric' },
+                    )}{' '}
+                    <br />
+                    Hora: {formData.periodo} <br />
+                  </div>
+                </>
+              ),
+              onClickYes: () => {
+                console.log(response.data);
+                const ambienteDisp = response.data.find(
+                  (obj) => obj.ambiente_id == formData.ambiente.id_ambiente,
+                );
+                if (ambienteDisp) {
+                  axios
+                    .post(`${database}/reservas/crear/`, {
+                      id_disponible: ambienteDisp.id_disponible,
+                      fecha_reserva: data.fecha_reserva,
+                      motivo: data.motivo,
+                      listaGrupos: data.listaGrupos,
+                      id_apertura: data.apertura.id,
+                      cantidad_total: data.cantidad_est,
+                    })
+                    .then((response) => {
+                      console.log(response);
+                      successModal({
+                        body: (
+                          <>
+                            <Icon
+                              icon="gg:check-o"
+                              style={{ color: '#0fa958', height: '90px', width: '90px' }}
+                            />
+                            <div className="pt-md-3">
+                              Registro de reserva
+                              <br />
+                              exitoso
+                            </div>
+                          </>
+                        ),
+                        onClickTo: '/reservas/listaReservas',
+                      });
+                    })
+                    .catch((error) => {
+                      formData.ambienteDisp = [];
+                      console.error('Error al registrar reserva:', error);
+                      errorModal({
+                        body: (
+                          <>
+                            <img src={iconoError} />
+                            <div className="pt-md-3">
+                              Error al registrar.
+                              <br />
+                              Intente de nuevo
+                            </div>
+                          </>
+                        ),
+                      });
                     });
-                  })
-                  .catch((error) => {
-                    formData.ambienteDisp = [];
-                    console.error('Error al registrar reserva:', error);
-                    errorModal({
-                      body: (
-                        <>
-                          <img src={iconoError} />
-                          <div className="pt-md-3">
-                            Error al registrar.
-                            <br />
-                            Intente de nuevo
-                          </div>
-                        </>
-                      ),
-                    });
+                } else {
+                  errorModal({
+                    body: (
+                      <>
+                        <img src={iconoError} />
+                        <div className="pt-md-3">
+                          El ambiente ya se encuentra
+                          <br />
+                          reservado.
+                        </div>
+                      </>
+                    ),
+                    onClickTo: `/ambientes/calendario/${formData.ambiente.id_ambiente}`,
                   });
-              } else {
-                errorModal({
-                  body: (
-                    <>
-                      <img src={iconoError} />
-                      <div className="pt-md-3">
-                        El ambiente ya se encuentra
-                        <br />
-                        reservado.
-                      </div>
-                    </>
-                  ),
-                  onClickTo: `/ambientes/calendario/${formData.ambiente.id_ambiente}`,
-                });
-              }
-            }
-          }))
+                }
+              },
+            }),
+          )
           .catch((error) => {
             console.error('Error al obtener los ambiente disponibles: ', error);
             errorNotification({ body: 'Error al enviar, intente de nuevo' });
@@ -348,7 +381,10 @@ const RegistroReservaPage = () => {
       axios
         .get(`${database}/usuarios/${foundUser.id_usuario}/materias-grupos`)
         .then(({ data }) => {
-          setValue('applicantGroups', data.materia_grupo.map(obj => (obj.id_aux_grupo)));
+          setValue(
+            'applicantGroups',
+            data.materia_grupo.map((obj) => obj.id_aux_grupo),
+          );
         })
         .catch((error) => {
           console.error('Error al obtener las materias y grupos:', error);
@@ -444,30 +480,32 @@ const RegistroReservaPage = () => {
               });
             }}
           >
-            {user.tipo_usuario === 'ADMINISTRADOR' && <TextInput
-              autoComplete="off"
-              label="Nombre del solicitante"
-              {...register('solicitante')}
-              placeholder="Ingrese el nombre del solicitante"
-              datalist={datalistSolicitante}
-              handleChange={handleSolicitante}
-              afterChange={() => {
-                searchGroupsByApplicant();
-                setAddAssociates(false);
-              }}
-              error={errors.solicitante?.message}
-            />}
+            {user.tipo_usuario === 'ADMINISTRADOR' && (
+              <TextInput
+                autoComplete="off"
+                label="Nombre del solicitante"
+                {...register('solicitante')}
+                placeholder="Ingrese el nombre del solicitante"
+                datalist={datalistSolicitante}
+                handleChange={handleSolicitante}
+                afterChange={() => {
+                  searchGroupsByApplicant();
+                  setAddAssociates(false);
+                }}
+                error={errors.solicitante?.message}
+              />
+            )}
 
             <div className="row row-cols6">
               <div className="col-md-4">
-                <TextInput disabled label='Ambiente' {...register('nombreAmbiente')} />
+                <TextInput disabled label="Ambiente" {...register('nombreAmbiente')} />
               </div>
 
               <div className="col-md-4">
-                <TextInput disabled label='Fecha de reserva' {...register('fecha_reserva')} />
+                <TextInput disabled label="Fecha de reserva" {...register('fecha_reserva')} />
               </div>
               <div className="col-md-4">
-                <TextInput disabled label='Periodo'{...register('periodo')} />
+                <TextInput disabled label="Periodo" {...register('periodo')} />
               </div>
             </div>
 
@@ -487,8 +525,11 @@ const RegistroReservaPage = () => {
                       name="asociados"
                       placeholder="Seleccionar un asociado"
                       options={users
-                        .filter((user) => associatesIds.includes(user.id_usuario)
-                          && !watch('asociados').includes(user.id_usuario))
+                        .filter(
+                          (user) =>
+                            associatesIds.includes(user.id_usuario) &&
+                            !watch('asociados').includes(user.id_usuario),
+                        )
                         .map((user) => ({
                           value: user.id_usuario,
                           title: user.nombre_usuario,
@@ -522,7 +563,9 @@ const RegistroReservaPage = () => {
                       title: `${group.nombre_materia} - ${group.nombre_grupo}`,
                     }))}
                   handleChange={addGropsSelected}
-                  afterChange={() => { clearErrors('listaGrupos') }}
+                  afterChange={() => {
+                    clearErrors('listaGrupos');
+                  }}
                   error={errors.listaGrupos?.message}
                 />
 
@@ -550,7 +593,9 @@ const RegistroReservaPage = () => {
                 <NumberInput
                   label="Número de Estudiantes"
                   {...register('cantidad_est')}
-                  disabled={user.tipo_usuario !== 'ADMINISTRADOR' || watch('listaGrupos').length < 1}
+                  disabled={
+                    user.tipo_usuario !== 'ADMINISTRADOR' || watch('listaGrupos').length < 1
+                  }
                   error={watch('cantidad_est') < 20 && errors.cantidad_est?.message}
                 />
               </div>
