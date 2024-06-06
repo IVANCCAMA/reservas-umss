@@ -27,6 +27,7 @@ const AmbientesDisponibles = () => {
         fecha_reserva: formData.fecha_reserva,
       })
       .then((response) => {
+        console.log('Deployado lista de ambientes disponibles');
         console.log(response.data);
         if (Array.isArray(response.data) && response.data.length === 0) {
           errorNotification({ body: 'No se encontró ningún ambiente disponible' });
