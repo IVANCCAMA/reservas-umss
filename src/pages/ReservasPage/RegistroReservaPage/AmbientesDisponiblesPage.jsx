@@ -27,9 +27,11 @@ const AmbientesDisponibles = () => {
         fecha_reserva: formData.fecha_reserva,
       })
       .then((response) => {
+        console.log(response.data);
         if (Array.isArray(response.data) && response.data.length === 0) {
           errorNotification({ body: 'No se encontró ningún ambiente disponible' });
         }
+        setFilteredAmbientes(response.data);
         formData.ambienteDisp = response.data;
       })
       .catch((error) => {
@@ -112,7 +114,7 @@ const AmbientesDisponibles = () => {
   const handleFilter = (searchTerm) => {
     const filteredData = formData.ambienteDisp.filter((amb) => {
       return Object.values(amb).some((value) =>
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        String(value).toLowerCase().includes(searchTerm.toLowerCase()),
       );
     });
     setFilteredAmbientes(filteredData);
