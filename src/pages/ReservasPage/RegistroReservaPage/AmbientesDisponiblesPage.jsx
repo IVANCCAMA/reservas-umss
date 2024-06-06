@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import './ListadoAmbientesPage.scss';
 import axios from 'axios';
 import Table from '../../../components/Table/Table';
 import Pagination from '../../../components/Pagination/Pagination';
@@ -11,13 +10,14 @@ import Filter from '../../../components/Filter/Filter';
 
 const AmbientesDisponibles = () => {
   const navigate = useNavigate();
-  // estados
   const database = import.meta.env.VITE_APP_DOMAIN;
   const location = useLocation();
   const formData = location.state;
   const { confirmationModal, errorModal, successModal } = useModal();
   const { errorNotification } = useNotification();
   const [ambientesData, setAmbientesData] = useState([]);
+  const [filteredAmbientes, setFilteredAmbientes] = useState([]);
+  const [pageNumber, setPageNumber] = useState(1);
 
   const queryAmbientesDisp = () => {
     axios
@@ -32,7 +32,6 @@ const AmbientesDisponibles = () => {
         if (Array.isArray(response.data) && response.data.length === 0) {
           errorNotification({ body: 'No se encontró ningún ambiente disponible' });
         }
-        //formData.ambienteDisp = response.data;
         setAmbientesData(response.data);
         setFilteredAmbientes(response.data);
       })
@@ -42,10 +41,11 @@ const AmbientesDisponibles = () => {
       });
   };
 
-  useEffect(() => queryAmbientesDisp, []);
-  const [filteredAmbientes, setFilteredAmbientes] = useState(ambientesData);
+  useEffect(() => {
+    queryAmbientesDisp();
+  }, []); // Se asegura de que queryAmbientesDisp se ejecute solo una vez al montar el componente
+
   const confirmSelect = (amb) => {
-    // show modal confirm
     confirmationModal({
       body: (
         <>
@@ -62,9 +62,7 @@ const AmbientesDisponibles = () => {
           </div>
         </>
       ),
-      // click acept modal confirm
       onClickYes: () => {
-        // register new reserva
         axios
           .post(`${database}/reservas/crear/`, {
             id_disponible: amb.id_disponible,
@@ -89,7 +87,6 @@ const AmbientesDisponibles = () => {
                   </div>
                 </>
               ),
-              // redirect
               onClickTo: '/reservas/listaReservas',
             });
           })
@@ -122,7 +119,6 @@ const AmbientesDisponibles = () => {
     setFilteredAmbientes(filteredData);
   };
 
-  const [pageNumber, setPageNumber] = useState(1);
   const ambientes = filteredAmbientes.map((amb) => {
     return {
       Aula: amb.nombre_ambiente,
@@ -147,12 +143,12 @@ const AmbientesDisponibles = () => {
 
   return (
     <div className="container-fluid listado-ambientes p-md-5">
-      <h2 className="text-start">Lista de ambientes disponible</h2>
+      <h2 className="text-start">Lista de ambientes disponibles</h2>
       <Filter onFilter={handleFilter} />
 
       <Table rows={ambientes} firstRow={(pageNumber - 1) * 10} lastRow={pageNumber * 10} />
 
-      <div className="my-3 row row-cols6">
+      <div className="my-3 row row-cols-6">
         <div className="col-md-6">
           <button
             type="button"
@@ -175,4 +171,5 @@ const AmbientesDisponibles = () => {
     </div>
   );
 };
+
 export default AmbientesDisponibles;
