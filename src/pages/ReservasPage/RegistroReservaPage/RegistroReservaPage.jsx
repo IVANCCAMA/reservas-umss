@@ -19,7 +19,7 @@ import { useAppSelector } from '../../../redux/app/hooks';
 
 const RegistroReservaPage = () => {
   const user = useAppSelector((state) => state.auth.usuario);
-  const database = 'https://backendtis-production.up.railway.app/api';
+  const database = import.meta.env.VITE_APP_DOMAIN;
   const alerts = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
 
   const navigate = useNavigate();
